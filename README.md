@@ -1,15 +1,19 @@
-# CDM Thesis Code
+# Context Effects in Discrete Choice Models
 
-Working repo for M.tech thesis (Discovering Context Effects from Random Choice Data).
+MTP, M.Tech I2MP DSAI, IIT Madras. Advisor: Prof. Suryanarayana Sankagiri.
 
-## Setup
-```
-python3 -m venv venv
-source venv/bin/activate
+Most choice models assume that adding an irrelevant option to the menu doesn't
+change how you feel about the rest. People don't actually work that way. This
+repo follows Seshadri, Singh and Ugander (ICML 2019) on models that drop that
+assumption.
+
+`bradley-terry.py` generates synthetic pairwise comparisons from known item
+strengths and fits them back by maximum likelihood, as a sanity check on the
+basic machinery. The paper and reading notes are in `cdm-icml/`.
+
+```bash
 pip install -r requirements.txt
+python bradley-terry.py
 ```
 
-## Structure
-- `src/` - model implementations
-- `data/` - datasets (gitignored)
-- `cdm-icml/` - reference implementation by Seshadri et al. (ICML 2019)
+Work in progress.
