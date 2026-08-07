@@ -1,0 +1,9 @@
+/_meta/
+/.vscode/
+
+# Sphinx-generated doc.
+/docs/_build
+
+# Coverage information.
+/.coverage
+/htmlcov

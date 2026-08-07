@@ -1,0 +1,8 @@
+{
+  "desc": "Cycle on three items with one additional comparison.",
+  "n_items": 3,
+  "data": [[0, 1], [0, 1], [1, 2], [2, 0]],
+  "ml_est": [0.419617624, -0.419617624, 0.0],
+  "lsr_est": [0.23104906, -0.46209812, 0.23104906],
+  "rc_est": [0.0, 0.0, 0.0]
+}
