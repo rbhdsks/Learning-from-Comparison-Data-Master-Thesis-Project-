@@ -1,6 +1,6 @@
 # Learning from Comparison Data
 
-Research code and [notes](https://www.overleaf.com/project/6a192de01f9877e35710e1d1) for an M.Tech thesis on learning preference models from observed choices. 
+Research code and [notes](https://www.overleaf.com/project/6a192de01f9877e35710e1d1) for my M.Tech thesis on learning preference models from observed choice data. 
 My project begun with understanding pairwise comparisons where now I am developing a good understanding of the underlying probability and optimization methods from the first principles.
 
 
