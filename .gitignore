@@ -10,3 +10,4 @@ runs/
 *.npy
 *.csv
 scratch/
+results/
