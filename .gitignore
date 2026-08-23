@@ -1,12 +1,13 @@
 .venv/
 venv/
 __pycache__/
-*.pyc
+*.py[cod]
+.pytest_cache/
 .ipynb_checkpoints/
+# macm1 generated filesss
 .DS_Store
+runs/
 *.npy
 *.csv
-.ipynb_checkpoints/
-runs/
-__pycache__/
-.ipynb_checkpoints/
+scratch/
+results/
