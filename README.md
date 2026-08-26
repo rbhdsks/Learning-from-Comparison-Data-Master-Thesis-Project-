@@ -1,24 +1,25 @@
 # Learning from Comparison Data
 
 Research code and [notes](https://www.overleaf.com/project/6a192de01f9877e35710e1d1) for my M.Tech thesis on learning preference models from observed choice data. 
-My project began with understanding pairwise comparisons where now I am developing a good understanding of the underlying probability and optimization methods from the first principles.   
-
+<!-- My project began with understanding pairwise comparisons where now I am developing a good understanding of the underlying probability and optimization methods from the first principles.    -->
 
 ## Repository structure
 
-| Path                              | Purpose                                          |
-| --------------------------------- | ------------------------------------------------ |
-| `notebooks/foundations/`          | Mathematical derivations and small examples      |
-| `notebooks/practice/choix/`       | Practice notebooks using and from Choix library  |
-| `notebooks/experiments/`          | Main thesis experiments                          |
-| `src/bradley_terry/`              | Not started yet                                  |
-| `docs/`                           | Research notes and report material               |
-| `references/paper_code/cdm_icml/` | Code accompanying the main reference paper.      |
-| `references/libraries/choix/`     | Local reference copy of the Choix library        |
+| Path | Purpose |
+| --- | --- |
+| `notebooks/archive/early_experiments/` | Earlier experiment notebooks preserved for reference |
+| `notebooks/foundations/` | Mathematical derivations and small examples |
+| `notebooks/practice/choix/` | Practice notebooks using the Choix library |
+| `notebooks/experiments/` | Main thesis experiments |
+| `src/bradley_terry/` | Reusable Bradley–Terry functions |
+| `results/figures/` | Figures generated from experiments |
+| `results/tables/` | Tables generated from experiments |
+| `docs/` | Research notes and report material |
+| `references/paper_code/cdm_icml/` | Code accompanying the main reference paper |
+| `references/libraries/choix/` | Local reference copy of the Choix library |
 
 Code under `references/` belongs to its original authors. It is kept separate from the implementation developed in this project.
-
-The notebooks in `notebooks/experiments/` are numbered in their intended reading order.
+The notebooks in `notebooks/experiments/` and `notebooks/foundations/` are numbered in their intended reading order.
 
 
 ## Setup
@@ -47,9 +48,9 @@ python -m pip install -r requirements.txt
 This repository is under active development as part of my code for M.Tech thesis. Implementations, experiments, and documentation will change as the research progresses.
 
 ## Project
-Supervisor: Prof. Suryanarayana Sankagiri
-Name : **Nitesh Kumar Shah**
-M.Tech Project
-ID25M806
-Department of Data Science & AI.
-IIT Madras.
+**Supervisor:** Prof. Suryanarayana Sankagiri  
+**Name:** Nitesh Kumar Shah  
+**Programme:** M.Tech Project  
+**Roll Number:** ID25M806  
+**Department:** Data Science and Artificial Intelligence  
+**Institute:** IIT Madras
