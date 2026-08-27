@@ -4,10 +4,12 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .ipynb_checkpoints/
-# macm1 generated filesss
+# macos generated files
 .DS_Store
 runs/
 *.npy
 *.csv
 scratch/
 results/
+# python package metadata file 
+*.egg-info/

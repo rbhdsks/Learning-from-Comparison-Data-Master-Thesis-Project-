@@ -1,0 +1,39 @@
+# Main intention of this file creation was to let notebooks import code from `src/` without manually changing `sys.path`, so it could also support future model packages, such as CDM and all, by allowing  Setuptools to discover all Python packages inside `src/`.
+# This file defines how the research project is installed and can be reproduced.
+# It also records the project metadata and required Python libraries.
+
+[build-system]
+requires=["setuptools>=68"]
+build-backend="setuptools.build_meta"
+
+[project]
+name="learning-from-comparison-data-mtp"
+version="0.1.0"
+description="Modular implementations and experiments for learning preference models from comparison and choice data."
+requires-python=">=3.10"
+dependencies=[
+    "numpy",
+    "scipy"
+]
+
+[project.optional-dependencies]
+notebooks=[
+    "pandas",
+    "matplotlib",
+    "jupyter",
+    "ipykernel"
+]
+
+models=[
+    "choix",
+    "torch",
+    "scikit-learn",
+    "networkx"
+]
+
+development=[
+    "pytest"
+]
+
+[tool.setuptools.packages.find]
+where=["src"]

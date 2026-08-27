@@ -21,22 +21,20 @@ Research code and [notes](https://www.overleaf.com/project/6a192de01f9877e35710e
 Code under `references/` belongs to its original authors. It is kept separate from the implementation developed in this project.
 The notebooks in `notebooks/experiments/` and `notebooks/foundations/` are numbered in their intended reading order.
 
-
 ## Setup
 
-Create and activate a virtual environment:
+The project requires Python 3.10 or later. From the repository root, create a virtual environment and install the project:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-```
-
-Install the project dependencies:
-
-```bash
 python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+python -m pip install -e ".[notebooks,models]"
 ```
+
+When opening a notebook, select `.venv` as the Python kernel.
+
+The editable installation makes the packages inside `src/` directly importable while keeping local code changes immediately available.
 
 ## References
 
