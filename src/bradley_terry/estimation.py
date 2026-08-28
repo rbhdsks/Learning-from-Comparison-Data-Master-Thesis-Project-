@@ -11,8 +11,7 @@ from .model import (
 
 def estimate_parameters_with_gradient_descent(
     number_of_items,
-    winners,
-    losers,
+    comparisons,
     learning_rate=0.1,
     maximum_iterations=1000
 ):
@@ -52,8 +51,7 @@ def estimate_parameters_with_gradient_descent(
 
     initial_nll=average_negative_log_likelihood(
         estimated_parameters,
-        winners,
-        losers
+        comparisons
     )
 
     nll_history=[initial_nll]
@@ -61,8 +59,7 @@ def estimate_parameters_with_gradient_descent(
     for _ in range(maximum_iterations):
         gradient=average_negative_log_likelihood_gradient(
             estimated_parameters,
-            winners,
-            losers
+            comparisons
         )
 
         estimated_parameters=(
@@ -76,8 +73,7 @@ def estimate_parameters_with_gradient_descent(
 
         current_nll=average_negative_log_likelihood(
             estimated_parameters,
-            winners,
-            losers
+            comparisons
         )
 
         nll_history.append(current_nll)

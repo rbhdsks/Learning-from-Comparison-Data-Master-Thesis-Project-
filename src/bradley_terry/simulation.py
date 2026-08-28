@@ -51,17 +51,9 @@ def generate_uniform_comparison_data(
 
     number_of_items=len(parameter_array)
 
-    winners=np.empty(
-        number_of_comparisons,
-        dtype=int
-    )
+    comparisons=[]
 
-    losers=np.empty(
-        number_of_comparisons,
-        dtype=int
-    )
-
-    for comparison_index in range(number_of_comparisons):
+    for _ in range(number_of_comparisons):
         item_i,item_j=rng.choice(
             number_of_items,
             size=2,
@@ -79,7 +71,8 @@ def generate_uniform_comparison_data(
         else:
             winner,loser=item_j,item_i
 
-        winners[comparison_index]=winner
-        losers[comparison_index]=loser
+        comparisons.append(
+            (int(winner),int(loser))
+        )
 
-    return winners,losers
+    return comparisons

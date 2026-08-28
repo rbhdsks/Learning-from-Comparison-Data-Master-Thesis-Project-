@@ -70,7 +70,7 @@ def run_parameter_recovery_trials(
     for run_index,run_seed in enumerate(independent_seeds):
         run_rng=np.random.default_rng(run_seed)
 
-        winners,losers=generate_uniform_comparison_data(
+        comparisons=generate_uniform_comparison_data(
             parameter_array,
             number_of_comparisons,
             run_rng
@@ -79,8 +79,7 @@ def run_parameter_recovery_trials(
         estimated_parameters,_=(
             estimate_parameters_with_gradient_descent(
                 number_of_items,
-                winners,
-                losers,
+                comparisons,
                 learning_rate,
                 maximum_iterations
             )
