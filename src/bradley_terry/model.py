@@ -19,32 +19,29 @@ def _as_parameter_array(parameters):
     return parameter_array
 
 
-def _as_comparison_arrays(winners,losers,number_of_items):
-    """Convert winners and losers into valid integer arrays."""
-    winner_array=np.asarray(winners)
-    loser_array=np.asarray(losers)
+def _as_comparison_array(comparisons,number_of_items):
+    """Convert (winner, loser) pairs into a valid integer array."""
+    comparison_array=np.asarray(comparisons)
 
-    if winner_array.ndim!=1 or loser_array.ndim!=1:
-        raise ValueError(
-            "winners and losers must be one-dimensional arrays"
-        )
-
-    if winner_array.size==0:
+    if comparison_array.size==0:
         raise ValueError("at least one comparison is required")
 
-    if winner_array.shape!=loser_array.shape:
+    if (
+        comparison_array.ndim!=2
+        or comparison_array.shape[1]!=2
+    ):
         raise ValueError(
-            "winners and losers must have the same length"
+            "comparisons must contain (winner, loser) pairs"
         )
 
-    if not np.issubdtype(winner_array.dtype,np.integer):
-        raise TypeError("winners must contain integer item indices")
+    if not np.issubdtype(comparison_array.dtype,np.integer):
+        raise TypeError(
+            "comparisons must contain integer item indices"
+        )
 
-    if not np.issubdtype(loser_array.dtype,np.integer):
-        raise TypeError("losers must contain integer item indices")
-
-    winner_array=winner_array.astype(int,copy=False)
-    loser_array=loser_array.astype(int,copy=False)
+    comparison_array=comparison_array.astype(int,copy=False)
+    winner_array=comparison_array[:,0]
+    loser_array=comparison_array[:,1]
 
     if np.any(winner_array<0) or np.any(
         winner_array>=number_of_items
@@ -63,7 +60,7 @@ def _as_comparison_arrays(winners,losers,number_of_items):
     if np.any(winner_array==loser_array):
         raise ValueError("an item cannot be compared with itself")
 
-    return winner_array,loser_array
+    return comparison_array
 
 
 def sigmoid(value):
@@ -109,17 +106,18 @@ def bradley_terry_probability(item_i,item_j,parameters):
 
 def average_negative_log_likelihood(
     parameters,
-    winners,
-    losers
+    comparisons
 ):
     """Calculate the average NLL of the observed comparisons."""
     parameter_array=_as_parameter_array(parameters)
 
-    winner_array,loser_array=_as_comparison_arrays(
-        winners,
-        losers,
+    comparison_array=_as_comparison_array(
+        comparisons,
         len(parameter_array)
     )
+
+    winner_array=comparison_array[:,0]
+    loser_array=comparison_array[:,1]
 
     parameter_differences=(
         parameter_array[winner_array]
@@ -136,17 +134,18 @@ def average_negative_log_likelihood(
 
 def average_negative_log_likelihood_gradient(
     parameters,
-    winners,
-    losers
+    comparisons
 ):
     """Calculate the gradient of the average NLL."""
     parameter_array=_as_parameter_array(parameters)
 
-    winner_array,loser_array=_as_comparison_arrays(
-        winners,
-        losers,
+    comparison_array=_as_comparison_array(
+        comparisons,
         len(parameter_array)
     )
+
+    winner_array=comparison_array[:,0]
+    loser_array=comparison_array[:,1]
 
     parameter_differences=(
         parameter_array[winner_array]
