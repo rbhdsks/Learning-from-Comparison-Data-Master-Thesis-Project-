@@ -1,7 +1,15 @@
 """Public functions for the Bradley-Terry experiments."""
 
+from .diagnostics import (
+    directed_win_graph_is_strongly_connected,
+    extract_directed_win_edges,
+    extract_undirected_comparison_edges,
+    ford_condition_holds,
+    observed_comparison_graph_is_connected,
+)
 from .estimation import (
     estimate_parameters_with_gradient_descent,
+    estimate_parameters_with_gradient_descent_trace,
 )
 from .experiments import (
     run_parameter_recovery_trials,
@@ -43,9 +51,15 @@ __all__ = [
     "build_two_disconnected_clusters_edges",
     "center_parameters",
     "comparison_graph_is_connected",
+    "directed_win_graph_is_strongly_connected",
     "estimate_parameters_with_gradient_descent",
+    "estimate_parameters_with_gradient_descent_trace",
+    "extract_directed_win_edges",
+    "extract_undirected_comparison_edges",
+    "ford_condition_holds",
     "generate_comparison_data_from_edges",
     "generate_uniform_comparison_data",
+    "observed_comparison_graph_is_connected",
     "parameter_recovery_error",
     "run_parameter_recovery_trials",
     "sigmoid",
