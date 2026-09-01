@@ -1,0 +1,62 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1.1in]{geometry}
+\usepackage{amsmath, amssymb, xcolor, enumitem, lmodern}
+\usepackage[T1]{fontenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\definecolor{navy}{RGB}{26,58,102}
+\definecolor{softgray}{RGB}{110,110,110}
+\setlist[itemize]{leftmargin=1.4em, itemsep=2pt, topsep=4pt}
+\pagestyle{empty}
+
+\newcommand{\week}[2]{\vspace{1.0\baselineskip}
+  \noindent{\color{navy}\bfseries\large Week #1}\hfill{\itshape\color{softgray} #2}\par
+  \vspace{3pt}{\color{softgray}\hrule height 0.4pt}\vspace{6pt}}
+\newcommand{\summary}[1]{{\itshape\color{softgray} #1}\par\vspace{2pt}}
+
+\begin{document}
+
+\begin{center}
+  {\color{navy}\bfseries\LARGE Weekly Log}\\[6pt]
+  {\large Nitesh \quad ID25M806}\\[3pt]
+  M.Tech I2MP DSAI, IIT Madras\\[3pt]
+  MTP: Context Effects in Discrete Choice Models \quad$|$\quad Advisor: Prof.\ Suryanarayana Sankagiri\\[4pt]
+  {\small Code: \url{https://github.com/rbhdsks/Nitesh-Kumar-Shah-MTP-}}
+\end{center}
+\vspace{4pt}{\color{softgray}\hrule height 0.6pt}
+\week{1}{}
+\summary{IIA.}
+\begin{itemize}
+  \item Started Seshadri, Singh and Ugander, \textbf{Discovering Context Effects from Raw Choice Data} (ICML 2019).
+  \item Verified $\frac{P(x \mid A)}{P(y \mid A)} = \frac{P(x \mid B)}{P(y \mid B)}$ by hand on a 5-alternative commute example.
+\end{itemize}
+
+\week{2}{}
+\summary{Multinomial logit.}
+\begin{itemize}
+  \item Worked through $P(x \mid C) = \exp(v(x))/\sum_{y \in C}\exp(v(y))$ and why it is the IIA model.
+  \item Checked shift invariance numerically; $\sum_y v(y)=0$ is identifiability, not a modelling assumption.
+\end{itemize}
+
+\week{3}{}
+\summary{Universal logit and Lemma 1.}
+\begin{itemize}
+  \item Derived $u(x \mid C) = \sum_{B \subseteq C \setminus \{x\}} v(x \mid B)$ with the constraints.
+  \item Counted parameters for $A=\{C,T,Bi\}$: $9-4=5$ free. General order-$q$ count not yet checked against the paper.
+\end{itemize}
+
+\week{4}{}
+\summary{Assigned reading; covered only the first 6 pages.}
+\begin{itemize}
+  \item Assigned: first 22 pages of Maystre, \emph{Efficient Learning from Comparisons} (EPFL, 2018), plus \texttt{choix}.
+  \item Covered pages 1--6, up to Section 1.3: Thurstone and Bradley--Terry. Luce's axiom and \texttt{choix} not started.
+\end{itemize}
+\week{5}{}
+\summary{Coding and Understanding MLE for bradley terry model}
+
+\begin{itemize}
+ \item Coded the Bradley Terry Model from scratch and also using the CHOIX library.
+  \item 
+\end{itemize}
+
+\end{document}

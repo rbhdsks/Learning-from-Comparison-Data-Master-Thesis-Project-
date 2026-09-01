@@ -1,0 +1,827 @@
+\documentclass[12pt,oneside]{book}
+\usepackage[a4paper,left=1.25in,right=1.0in,top=1.0in,bottom=1.0in]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{graphicx}
+\usepackage{booktabs,array,longtable}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[hidelinks]{hyperref}
+\usepackage{cleveref}
+\onehalfspacing
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{remark}[definition]{Remark}
+\newcommand{\TODO}[1]{\textcolor{blue}{[TODO: #1]}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\X}{\mathcal{X}}
+\begin{document}
+\frontmatter
+\begin{titlepage}
+    \centering
+    \vspace*{0.45in}
+    \includegraphics[width=1.55in]{images/iitm-logo.png}\par
+    \vspace{0.35in}
+    {\Large\textbf{INDIAN INSTITUTE OF TECHNOLOGY MADRAS}\par}
+    \vspace{0.70in}
+    {\Large\textbf{Learning from Comparison Data}\par}
+    \vspace{0.45in}
+    {\large A Project Report\par}
+    \vspace{0.18in}
+    {\large
+    \textbf{Under the Supervision of}\\[0.08in]
+    \textbf{Prof. Suryanarayana Sankagiri}
+    \par}
+    \vspace{0.42in}
+    {\large Submitted by\par}
+    \vspace{0.12in}
+    {\Large\textbf{Nitesh Kumar Shah}\par}
+    \vspace{0.18in}
+    {\large ID25M806\par}
+    \vfill
+    {\large Department of Data Science and AI\par}
+    {\large Indian Institute of Technology Madras\par}
+    {\large Chennai -- 600036\par}
+    \vspace{0.25in}
+    {\large 2026\par}
+\end{titlepage}
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+(Not Started yet)
+\tableofcontents
+\listoffigures
+\listoftables
+\chapter*{Notation}
+\addcontentsline{toc}{chapter}{Notation}
+\begin{longtable}{>{$}l<{$} p{0.68\textwidth}}
+    \toprule
+    \text{Symbol} & \text{Meaning}\\
+    \midrule
+    \X & Universal set of alternatives\\
+    A,B,C & Choice sets containing available alternatives\\
+    x,y & Individual alternatives or items\\
+    v(x) & Item-level utility or score of alternative \(x\)\\
+    u(x\mid C) & Context-dependent utility of \(x\) in choice set \(C\)\\
+    \theta_i & Bradley--Terry score of item \(i\)\\
+    P(x\mid C) & Probability of choosing \(x\) from \(C\)\\
+    i\succ j & Item \(i\) is preferred to or defeats item \(j\)\\
+    L(\theta) & Likelihood function\\
+    \ell(\theta) & Log-likelihood function\\
+    \bottomrule
+\end{longtable}
+\mainmatter
+\chapter{Introduction}
+\section{Motivation}
+Let us imagine that someone has to travel from IIT Madras to the airport.
+The person has four realistic choices: car, bike, taxi, and bus. Based on
+cost, comfort, and speed, the person may have a natural preference ranking
+among these alternatives. For example, the ranking may be
+\begin{equation}
+    \text{Car} \succ \text{Taxi} \succ \text{Bike} \succ \text{Bus}.
+\end{equation}
+Now suppose that a fifth alternative is added. This alternative is walking,
+which may take almost three hours and is therefore unlikely to be seriously
+considered.
+Common sense suggests that adding walking should not change the person's
+relative preference between car, taxi, bike, and bus. Walking is an
+irrelevant alternative in this situation. Therefore, the relative preference
+between the original alternatives should remain unchanged.
+This idea is called the \emph{Independence of Irrelevant Alternatives}
+property. It is one of the central properties behind classical models of
+choice.
+However, human preferences may not always behave exactly as assumed by
+classical multinomial logit models. Experimental evidence indicates that
+adding or removing alternatives can change how attractive the existing
+alternatives appear. Such behaviour is described as a violation of the
+Independence of Irrelevant Alternatives property
+\citep{seshadri2019}.
+
+\section{Objectives}
+
+\chapter{Background and Choice Models}
+
+\section{Choice Data and Choice Sets}
+
+Let \(\X\) denote the universal set of alternatives. A choice set is a
+subset of \(\X\) containing the alternatives available to a decision-maker
+at a particular time.
+
+For the commute-mode example, the universal set is
+
+\begin{equation}
+    \X=
+    \{
+    \text{Car},
+    \text{Taxi},
+    \text{Bike},
+    \text{Bus},
+    \text{Walking}
+    \}.
+\end{equation}
+
+The walking alternative remains a member of the universal set even when it
+does not appear in a particular choice set. All the smaller choice sets are
+constructed from the same fixed universal set.
+
+Let \(A,B\subseteq\X\) be two choice sets. Let \(x\) and \(y\) be
+alternatives belonging to the intersection \(A\cap B\).
+
+\section{Independence of Irrelevant Alternatives}
+
+For a universal set \(\X\) and choice sets \(A,B\subseteq\X\), the
+Independence of Irrelevant Alternatives property for two alternatives
+\(x\) and \(y\) can be written as
+
+\begin{equation}
+    \frac{P(x\mid A)}{P(y\mid A)}
+    =
+    \frac{P(x\mid B)}{P(y\mid B)},
+    \qquad
+    x,y\in A\cap B.
+    \label{eq:iia}
+\end{equation}
+
+The equation states that if \(x\) and \(y\) are present in both choice sets,
+then their relative odds should not change merely because other alternatives
+have been added or removed.
+
+\subsection{Worked Example}
+
+For convenience, denote the alternatives as follows:
+
+\begin{table}[htbp]
+    \centering
+    \caption{Alternatives and their assigned weights}
+    \label{tab:alternative-weights}
+    \begin{tabular}{lll}
+        \toprule
+        Item & Symbol & Weight \(w\)\\
+        \midrule
+        Car     & \(C\)  & \(0.40\)\\
+        Taxi    & \(T\)  & \(0.25\)\\
+        Bike    & \(Bi\) & \(0.15\)\\
+        Bus     & \(Bu\) & \(0.12\)\\
+        Walking & \(W\)  & \(0.08\)\\
+        \midrule
+        Total   &        & \(1.00\)\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Consider the following two choice sets:
+
+\begin{align}
+    A &= \{C,T,Bi\},
+    &
+    \sum_{x\in A}w_x &= 0.80,
+    \\
+    B &= \{C,T,W\},
+    &
+    \sum_{x\in B}w_x &= 0.73.
+\end{align}
+
+We want to verify whether
+
+\begin{equation}
+    \frac{P(C\mid A)}{P(T\mid A)}
+    =
+    \frac{P(C\mid B)}{P(T\mid B)}.
+\end{equation}
+
+For choice set \(A\),
+
+\begin{align}
+    P(C\mid A)
+    &=
+    \frac{w_C}{\sum_{x\in A}w_x}
+    =
+    \frac{0.40}{0.80}
+    =
+    0.50,
+    \\
+    P(T\mid A)
+    &=
+    \frac{w_T}{\sum_{x\in A}w_x}
+    =
+    \frac{0.25}{0.80}
+    =
+    0.3125.
+\end{align}
+
+Therefore,
+
+\begin{equation}
+    \frac{P(C\mid A)}{P(T\mid A)}
+    =
+    \frac{0.40/0.80}{0.25/0.80}
+    =
+    \frac{0.40}{0.25}
+    =
+    1.6.
+\end{equation}
+
+For choice set \(B\),
+
+\begin{align}
+    P(C\mid B)
+    &=
+    \frac{w_C}{\sum_{x\in B}w_x}
+    =
+    \frac{0.40}{0.73},
+    \\
+    P(T\mid B)
+    &=
+    \frac{w_T}{\sum_{x\in B}w_x}
+    =
+    \frac{0.25}{0.73}.
+\end{align}
+
+Therefore,
+
+\begin{equation}
+    \frac{P(C\mid B)}{P(T\mid B)}
+    =
+    \frac{0.40/0.73}{0.25/0.73}
+    =
+    \frac{0.40}{0.25}
+    =
+    1.6.
+\end{equation}
+
+Thus,
+
+\begin{equation}
+    \frac{P(C\mid A)}{P(T\mid A)}
+    =
+    \frac{P(C\mid B)}{P(T\mid B)}.
+\end{equation}
+
+Hence, the Independence of Irrelevant Alternatives property holds in this
+worked example.
+
+\section{Multinomial Logit Model}
+
+The classical multinomial logit model assigns a score \(v(x)\) to every
+alternative \(x\). The probability of selecting \(x\) from choice set \(C\)
+is
+
+\begin{equation}
+    P(x\mid C)
+    =
+    \frac{\exp(v(x))}
+    {\displaystyle\sum_{y\in C}\exp(v(y))}.
+    \label{eq:mnl}
+\end{equation}
+
+The scores are shift-invariant. A common identification constraint is
+
+\begin{equation}
+    \sum_{x\in\X}v(x)=0.
+    \label{eq:mnl-identification}
+\end{equation}
+
+\subsection{Reason for the Identification Constraint}
+
+Consider two alternatives, car and taxi, with scores
+
+\begin{align}
+    v(C)&=2.5,\\
+    v(T)&=-0.9.
+\end{align}
+
+Their exponentiated scores are
+
+\begin{align}
+    \exp(v(C))
+    &=
+    \exp(2.5)
+    \approx
+    12.182,
+    \\
+    \exp(v(T))
+    &=
+    \exp(-0.9)
+    \approx
+    0.407.
+\end{align}
+
+Therefore, the probability of choosing car from the set
+\(\{C,T\}\) is
+
+\begin{align}
+    P(C\mid\{C,T\})
+    &=
+    \frac{\exp(2.5)}
+    {\exp(2.5)+\exp(-0.9)}
+    \\
+    &=
+    \frac{12.182}{12.182+0.407}
+    \\
+    &\approx
+    0.968.
+\end{align}
+
+However,
+
+\begin{equation}
+    v(C)+v(T)=2.5-0.9=1.6\neq 0.
+\end{equation}
+
+Suppose the same constant \(k\) is added to both scores. To satisfy the
+zero-sum constraint, choose \(k\) such that
+
+\begin{align}
+    (2.5+k)+(-0.9+k)&=0,\\
+    1.6+2k&=0,\\
+    k&=-0.8.
+\end{align}
+
+After applying this shift,
+
+\begin{align}
+    v(C)&=2.5-0.8=1.7,\\
+    v(T)&=-0.9-0.8=-1.7.
+\end{align}
+
+The probability obtained using these centred scores is
+
+\begin{align}
+    P(C\mid\{C,T\})
+    &=
+    \frac{\exp(1.7)}
+    {\exp(1.7)+\exp(-1.7)}
+    \\
+    &=
+    \frac{5.474}{5.474+0.183}
+    \\
+    &\approx
+    0.968.
+\end{align}
+
+Thus, adding the same constant to every score does not change the choice
+probabilities. The zero-sum constraint selects one representative from all
+score vectors that produce the same probabilities.
+
+\section{Context-Dependent Utility}
+
+In a universal logit model, the utility of an alternative can depend on the
+choice set in which it appears. Instead of assigning only one utility to an
+alternative, the model allows the alternative to have different utilities
+in different contexts.
+
+The probability of selecting \(x\) from \(C\) is
+
+\begin{equation}
+    P(x\mid C)
+    =
+    \frac{\exp(u(x\mid C))}
+    {\displaystyle\sum_{y\in C}\exp(u(y\mid C))}.
+    \label{eq:context-logit}
+\end{equation}
+
+An identification constraint can be imposed separately for each choice set:
+
+\begin{equation}
+    \sum_{y\in C}u(y\mid C)=0,
+    \qquad
+    \text{for every }C\subseteq\X.
+\end{equation}
+
+\section{Decomposition of Context Effects}
+
+\begin{lemma}[Decomposition of context-dependent utility]
+For a universal logit model, the context-dependent utility \(u(x\mid C)\)
+can be written as a sum of terms indexed by subsets \(B\) of
+\(C\setminus\{x\}\) \citep{seshadri2019}:
+
+\begin{equation}
+    u(x\mid C)
+    =
+    \sum_{B\subseteq C\setminus\{x\}}v(x\mid B).
+    \label{eq:utility-decomposition}
+\end{equation}
+
+Equivalently,
+
+\begin{equation}
+\begin{split}
+    u(x\mid C)
+    &=
+    v(x)
+    +
+    \sum_{y\in C\setminus\{x\}}v(x\mid\{y\})
+    \\
+    &\quad+
+    \sum_{\{y,z\}\subseteq C\setminus\{x\}}
+    v(x\mid\{y,z\})
+    +\cdots.
+\end{split}
+\end{equation}
+
+The parameters satisfy
+
+\begin{equation}
+    \sum_{x\notin B}v(x\mid B)=0
+    \qquad
+    \text{for every }B\subseteq\X.
+    \label{eq:decomposition-constraint}
+\end{equation}
+\end{lemma}
+
+
+\subsection{Worked Example}
+
+Consider the choice set
+
+\begin{equation}
+    A=\{C,T,Bi\}.
+\end{equation}
+
+The subsets of \(A\) are
+
+\begin{equation}
+\begin{split}
+    \emptyset,\;
+    \{C\},\;
+    \{T\},\;
+    \{Bi\},\;
+    \{C,T\},\;
+    \{T,Bi\},\;
+    \{Bi,C\},\;
+    \{C,T,Bi\}.
+\end{split}
+\end{equation}
+
+The utility expansions are
+
+\begin{align}
+    u(C\mid A)
+    &=
+    v(C)
+    +v(C\mid\{T\})
+    +v(C\mid\{Bi\})
+    +v(C\mid\{T,Bi\}),
+    \\
+    u(T\mid A)
+    &=
+    v(T)
+    +v(T\mid\{C\})
+    +v(T\mid\{Bi\})
+    +v(T\mid\{C,Bi\}),
+    \\
+    u(Bi\mid A)
+    &=
+    v(Bi)
+    +v(Bi\mid\{C\})
+    +v(Bi\mid\{T\})
+    +v(Bi\mid\{C,T\}).
+\end{align}
+
+The corresponding constraint equations are
+
+\begin{align}
+    v(C)+v(T)+v(Bi)&=0,
+    \label{eq:constraint-empty}
+    \\
+    v(T\mid\{C\})+v(Bi\mid\{C\})&=0,
+    \\
+    v(C\mid\{T\})+v(Bi\mid\{T\})&=0,
+    \\
+    v(C\mid\{Bi\})+v(T\mid\{Bi\})&=0,
+    \\
+    v(C\mid\{T,Bi\})&=0,
+    \\
+    v(T\mid\{C,Bi\})&=0,
+    \\
+    v(Bi\mid\{C,T\})&=0.
+\end{align}
+
+The final three constraints force the corresponding highest-order terms
+to zero. The utility equations therefore reduce to
+
+\begin{align}
+    u(C\mid A)
+    &=
+    v(C)
+    +v(C\mid\{T\})
+    +v(C\mid\{Bi\}),
+    \\
+    u(T\mid A)
+    &=
+    v(T)
+    +v(T\mid\{C\})
+    +v(T\mid\{Bi\}),
+    \\
+    u(Bi\mid A)
+    &=
+    v(Bi)
+    +v(Bi\mid\{C\})
+    +v(Bi\mid\{T\}).
+\end{align}
+
+There are nine remaining parameters. The first four constraint equations
+give four independent restrictions. Therefore, the number of free parameters
+is
+
+\begin{equation}
+    9-4=5.
+\end{equation}
+
+% =========================================================
+% CHAPTER 3
+% =========================================================
+
+\chapter{Bradley--Terry Model and Maximum Likelihood}
+
+To understand the underlying mechanics of a model for choice data, we
+consider observed pairwise comparisons and assume a probabilistic model.
+The Bradley--Terry model is used for this purpose.
+
+The goal is to estimate unknown parameters that provide a compressed
+representation of the observed comparison data.
+
+
+For items \(i\) and \(j\), with scores \(\theta_i\) and \(\theta_j\), the
+Bradley--Terry model defines
+
+\begin{equation}
+    P(i\succ j)
+    =
+    \frac{\exp(\theta_i)}
+    {\exp(\theta_i)+\exp(\theta_j)}.
+    \label{eq:bradley-terry}
+\end{equation}
+
+Dividing the numerator and denominator by \(\exp(\theta_i)\) gives
+
+\begin{equation}
+    P(i\succ j)
+    =
+    \frac{1}
+    {1+\exp\left(-(\theta_i-\theta_j)\right)}.
+\end{equation}
+
+Therefore, the probability depends only on the score difference
+\(\theta_i-\theta_j\).
+
+\section{Likelihood and Log-Likelihood}
+
+\subsection{Assumptions Used for Estimation}
+
+The assumptions typically used when working with repeated Bernoulli
+observations include independence and identical distribution.
+
+\paragraph{Independence.}
+
+For \(i\neq j\),
+
+\begin{equation}
+    P(X_i=x_i,X_j=x_j)
+    =
+    P(X_i=x_i)P(X_j=x_j).
+\end{equation}
+
+Equivalently, when the required conditional probabilities are defined,
+
+\begin{equation}
+    P(X_i=x_i\mid X_j=x_j)
+    =
+    P(X_i=x_i).
+\end{equation}
+
+\paragraph{Identically distributed.}
+
+For all \(i\) and \(j\),
+
+\begin{equation}
+    P(X_i=1)
+    =
+    P(X_j=1)
+    =
+    p.
+\end{equation}
+
+\subsection{Likelihood Function}
+
+To obtain a principled estimate from observed data, we use a likelihood
+function. The likelihood indicates which value of the unknown parameter
+makes the observed data most probable.
+
+Following Fisher's principle of maximum likelihood
+\citep{fisher1922}, suppose that
+
+\begin{equation}
+    x_1,x_2,\ldots,x_n
+\end{equation}
+
+are observations drawn from a distribution parameterised by \(p\).
+The likelihood is the joint probability of the observed data, viewed as
+a function of \(p\):
+
+\begin{align}
+    L(p;\{x_1,x_2,\ldots,x_n\})
+    &=
+    P(x_1,x_2,\ldots,x_n;p)
+    \\
+    &=
+    P(x_1;p)P(x_2;p)\cdots P(x_n;p)
+    \qquad\text{(by independence)}
+    \\
+    &=
+    \prod_{i=1}^{n}
+    p^{x_i}(1-p)^{1-x_i}.
+    \label{eq:bernoulli-likelihood}
+\end{align}
+
+The last line follows by treating each \(x_i\) as a Bernoulli observation
+with success probability \(p\), so that
+
+\begin{equation}
+    P(x_i;p)
+    =
+    p^{x_i}(1-p)^{1-x_i}.
+\end{equation}
+
+The maximum likelihood estimate \(\widehat{p}\) is the value of \(p\)
+that maximises the likelihood in \cref{eq:bernoulli-likelihood}.
+
+\subsection{Log-Likelihood}
+
+% \TODO{Continue the existing likelihood derivation by applying the logarithm.
+% Explain how the product becomes a sum and connect the Bernoulli likelihood
+% to the Bradley--Terry comparison likelihood.}
+
+% \section{Negative Log-Likelihood}
+
+% \TODO{Explain why maximising the log-likelihood is equivalent to minimising
+% the negative log-likelihood. Include the exact loss function used in the
+% implementation.}
+
+% \section{Gradient and Gradient Descent}
+
+% \TODO{Derive the partial derivative of the Bradley--Terry negative
+% log-likelihood with respect to each score. State the gradient-descent update
+% rule and explain the centring step used in the implementation.}
+
+% \section{Identifiability, Existence, and Uniqueness}
+
+% Since the Bradley--Terry probability depends only on score differences,
+% adding the same constant \(c\) to all scores leaves every probability
+% unchanged:
+
+% \begin{equation}
+%     \frac{\exp(\theta_i+c)}
+%     {\exp(\theta_i+c)+\exp(\theta_j+c)}
+%     =
+%     \frac{\exp(\theta_i)}
+%     {\exp(\theta_i)+\exp(\theta_j)}.
+% \end{equation}
+
+% A common identification constraint is
+
+% \begin{equation}
+%     \sum_{i=1}^{m}\theta_i=0.
+% \end{equation}
+
+% \TODO{Add the conditions involving the undirected comparison graph and
+% directed win graph for uniqueness and existence of a finite MLE. Include
+% only claims that have been verified mathematically or experimentally.}
+
+% % =========================================================
+% % CHAPTER 4
+% % =========================================================
+
+% \chapter{Experimental Methodology}
+
+% \section{Data Generation}
+
+% \TODO{Describe how the true scores are generated or fixed, how pairs are
+% sampled, how the winner is generated from the Bradley--Terry probability,
+% and how the random-number generator and seed are used.}
+
+% \TODO{Record the number of items, comparison budgets, repeated runs, and
+% sampling schemes used in the final experiments.}
+
+% \section{Recovery Error}
+
+% \TODO{Define the ground-truth score vector, the estimated centred score
+% vector, and the exact recovery-error metric used in the notebook.}
+
+% \section{Optimization Methods}
+
+% \subsection{Handcrafted Gradient Descent}
+
+% \TODO{Describe the initial scores, learning rate, maximum number of
+% iterations, stopping tolerance, centring constraint, and implementation
+% details.}
+
+% \subsection{PyTorch Optimization}
+
+% \TODO{Describe full-batch or mini-batch training, Adam settings,
+% initialisation, stopping rule, data type, and centring procedure.}
+
+% \section{Evaluation Criteria}
+
+% \begin{itemize}
+%     \item Recovery accuracy:
+%     \TODO{Insert the recovery-error metric.}
+
+%     \item Convergence:
+%     \TODO{State whether convergence is measured by iterations, gradient
+%     norm, parameter change, objective change, or a combination.}
+
+%     \item Runtime:
+%     \TODO{Describe the use of \texttt{perf\_counter}, repeated timings,
+%     warm-up runs if any, and the statistic reported.}
+
+%     \item Reproducibility:
+%     \TODO{List the random seeds and the number of repeated runs.}
+% \end{itemize}
+
+% \chapter{Results}
+
+% \section{Scaling with the Number of Items}
+
+% \TODO{Insert the corresponding figure or table and interpret the mean
+% recovery error and variability as the number of items changes.}
+
+% \section{Scaling with the Number of Comparisons}
+
+% \TODO{Insert the corresponding figure or table. Explain why a single random
+% run may be irregular and why averages over repeated runs provide stronger
+% evidence.}
+
+% \section{Effect of Sampling Scheme}
+
+% \TODO{Insert the comparison between the sampling schemes. Describe which
+% pairs are sampled more frequently and how this affects recovery.}
+
+% \section{Comparison of Optimization Methods}
+
+% \TODO{Report the final loss, recovery error, number of iterations, runtime,
+% and reproducibility for handcrafted gradient descent and the PyTorch
+% optimisers.}
+
+% \section{Finite-Solution and Uniqueness Experiments}
+
+% \TODO{Report experiments involving connected and disconnected comparison
+% graphs, strongly connected and non-strongly-connected win graphs, and the
+% behaviour of the estimated scores.}
+
+% % =========================================================
+% % CHAPTER 6
+% % =========================================================
+
+% \chapter{Discussion and Conclusion}
+
+% \section{Discussion}
+
+% \TODO{Interpret the completed results without claiming more than the
+% experiments establish. Distinguish observations from mathematical
+% conclusions.}
+
+% \section{Limitations}
+
+% \TODO{Discuss limitations related to simulated data, finite repeated runs,
+% parameter settings, sampling assumptions, model assumptions, and runtime
+% measurements.}
+
+% \section{Conclusion}
+
+% \TODO{Summarise the completed theoretical and experimental work in your
+% own words.}
+
+% \section{Future Work}
+
+% \TODO{List realistic extensions connected directly to the results, such as
+% larger experiments, alternative comparison-graph structures, real datasets,
+% context-dependent models, regularisation, or additional optimisers.}
+
+% =========================================================
+% APPENDICES
+% =========================================================
+
+\appendix
+
+\chapter{Additional Derivations}
+
+
+\chapter{Reproducibility Details}
+
+
+\backmatter
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}
