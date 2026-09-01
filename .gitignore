@@ -57,3 +57,9 @@ results/
 /docs/thesis/Weekly-log.pdf
 # Local VS Code workspace files
 *.code-workspace
+<<<<<<< HEAD
+=======
+
+# macOS metadata
+.DS_Store
+>>>>>>> 8de21968bc8db8a1ec5af6e33f4bd341cd3c88c1

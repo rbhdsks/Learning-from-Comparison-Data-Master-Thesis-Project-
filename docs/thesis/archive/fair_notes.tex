@@ -1,0 +1,33 @@
+\documentclass[12pt]{report}
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{natbib}
+\usepackage{graphicx}
+\graphicspath{{images/}}
+
+\usepackage{setspace}
+\onehalfspacing
+\setlength{\parindent}{1.5em}
+\setlength{\parskip}{0pt}
+
+\usepackage{enumitem}
+\setlist{itemsep=6pt, parsep=4pt, topsep=8pt}
+
+\usepackage{titlesec}
+\titlespacing*{\section}{0pt}{18pt}{10pt}
+\titlespacing*{\subsection}{0pt}{14pt}{8pt}
+
+\begin{document}
+\input{fair-notes/prematter/titlepage}
+\tableofcontents
+\input{fair-notes/chapters/chap-abstract}
+\input{fair-notes/chapters/chap-introduction}
+\input{fair-notes/chapters/chap-preliminaries}
+\input{fair-notes/chapters/chap-mle-bradley-terry}
+\input{fair-notes/chapters/chap-scaling}
+\appendix
+\input{fair-notes/appendices/appn-worked-examples}
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}
