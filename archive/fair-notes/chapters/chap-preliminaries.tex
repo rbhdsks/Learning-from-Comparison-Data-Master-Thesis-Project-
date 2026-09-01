@@ -1,0 +1,206 @@
+\chapter{Preliminaries}
+
+\section{Independence of Irrelevant Alternatives}
+
+$\mathcal{X}$ being the universal set, and $A$ and $B$ being the item
+sets which are subsets of the universal set and The universal set X would have every choices fixed throught as well( in the above example the walking option as well because all the decision drawn for the real choices would come from this same fixed universe.). Also, let us say that $x, y$ are the
+items of that set, then 
+
+
+
+\subsection*{My worked example}
+
+
+
+So, now, let us call Car, Taxi, Bike, Bus, Walking as
+$C, T, Bi, Bu, W$ for our own convenience; now let us work out
+the example as well.
+
+So,
+
+Item \quad Symbol \quad Weight ($w$)
+
+Car \quad\quad $C$ \quad\quad $0.40$
+
+Taxi \quad\quad $T$ \quad\quad $0.25$
+
+Bike \quad\quad $Bi$ \quad\quad $0.15$
+
+Bus \quad\quad $Bu$ \quad\quad $0.12$
+
+Walking \quad $W$ \quad\quad $0.08$
+
+\hspace{1.6cm} Total \quad $1.00$
+
+And the item set to work with:
+\begin{align*}
+    A &= \{C, T, Bi\}, \quad \sum w_A = 0.80 \\
+    B &= \{C, T, W\}, \quad \sum w_B = 0.73
+\end{align*}
+
+to check whether
+
+\begin{equation*}
+    \frac{P(C \mid A)}{P(T \mid A)} = \frac{P(C \mid B)}{P(T \mid B)}
+\end{equation*}
+
+\[
+P(C \mid A) = \frac{w_C}{\sum w_A} = \frac{0.40}{0.80}
+\qquad\qquad
+P(T \mid A) = \frac{w_T}{\sum w_A} = \frac{0.25}{0.80}
+\]
+
+\[
+P(C \mid B) = \frac{w_C}{\sum w_B} = \frac{0.40}{0.73}
+\qquad\qquad
+P(T \mid B) = \frac{w_T}{\sum w_B} = \frac{0.25}{0.73}
+\]
+
+So,
+
+\begin{equation*}
+    \frac{P(C \mid A)}{P(T \mid A)} = \frac{P(C \mid B)}{P(T \mid B)}
+\end{equation*}
+
+or, \quad
+$\dfrac{\left(\dfrac{0.40}{0.80}\right)}{\left(\dfrac{0.25}{0.80}\right)}
+= \dfrac{\left(\dfrac{0.40}{0.73}\right)}{\left(\dfrac{0.25}{0.73}\right)}$
+
+or, \quad
+$\dfrac{0.40}{0.80} \times \dfrac{0.80}{0.25}
+= \dfrac{0.40}{0.73} \times \dfrac{0.73}{0.25}$
+
+or, \quad $\dfrac{0.40}{0.25} = \dfrac{0.40}{0.25}$
+
+or, \quad $1 = 1$.
+
+Hence proved.
+
+\section{Multinomial Logits}
+
+Mathematically,
+\begin{equation*}
+    P(x \mid C) = \frac{\exp(v(x))}{\displaystyle\sum_{y \in C} \exp(v(y))}
+\end{equation*}
+
+with the constraint
+\begin{equation*}
+    \sum_{y} v(y) = 0 \quad \rightarrow \quad \text{for the purpose of identifiability.(Shift invariant)}
+\end{equation*}
+
+So, let us also know the logic behind the purpose of identifiability with a example..
+
+Suppose we have,
+\begin{align*}
+    v(C) &= 2.5 \\
+    v(T) &= -0.9
+\end{align*}
+
+So,
+\begin{align*}
+    \exp(v(C)) &= \exp(2.5) = 12.18 \\
+    \exp(v(T)) &= \exp(-0.9) = 0.407
+\end{align*}
+
+So,
+\begin{equation*}
+    P(C \mid \{C,T\}) = \frac{12.18}{12.18 + 0.407} = 0.968
+\end{equation*}
+
+While checking the constraint,
+\begin{equation*}
+    v(C) + v(T) = 1.6 \neq 0.
+\end{equation*}
+
+So, solving for $k$:
+\begin{align*}
+    (2.5+k) + (-0.9+k) &= 1.6 + 2k = 0 \\
+    \text{or,} \quad k &= -0.8
+\end{align*}
+
+And after applying the shift,
+\begin{align*}
+    v(C) &= 1.7 \\
+    v(T) &= -1.7
+\end{align*}
+
+Now, to verify that the probability is unchanged,
+\begin{align*}
+    P(C \mid \{C,T\}) &= \frac{\exp(1.7)}{\exp(1.7) + \exp(-1.7)} \\
+    &= \frac{5.474}{5.657} \\
+    &= 0.968.
+\end{align*}
+
+Hence proved. and moreover this method as in this constraint is used to know about the true one representative as
+2.5, -0.9 and 1.7, -1.7, the second one seems as better representation and is giving more idea about the uniquely defined behaviour.
+
+\section{Universal logit model}
+So here in this, instead of just a single utility item, it is defining and assigning different seperate utilities to each items. Mathematically,
+\begin{equation*}
+    P(x \mid C) = \frac{\exp(u(x \mid C))}{\displaystyle\sum_{y \in C} \exp(u(y \mid C))}
+\end{equation*}
+
+with the constraint
+\begin{equation*}
+    \sum_{y \in C} u(y \mid C) = 0 \quad \forall\, C \subseteq \mathcal{X}
+\end{equation*}
+
+\section{Lemma 1}
+
+Lemma 1 says that for any universal logits, the context dependent
+utility $u(x \mid C)$ can be written as the sum of terms indexed by
+subset $B$ where $B$ is the subset of $C \setminus \{x\}$. \cite{seshadri2019}
+
+Mathematically,
+\begin{equation*}
+    u(x \mid C) = \sum_{B \subseteq C \setminus \{x\}} v(x \mid B)
+    = v(x) + \sum_{y \in C \setminus x} v(x \mid \{y\})
+    + \sum_{\{y, z\} \subseteq C \setminus x} v(x \mid \{y, z\}) + \dots
+\end{equation*}
+
+with the constraint:
+\begin{equation*}
+    \sum_{x \notin B} v(x \mid B) = 0 \quad \text{for every } B.
+\end{equation*}
+
+\subsection*{An example}
+
+Set $A = \{C, T, Bi\}$.
+
+Let us find out the subset for all first:
+\begin{equation*}
+    \{\emptyset\}, \; \{C\}, \; \{T\}, \; \{Bi\}, \; \{C, T\}, \;
+    \{T, Bi\}, \; \{Bi, C\}, \; \{C, T, Bi\}.
+\end{equation*}
+
+Now:
+\begin{align*}
+    u(C \mid A) &= \underset{(1)}{v(C)} + \underset{(2)}{v(C \mid \{T\})} + \underset{(3)}{v(C \mid \{Bi\})} + \underset{(4)}{v(C \mid \{T, Bi\})} \\[1mm]
+    u(T \mid A) &= \underset{(5)}{v(T)} + \underset{(6)}{v(T \mid \{C\})} + \underset{(7)}{v(T \mid \{Bi\})} + \underset{(8)}{v(T \mid \{C, Bi\})} \\[1mm]
+    u(Bi \mid A) &= \underset{(9)}{v(Bi)} + \underset{(10)}{v(Bi \mid \{C\})} + \underset{(11)}{v(Bi \mid \{T\})} + \underset{(12)}{v(Bi \mid \{C, T\})}
+\end{align*}
+
+So, here the seven constraint equations:
+\begin{align}
+    v(C) + v(T) + v(Bi) &= 0 \\
+    v(T \mid \{C\}) + v(Bi \mid \{C\}) &= 0 \\
+    v(C \mid \{T\}) + v(Bi \mid \{T\}) &= 0 \\
+    v(C \mid \{Bi\}) + v(T \mid \{Bi\}) &= 0 \\
+    v(C \mid \{T, Bi\}) &= 0 \\
+    v(T \mid \{C, Bi\}) &= 0 \\
+    v(Bi \mid \{C, T\}) &= 0
+\end{align}
+
+Constraints (1)--(4) tie pairs of parameters together (4 constraints),
+while constraints (5)--(7) directly kill single terms.
+
+So, now the new equations after cutting these three terms would be:
+\begin{align*}
+    u(C \mid A) &= \underset{(1)}{v(C)} + \underset{(2)}{v(C \mid \{T\})} + \underset{(3)}{v(C \mid \{Bi\})} \\
+    u(T \mid A) &= \underset{(4)}{v(T)} + \underset{(5)}{v(T \mid \{C\})} + \underset{(6)}{v(T \mid \{Bi\})} \\
+    u(Bi \mid A) &= \underset{(7)}{v(Bi)} + \underset{(8)}{v(Bi \mid \{C\})} + \underset{(9)}{v(Bi \mid \{T\})}
+\end{align*}
+
+$\rightarrow$ 9 parameters.
+
+\fbox{$9 - 4 = 5$ free parameters.}

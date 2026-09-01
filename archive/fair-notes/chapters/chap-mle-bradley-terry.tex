@@ -1,0 +1,145 @@
+\chapter{Maximum Likelihood Estimation: The Bradley--Terry Model}
+
+To find and understand the underlined mechanics of the model in the choice set, we will observe some data where we need to  assume a probabilistic model, and for now we are using Bradley terry model.
+Actually, the goal of doing so is to find that unknown parameter i.e. the compressed representation of the observed data.
+\section{Assumption followed for Estimation}
+The Assumptions that one typically works with when we are dealing with the data about the observations are following :
+\[
+\text{Independence:}\qquad P(X_i \mid X_j) = P(X_i), \qquad \forall\, i \neq j.
+\]
+
+\[
+\text{Identically distributed:}\qquad P(X_i = 1) = P(X_j = 1) = p,
+\qquad \forall\, i,j.
+\]
+\section{Likelihood Function}
+In order to get a principled way to get estimates from the data, we need a likelihood function.
+Likelihood function will give us the value of the parameter where the chance of seeing the data is highest.
+As per Fisher's principle of maximum likelihood \citep{fisher1922mathematical}, given $n$
+observations $x_1, x_2, \dots, x_n$ drawn from a distribution parameterised by $p$, the
+likelihood function is defined as the joint probability of observing the data, viewed as a
+function of the parameter:
+\begin{align}
+    L(p ; \{x_1, x_2, \dots, x_n\}) &= P(x_1, x_2, \dots, x_n ; p) \label{eq:likelihood-def} \\
+    &= P(x_1 ; p) \cdot P(x_2 ; p) \cdots P(x_n ; p) \qquad \text{(by independence)} \label{eq:likelihood-product} \\
+    &= \prod_{i=1}^{n} p^{x_i} (1-p)^{1-x_i} \label{eq:likelihood-bernoulli}
+\end{align}
+where the last line follows from taking each $x_i$ to be a Bernoulli trial with success
+probability $p$, so that $P(x_i ; p) = p^{x_i}(1-p)^{1-x_i}$. The maximum likelihood estimate
+$\hat{p}$ is then the value of $p$ that maximises Equation~\eqref{eq:likelihood-bernoulli}.
+% \section*{Setting up the likelihood}
+
+% Let us consider that we observe $N$ independent pairwise comparisons, where in the
+% $n^{\text{th}}$ comparison item $i_n$ is chosen over item $j_n$. Under
+% the multinomial logit model with $|C| = 2$, then, the  probability of the
+% observed winner is
+
+% \begin{equation*}
+%     P(i_n \succ j_n)
+%     = \frac{\exp(v_{i_n})}{\exp(v_{i_n}) + \exp(v_{j_n})}
+%     = \sigma(v_{i_n} - v_{j_n})
+% \end{equation*}
+
+% where $\sigma(x) = 1 / (1 + e^{-x})$ is the logistic function. So the
+% likelihood of the full data is just the product over all $N$ comparisons. 
+
+% \begin{equation*}
+%     \mathcal{L}(\mathbf{v})
+%     = \prod_{n=1}^{N} \sigma(v_{i_n} - v_{j_n}).
+% \end{equation*}
+
+% Taking log for the numerical convenience,
+
+% \begin{equation*}
+%     \ell(\mathbf{v})
+%     = \log \mathcal{L}(\mathbf{v})
+%     = \sum_{n=1}^{N} \log \sigma(v_{i_n} - v_{j_n}).
+% \end{equation*}
+
+% \section*{Gradient of the log-likelihood}
+
+% Now, to find the MLE we would want to maximize $\ell(\mathbf{v})$, so let
+% us take the partial derivative with respect to $v_k$.
+
+% For a single comparison $(i, j)$,
+
+% \begin{align*}
+%     \frac{\partial}{\partial v_i} \log \sigma(v_i - v_j)
+%         &= 1 - \sigma(v_i - v_j) \\
+%     \frac{\partial}{\partial v_j} \log \sigma(v_i - v_j)
+%         &= -\bigl(1 - \sigma(v_i - v_j)\bigr)
+% \end{align*}
+
+% and summing over all $N$ comparisons,
+
+% \begin{equation*}
+%     \frac{\partial \ell}{\partial v_k}
+%     = \underbrace{W_k}_{\text{wins of } k}
+%     \;-\;
+%     \underbrace{\sum_{n \,:\, k \in \{i_n, j_n\}} P(k \text{ beats opponent})}
+%         _{\text{expected wins of } k}
+% \end{equation*}
+
+% or, in short form,
+
+% \begin{equation*}
+%     \frac{\partial \ell}{\partial v_k} = W_k - E_k.
+% \end{equation*}
+
+% This gives a very clean interpretation $\rightarrow$ at the MLE, the
+% observed wins equal the expected wins for every item. That is called
+% the moment matching condition.
+
+% \section*{Gradient descent update}
+
+% Since $\ell$ is strictly concave in $\mathbf{v}$, gradient ascent will
+% converge to the unique global maximum. So the update rule becomes
+
+% \begin{equation*}
+%     v_k^{(t+1)} = v_k^{(t)} + \eta \, \bigl(W_k - E_k^{(t)}\bigr)
+% \end{equation*}
+
+% where $\eta$ is the learning rate. And after every step we also enforce
+% the identifiability constraint $\sum_k v_k = 0$ by subtracting the mean
+% so that the parameters are uniquely defined (same shift trick as in the
+% MNL section above).
+
+% \section*{Numerical check on the same commute example}
+
+% Using the weights from Section 2, that is
+% $w = (0.40,\, 0.25,\, 0.15,\, 0.12,\, 0.08)$ for
+% $(C, T, Bi, Bu, W)$, the corresponding centered true parameters are
+
+% \begin{equation*}
+%     \mathbf{v}_{\text{true}}
+%     = [\,0.853,\ 0.383,\ -0.128,\ -0.351,\ -0.757\,].
+% \end{equation*}
+
+% We simulate $N = 2000$ pairwise comparisons: for each comparison, a pair
+% $(i, j)$ is drawn uniformly at random from the $5$ items, and the winner
+% is drawn from Bernoulli$\bigl(\sigma(v_i - v_j)\bigr)$.
+
+% Fitting the model in two independent ways:
+
+% \begin{itemize}
+%     \item {I-LSR} via \texttt{choix.ilsr\_pairwise} $\rightarrow$
+%     Maystre's spectral method (Chapter 3 of his thesis).
+%     \item {Gradient descent from scratch} $\rightarrow$ the update
+%     rule above, run for $1000$ iterations with $\eta = 0.01$ on the
+%     normalized gradient.
+% \end{itemize}
+
+% gives the estimates
+
+% \begin{align*}
+%     \mathbf{v}_{\text{I-LSR}} &= [\,0.827,\ 0.461,\ -0.122,\ -0.418,\ -0.749\,] \\
+%     \mathbf{v}_{\text{GD}}    &\approx \mathbf{v}_{\text{I-LSR}}
+% \end{align*}
+
+% with mean absolute error $\approx 0.04$ against the true parameters.
+% So, both the methods agree with each other and with the truth up to
+% sampling noise. This is expected because the Bradley-Terry log-likelihood
+% is strictly concave $\rightarrow$ any correct optimizer must land at the
+% same unique MLE.
+
+% Hence proved.
