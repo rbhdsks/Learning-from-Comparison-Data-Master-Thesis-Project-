@@ -13,3 +13,50 @@ scratch/
 results/
 # python package metadata file 
 *.egg-info/
+# ------------------------------------------------------------
+# Local LaTeX compilation files
+# ------------------------------------------------------------
+
+/docs/thesis/**/*.aux
+/docs/thesis/**/*.bbl
+/docs/thesis/**/*.bcf
+/docs/thesis/**/*.blg
+/docs/thesis/**/*.dvi
+/docs/thesis/**/*.fdb_latexmk
+/docs/thesis/**/*.fls
+/docs/thesis/**/*.lof
+/docs/thesis/**/*.log
+/docs/thesis/**/*.lot
+/docs/thesis/**/*.nav
+/docs/thesis/**/*.out
+/docs/thesis/**/*.run.xml
+/docs/thesis/**/*.snm
+/docs/thesis/**/*.synctex.gz
+/docs/thesis/**/*.toc
+/docs/thesis/**/*.vrb
+/docs/thesis/**/*.xdv
+
+# Glossary and index files
+/docs/thesis/**/*.acn
+/docs/thesis/**/*.acr
+/docs/thesis/**/*.alg
+/docs/thesis/**/*.glg
+/docs/thesis/**/*.glo
+/docs/thesis/**/*.gls
+/docs/thesis/**/*.idx
+/docs/thesis/**/*.ilg
+/docs/thesis/**/*.ind
+/docs/thesis/**/*.ist
+
+# Minted/code-highlighting output
+/docs/thesis/**/_minted-*/
+/docs/thesis/**/*.pyg
+
+# Locally compiled thesis PDF
+/docs/thesis/Notes.pdf
+/docs/thesis/Weekly-log.pdf
+# Local VS Code workspace files
+*.code-workspace
+
+# macOS metadata
+.DS_Store
