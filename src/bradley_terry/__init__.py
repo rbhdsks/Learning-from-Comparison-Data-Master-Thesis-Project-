@@ -37,7 +37,14 @@ from .simulation import (
     generate_comparison_data_from_edges,
     generate_uniform_comparison_data,
 )
-
+from .optimization import (
+    OptimizationResult,
+    optimize_with_adam,
+    optimize_with_full_batch_gradient_descent,
+    optimize_with_minibatch_gradient_descent,
+    optimize_with_momentum_gradient_descent,
+    optimize_with_stochastic_gradient_descent,
+)
 
 __all__ = [
     "average_negative_log_likelihood",
@@ -63,4 +70,10 @@ __all__ = [
     "parameter_recovery_error",
     "run_parameter_recovery_trials",
     "sigmoid",
+    "OptimizationResult",
+    "optimize_with_adam",
+    "optimize_with_full_batch_gradient_descent",
+    "optimize_with_minibatch_gradient_descent",
+    "optimize_with_momentum_gradient_descent",
+    "optimize_with_stochastic_gradient_descent",
 ]
