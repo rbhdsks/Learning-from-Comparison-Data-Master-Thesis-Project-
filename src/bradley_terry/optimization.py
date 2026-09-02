@@ -5,9 +5,6 @@ from time import perf_counter
 
 import numpy as np
 
-from .estimation import (
-    estimate_parameters_with_gradient_descent_trace,
-)
 from .model import (
     average_negative_log_likelihood,
     average_negative_log_likelihood_gradient,
@@ -17,40 +14,34 @@ from .model import (
 
 @dataclass
 class OptimizationResult:
-    """Store the output and history of one optimization run."""
+    """Store the result and history of one optimization run."""
 
     optimizer_name: str
     parameters: np.ndarray
     nll_history: np.ndarray
+    gradient_norm_history: np.ndarray
     parameter_history: np.ndarray
     update_count_history: np.ndarray
     runtime_seconds: float
+    converged: bool
+    stopping_reason: str
+
+    @property
+    def epochs_completed(self):
+        """Return the number of completed data passes."""
+        return len(self.nll_history) - 1
+
+    @property
+    def updates_completed(self):
+        """Return the total number of parameter updates."""
+        return int(self.update_count_history[-1])
 
 
-def _validate_optimization_inputs(
-    number_of_items,
+def _as_comparison_array(
     comparisons,
-    learning_rate,
-    number_of_epochs,
+    number_of_items,
 ):
-    """Validate settings shared by all optimizers."""
-
-    if not isinstance(number_of_items, (int, np.integer)):
-        raise TypeError("number_of_items must be an integer")
-
-    if number_of_items < 2:
-        raise ValueError("number_of_items must be at least two")
-
-    if not np.isfinite(learning_rate) or learning_rate <= 0:
-        raise ValueError(
-            "learning_rate must be a positive finite number"
-        )
-
-    if not isinstance(number_of_epochs, (int, np.integer)):
-        raise TypeError("number_of_epochs must be an integer")
-
-    if number_of_epochs <= 0:
-        raise ValueError("number_of_epochs must be positive")
+    """Convert comparisons into a valid integer array."""
 
     comparison_array = np.asarray(comparisons)
 
@@ -63,7 +54,9 @@ def _validate_optimization_inputs(
         )
 
     if len(comparison_array) == 0:
-        raise ValueError("at least one comparison is required")
+        raise ValueError(
+            "at least one comparison is required"
+        )
 
     if not np.issubdtype(
         comparison_array.dtype,
@@ -99,11 +92,124 @@ def _validate_optimization_inputs(
     return comparison_array
 
 
-def _initialise_optimization_history(
+def _validate_common_settings(
+    number_of_items,
+    learning_rate,
+    gradient_tolerance,
+    target_nll,
+    emergency_maximum_epochs,
+):
+    """Validate settings shared by all optimizers."""
+
+    if not isinstance(
+        number_of_items,
+        (int, np.integer),
+    ):
+        raise TypeError(
+            "number_of_items must be an integer"
+        )
+
+    if number_of_items < 2:
+        raise ValueError(
+            "number_of_items must be at least two"
+        )
+
+    if (
+        not np.isfinite(learning_rate)
+        or learning_rate <= 0
+    ):
+        raise ValueError(
+            "learning_rate must be a positive finite number"
+        )
+
+    if gradient_tolerance is not None:
+        if (
+            not np.isfinite(gradient_tolerance)
+            or gradient_tolerance <= 0
+        ):
+            raise ValueError(
+                "gradient_tolerance must be positive"
+            )
+
+    if target_nll is not None:
+        if (
+            not np.isfinite(target_nll)
+            or target_nll < 0
+        ):
+            raise ValueError(
+                "target_nll must be non-negative and finite"
+            )
+
+    if (
+        gradient_tolerance is None
+        and target_nll is None
+    ):
+        raise ValueError(
+            "provide a gradient tolerance or target NLL"
+        )
+
+    if not isinstance(
+        emergency_maximum_epochs,
+        (int, np.integer),
+    ):
+        raise TypeError(
+            "emergency_maximum_epochs must be an integer"
+        )
+
+    if emergency_maximum_epochs <= 0:
+        raise ValueError(
+            "emergency_maximum_epochs must be positive"
+        )
+
+
+def _validate_batch_settings(
+    batch_size,
+    number_of_observations,
+    random_seed,
+    shuffle,
+):
+    """Validate settings used by batch-based methods."""
+
+    if not isinstance(
+        batch_size,
+        (int, np.integer),
+    ):
+        raise TypeError(
+            "batch_size must be an integer"
+        )
+
+    if batch_size <= 0:
+        raise ValueError(
+            "batch_size must be positive"
+        )
+
+    if batch_size > number_of_observations:
+        raise ValueError(
+            "batch_size cannot exceed the dataset size"
+        )
+
+    if not isinstance(
+        random_seed,
+        (int, np.integer),
+    ):
+        raise TypeError(
+            "random_seed must be an integer"
+        )
+
+    if not isinstance(
+        shuffle,
+        (bool, np.bool_),
+    ):
+        raise TypeError(
+            "shuffle must be True or False"
+        )
+
+
+def _initialise_optimization(
     number_of_items,
     comparisons,
 ):
-    """Create zero parameters and record their initial state."""
+    """Create zero parameters and initial diagnostics."""
 
     parameters = np.zeros(
         number_of_items,
@@ -115,16 +221,55 @@ def _initialise_optimization_history(
         comparisons,
     )
 
+    initial_gradient = (
+        average_negative_log_likelihood_gradient(
+            parameters,
+            comparisons,
+        )
+    )
+
+    initial_gradient_norm = np.linalg.norm(
+        initial_gradient
+    )
+
     nll_history = [initial_nll]
+    gradient_norm_history = [
+        initial_gradient_norm
+    ]
     parameter_history = [parameters.copy()]
     update_count_history = [0]
 
     return (
         parameters,
+        initial_gradient,
         nll_history,
+        gradient_norm_history,
         parameter_history,
         update_count_history,
     )
+
+
+def _find_stopping_reason(
+    current_nll,
+    gradient_norm,
+    gradient_tolerance,
+    target_nll,
+):
+    """Check whether a requested stopping condition holds."""
+
+    if (
+        gradient_tolerance is not None
+        and gradient_norm <= gradient_tolerance
+    ):
+        return "gradient tolerance reached"
+
+    if (
+        target_nll is not None
+        and current_nll <= target_nll
+    ):
+        return "target NLL reached"
+
+    return None
 
 
 def _create_epoch_batches(
@@ -133,18 +278,18 @@ def _create_epoch_batches(
     random_generator,
     shuffle,
 ):
-    """Create observation-index batches for one epoch."""
+    """Yield observation-index batches for one epoch."""
 
     observation_indices = np.arange(
         number_of_observations
     )
 
     if shuffle:
-        observation_indices = random_generator.permutation(
-            observation_indices
+        observation_indices = (
+            random_generator.permutation(
+                observation_indices
+            )
         )
-
-    batches = []
 
     for start_index in range(
         0,
@@ -153,99 +298,236 @@ def _create_epoch_batches(
     ):
         end_index = start_index + batch_size
 
-        batches.append(
-            observation_indices[start_index:end_index]
-        )
+        yield observation_indices[
+            start_index:end_index
+        ]
 
-    return batches
+
+def _create_result(
+    optimizer_name,
+    parameters,
+    nll_history,
+    gradient_norm_history,
+    parameter_history,
+    update_count_history,
+    runtime_seconds,
+    stopping_reason,
+):
+    """Construct a consistently formatted result."""
+
+    converged = (
+        stopping_reason
+        != "emergency maximum epochs reached"
+    )
+
+    return OptimizationResult(
+        optimizer_name=optimizer_name,
+        parameters=np.asarray(parameters),
+        nll_history=np.asarray(nll_history),
+        gradient_norm_history=np.asarray(
+            gradient_norm_history
+        ),
+        parameter_history=np.asarray(
+            parameter_history
+        ),
+        update_count_history=np.asarray(
+            update_count_history
+        ),
+        runtime_seconds=float(runtime_seconds),
+        converged=converged,
+        stopping_reason=stopping_reason,
+    )
 
 
 def optimize_with_full_batch_gradient_descent(
     number_of_items,
     comparisons,
     learning_rate=0.1,
-    number_of_epochs=1_000,
+    gradient_tolerance=1e-6,
+    target_nll=None,
+    emergency_maximum_epochs=100_000,
 ):
-    """Estimate parameters using handcrafted full-batch GD."""
+    """Run full-batch GD until a stopping condition holds."""
 
-    comparison_array = _validate_optimization_inputs(
-        number_of_items,
+    _validate_common_settings(
+        number_of_items=number_of_items,
+        learning_rate=learning_rate,
+        gradient_tolerance=gradient_tolerance,
+        target_nll=target_nll,
+        emergency_maximum_epochs=(
+            emergency_maximum_epochs
+        ),
+    )
+
+    comparison_array = _as_comparison_array(
         comparisons,
-        learning_rate,
-        number_of_epochs,
+        number_of_items,
     )
 
     start_time = perf_counter()
 
     (
-        estimated_parameters,
+        parameters,
+        gradient,
         nll_history,
+        gradient_norm_history,
         parameter_history,
-    ) = estimate_parameters_with_gradient_descent_trace(
-        number_of_items=number_of_items,
-        comparisons=comparison_array,
-        learning_rate=learning_rate,
-        maximum_iterations=number_of_epochs,
+        update_count_history,
+    ) = _initialise_optimization(
+        number_of_items,
+        comparison_array,
     )
 
-    runtime_seconds = perf_counter() - start_time
+    current_nll = nll_history[-1]
+    gradient_norm = gradient_norm_history[-1]
 
-    return OptimizationResult(
+    stopping_reason = _find_stopping_reason(
+        current_nll=current_nll,
+        gradient_norm=gradient_norm,
+        gradient_tolerance=gradient_tolerance,
+        target_nll=target_nll,
+    )
+
+    number_of_epochs = 0
+    number_of_updates = 0
+
+    while (
+        stopping_reason is None
+        and number_of_epochs
+        < emergency_maximum_epochs
+    ):
+        parameters = (
+            parameters
+            - learning_rate * gradient
+        )
+
+        parameters = center_parameters(
+            parameters
+        )
+
+        number_of_epochs += 1
+        number_of_updates += 1
+
+        current_nll = (
+            average_negative_log_likelihood(
+                parameters,
+                comparison_array,
+            )
+        )
+
+        gradient = (
+            average_negative_log_likelihood_gradient(
+                parameters,
+                comparison_array,
+            )
+        )
+
+        gradient_norm = np.linalg.norm(
+            gradient
+        )
+
+        nll_history.append(current_nll)
+        gradient_norm_history.append(
+            gradient_norm
+        )
+        parameter_history.append(
+            parameters.copy()
+        )
+        update_count_history.append(
+            number_of_updates
+        )
+
+        stopping_reason = _find_stopping_reason(
+            current_nll=current_nll,
+            gradient_norm=gradient_norm,
+            gradient_tolerance=(
+                gradient_tolerance
+            ),
+            target_nll=target_nll,
+        )
+
+    if stopping_reason is None:
+        stopping_reason = (
+            "emergency maximum epochs reached"
+        )
+
+    runtime_seconds = (
+        perf_counter() - start_time
+    )
+
+    return _create_result(
         optimizer_name="Manual full-batch GD",
-        parameters=estimated_parameters,
-        nll_history=np.asarray(nll_history),
-        parameter_history=np.asarray(parameter_history),
-        update_count_history=np.arange(
-            number_of_epochs + 1
+        parameters=parameters,
+        nll_history=nll_history,
+        gradient_norm_history=(
+            gradient_norm_history
+        ),
+        parameter_history=parameter_history,
+        update_count_history=(
+            update_count_history
         ),
         runtime_seconds=runtime_seconds,
+        stopping_reason=stopping_reason,
     )
 
 
-def _optimize_with_batches(
+def _run_batch_optimizer(
+    algorithm,
     optimizer_name,
     number_of_items,
     comparisons,
     learning_rate,
-    number_of_epochs,
     batch_size,
+    gradient_tolerance,
+    target_nll,
     random_seed,
     shuffle,
+    emergency_maximum_epochs,
     momentum=0.0,
     beta_1=0.9,
     beta_2=0.999,
     epsilon=1e-8,
 ):
-    """Run a handcrafted batch-based optimization algorithm."""
+    """Run one handcrafted stochastic optimizer."""
 
-    comparison_array = _validate_optimization_inputs(
-        number_of_items,
-        comparisons,
-        learning_rate,
-        number_of_epochs,
+    _validate_common_settings(
+        number_of_items=number_of_items,
+        learning_rate=learning_rate,
+        gradient_tolerance=gradient_tolerance,
+        target_nll=target_nll,
+        emergency_maximum_epochs=(
+            emergency_maximum_epochs
+        ),
     )
 
-    if not isinstance(batch_size, (int, np.integer)):
-        raise TypeError("batch_size must be an integer")
+    comparison_array = _as_comparison_array(
+        comparisons,
+        number_of_items,
+    )
 
-    if batch_size <= 0:
-        raise ValueError("batch_size must be positive")
-
-    if batch_size > len(comparison_array):
-        raise ValueError(
-            "batch_size cannot exceed the dataset size"
-        )
+    _validate_batch_settings(
+        batch_size=batch_size,
+        number_of_observations=len(
+            comparison_array
+        ),
+        random_seed=random_seed,
+        shuffle=shuffle,
+    )
 
     random_generator = np.random.default_rng(
         random_seed
     )
 
+    start_time = perf_counter()
+
     (
         parameters,
+        full_gradient,
         nll_history,
+        gradient_norm_history,
         parameter_history,
         update_count_history,
-    ) = _initialise_optimization_history(
+    ) = _initialise_optimization(
         number_of_items,
         comparison_array,
     )
@@ -254,10 +536,24 @@ def _optimize_with_batches(
     first_moment = np.zeros_like(parameters)
     second_moment = np.zeros_like(parameters)
 
-    number_of_updates = 0
-    start_time = perf_counter()
+    current_nll = nll_history[-1]
+    gradient_norm = gradient_norm_history[-1]
 
-    for _ in range(number_of_epochs):
+    stopping_reason = _find_stopping_reason(
+        current_nll=current_nll,
+        gradient_norm=gradient_norm,
+        gradient_tolerance=gradient_tolerance,
+        target_nll=target_nll,
+    )
+
+    number_of_epochs = 0
+    number_of_updates = 0
+
+    while (
+        stopping_reason is None
+        and number_of_epochs
+        < emergency_maximum_epochs
+    ):
         epoch_batches = _create_epoch_batches(
             number_of_observations=len(
                 comparison_array
@@ -272,7 +568,7 @@ def _optimize_with_batches(
                 batch_indices
             ]
 
-            gradient = (
+            batch_gradient = (
                 average_negative_log_likelihood_gradient(
                     parameters,
                     comparison_batch,
@@ -281,19 +577,17 @@ def _optimize_with_batches(
 
             number_of_updates += 1
 
-            if optimizer_name in {
-                "Manual SGD",
-                "Manual mini-batch SGD",
-            }:
+            if algorithm == "sgd":
                 parameters = (
                     parameters
-                    - learning_rate * gradient
+                    - learning_rate
+                    * batch_gradient
                 )
 
-            elif optimizer_name == "Manual momentum SGD":
+            elif algorithm == "momentum":
                 velocity = (
                     momentum * velocity
-                    + gradient
+                    + batch_gradient
                 )
 
                 parameters = (
@@ -301,23 +595,25 @@ def _optimize_with_batches(
                     - learning_rate * velocity
                 )
 
-            elif optimizer_name == "Manual Adam":
+            elif algorithm == "adam":
                 first_moment = (
                     beta_1 * first_moment
-                    + (1.0 - beta_1) * gradient
+                    + (1.0 - beta_1)
+                    * batch_gradient
                 )
 
                 second_moment = (
                     beta_2 * second_moment
                     + (1.0 - beta_2)
-                    * np.square(gradient)
+                    * np.square(batch_gradient)
                 )
 
                 corrected_first_moment = (
                     first_moment
                     / (
                         1.0
-                        - beta_1 ** number_of_updates
+                        - beta_1
+                        ** number_of_updates
                     )
                 )
 
@@ -325,7 +621,8 @@ def _optimize_with_batches(
                     second_moment
                     / (
                         1.0
-                        - beta_2 ** number_of_updates
+                        - beta_2
+                        ** number_of_updates
                     )
                 )
 
@@ -342,33 +639,75 @@ def _optimize_with_batches(
 
             else:
                 raise ValueError(
-                    f"unknown optimizer: {optimizer_name}"
+                    f"unknown algorithm: {algorithm}"
                 )
 
-            parameters = center_parameters(parameters)
+            parameters = center_parameters(
+                parameters
+            )
 
-        current_nll = average_negative_log_likelihood(
-            parameters,
-            comparison_array,
+        number_of_epochs += 1
+
+        current_nll = (
+            average_negative_log_likelihood(
+                parameters,
+                comparison_array,
+            )
+        )
+
+        full_gradient = (
+            average_negative_log_likelihood_gradient(
+                parameters,
+                comparison_array,
+            )
+        )
+
+        gradient_norm = np.linalg.norm(
+            full_gradient
         )
 
         nll_history.append(current_nll)
-        parameter_history.append(parameters.copy())
-        update_count_history.append(number_of_updates)
+        gradient_norm_history.append(
+            gradient_norm
+        )
+        parameter_history.append(
+            parameters.copy()
+        )
+        update_count_history.append(
+            number_of_updates
+        )
 
-    runtime_seconds = perf_counter() - start_time
+        stopping_reason = _find_stopping_reason(
+            current_nll=current_nll,
+            gradient_norm=gradient_norm,
+            gradient_tolerance=(
+                gradient_tolerance
+            ),
+            target_nll=target_nll,
+        )
 
-    return OptimizationResult(
+    if stopping_reason is None:
+        stopping_reason = (
+            "emergency maximum epochs reached"
+        )
+
+    runtime_seconds = (
+        perf_counter() - start_time
+    )
+
+    return _create_result(
         optimizer_name=optimizer_name,
         parameters=parameters,
-        nll_history=np.asarray(nll_history),
-        parameter_history=np.asarray(
-            parameter_history
+        nll_history=nll_history,
+        gradient_norm_history=(
+            gradient_norm_history
         ),
-        update_count_history=np.asarray(
+        parameter_history=parameter_history,
+        update_count_history=(
             update_count_history
         ),
         runtime_seconds=runtime_seconds,
+        stopping_reason=stopping_reason,
     )
 
 
@@ -376,21 +715,28 @@ def optimize_with_stochastic_gradient_descent(
     number_of_items,
     comparisons,
     learning_rate=0.01,
-    number_of_epochs=100,
+    gradient_tolerance=1e-6,
+    target_nll=None,
     random_seed=0,
     shuffle=True,
+    emergency_maximum_epochs=10_000,
 ):
-    """Estimate parameters using one observation per update."""
+    """Run handcrafted SGD using one observation per update."""
 
-    return _optimize_with_batches(
+    return _run_batch_optimizer(
+        algorithm="sgd",
         optimizer_name="Manual SGD",
         number_of_items=number_of_items,
         comparisons=comparisons,
         learning_rate=learning_rate,
-        number_of_epochs=number_of_epochs,
         batch_size=1,
+        gradient_tolerance=gradient_tolerance,
+        target_nll=target_nll,
         random_seed=random_seed,
         shuffle=shuffle,
+        emergency_maximum_epochs=(
+            emergency_maximum_epochs
+        ),
     )
 
 
@@ -398,22 +744,29 @@ def optimize_with_minibatch_gradient_descent(
     number_of_items,
     comparisons,
     learning_rate=0.1,
-    number_of_epochs=100,
     batch_size=64,
+    gradient_tolerance=1e-6,
+    target_nll=None,
     random_seed=0,
     shuffle=True,
+    emergency_maximum_epochs=10_000,
 ):
-    """Estimate parameters using mini-batch SGD."""
+    """Run handcrafted mini-batch SGD."""
 
-    return _optimize_with_batches(
+    return _run_batch_optimizer(
+        algorithm="sgd",
         optimizer_name="Manual mini-batch SGD",
         number_of_items=number_of_items,
         comparisons=comparisons,
         learning_rate=learning_rate,
-        number_of_epochs=number_of_epochs,
         batch_size=batch_size,
+        gradient_tolerance=gradient_tolerance,
+        target_nll=target_nll,
         random_seed=random_seed,
         shuffle=shuffle,
+        emergency_maximum_epochs=(
+            emergency_maximum_epochs
+        ),
     )
 
 
@@ -421,31 +774,38 @@ def optimize_with_momentum_gradient_descent(
     number_of_items,
     comparisons,
     learning_rate=0.05,
-    number_of_epochs=100,
     batch_size=64,
     momentum=0.9,
+    gradient_tolerance=1e-6,
+    target_nll=None,
     random_seed=0,
     shuffle=True,
+    emergency_maximum_epochs=10_000,
 ):
-    """Estimate parameters using mini-batch momentum SGD."""
+    """Run handcrafted mini-batch momentum SGD."""
 
-    if not np.isfinite(momentum):
-        raise ValueError("momentum must be finite")
-
-    if not 0 <= momentum < 1:
+    if (
+        not np.isfinite(momentum)
+        or not 0 <= momentum < 1
+    ):
         raise ValueError(
-            "momentum must be in the interval [0, 1)"
+            "momentum must be in [0, 1)"
         )
 
-    return _optimize_with_batches(
+    return _run_batch_optimizer(
+        algorithm="momentum",
         optimizer_name="Manual momentum SGD",
         number_of_items=number_of_items,
         comparisons=comparisons,
         learning_rate=learning_rate,
-        number_of_epochs=number_of_epochs,
         batch_size=batch_size,
+        gradient_tolerance=gradient_tolerance,
+        target_nll=target_nll,
         random_seed=random_seed,
         shuffle=shuffle,
+        emergency_maximum_epochs=(
+            emergency_maximum_epochs
+        ),
         momentum=momentum,
     )
 
@@ -454,40 +814,56 @@ def optimize_with_adam(
     number_of_items,
     comparisons,
     learning_rate=0.01,
-    number_of_epochs=100,
     batch_size=64,
     beta_1=0.9,
     beta_2=0.999,
     epsilon=1e-8,
+    gradient_tolerance=1e-6,
+    target_nll=None,
     random_seed=0,
     shuffle=True,
+    emergency_maximum_epochs=10_000,
 ):
-    """Estimate parameters using handcrafted Adam."""
+    """Run handcrafted mini-batch Adam."""
 
-    if not 0 <= beta_1 < 1:
+    if (
+        not np.isfinite(beta_1)
+        or not 0 <= beta_1 < 1
+    ):
         raise ValueError(
-            "beta_1 must be in the interval [0, 1)"
+            "beta_1 must be in [0, 1)"
         )
 
-    if not 0 <= beta_2 < 1:
+    if (
+        not np.isfinite(beta_2)
+        or not 0 <= beta_2 < 1
+    ):
         raise ValueError(
-            "beta_2 must be in the interval [0, 1)"
+            "beta_2 must be in [0, 1)"
         )
 
-    if not np.isfinite(epsilon) or epsilon <= 0:
+    if (
+        not np.isfinite(epsilon)
+        or epsilon <= 0
+    ):
         raise ValueError(
-            "epsilon must be a positive finite number"
+            "epsilon must be positive and finite"
         )
 
-    return _optimize_with_batches(
+    return _run_batch_optimizer(
+        algorithm="adam",
         optimizer_name="Manual Adam",
         number_of_items=number_of_items,
         comparisons=comparisons,
         learning_rate=learning_rate,
-        number_of_epochs=number_of_epochs,
         batch_size=batch_size,
+        gradient_tolerance=gradient_tolerance,
+        target_nll=target_nll,
         random_seed=random_seed,
         shuffle=shuffle,
+        emergency_maximum_epochs=(
+            emergency_maximum_epochs
+        ),
         beta_1=beta_1,
         beta_2=beta_2,
         epsilon=epsilon,
