@@ -45,6 +45,13 @@ from .optimization import (
     optimize_with_momentum_gradient_descent,
     optimize_with_stochastic_gradient_descent,
 )
+from .pytorch_optimization import (
+    optimize_with_pytorch_adam,
+    optimize_with_pytorch_full_batch_gradient_descent,
+    optimize_with_pytorch_minibatch_gradient_descent,
+    optimize_with_pytorch_momentum_gradient_descent,
+    optimize_with_pytorch_stochastic_gradient_descent,
+)
 
 __all__ = [
     "average_negative_log_likelihood",
@@ -76,4 +83,10 @@ __all__ = [
     "optimize_with_minibatch_gradient_descent",
     "optimize_with_momentum_gradient_descent",
     "optimize_with_stochastic_gradient_descent",
+    "optimize_with_pytorch_adam",
+    "optimize_with_pytorch_full_batch_gradient_descent",
+    "optimize_with_pytorch_minibatch_gradient_descent",
+    "optimize_with_pytorch_momentum_gradient_descent",
+    "optimize_with_pytorch_stochastic_gradient_descent",
+
 ]
