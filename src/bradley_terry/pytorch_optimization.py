@@ -16,6 +16,7 @@ Comparison = tuple[int, int]
 def _prepare_comparisons(
     number_of_items: int,
     comparisons: Sequence[Comparison],
+    device: torch.device,
 ) -> torch.Tensor:
     """Validate comparisons and convert them into a tensor."""
 
@@ -54,15 +55,17 @@ def _prepare_comparisons(
     return torch.tensor(
         comparison_array,
         dtype=torch.long,
-        device="cpu",
+        device=device,
     )
 
 
 def _prepare_initial_parameters(
     number_of_items: int,
     initial_parameters: np.ndarray | None,
+    device: torch.device,
+    dtype: torch.dtype,
 ) -> torch.Tensor:
-    """Create centred float64 PyTorch parameters."""
+    """Create centred floating-point PyTorch parameters."""
 
     if initial_parameters is None:
         parameter_array = np.zeros(
@@ -84,10 +87,70 @@ def _prepare_initial_parameters(
 
     return torch.tensor(
         parameter_array,
-        dtype=torch.float64,
-        device="cpu",
+        dtype=dtype,
+        device=device,
         requires_grad=True,
     )
+
+
+def _resolve_device_and_dtype(
+    device: str | torch.device,
+    dtype: torch.dtype,
+) -> tuple[torch.device, torch.dtype]:
+    """Validate and normalize the requested execution settings."""
+
+    selected_device = torch.device(device)
+
+    if dtype not in {torch.float32, torch.float64}:
+        raise ValueError(
+            "dtype must be torch.float32 or torch.float64"
+        )
+
+    if (
+        selected_device.type == "mps"
+        and not torch.backends.mps.is_available()
+    ):
+        raise RuntimeError(
+            "MPS was requested but is not available"
+        )
+
+    if (
+        selected_device.type == "cuda"
+        and not torch.cuda.is_available()
+    ):
+        raise RuntimeError(
+            "CUDA was requested but is not available"
+        )
+
+    if (
+        selected_device.type == "mps"
+        and dtype == torch.float64
+    ):
+        raise ValueError(
+            "MPS does not support torch.float64; "
+            "use torch.float32"
+        )
+
+    return selected_device, dtype
+
+
+def _synchronize_device(
+    device: torch.device,
+) -> None:
+    """Wait for queued accelerator operations to finish."""
+
+    if device.type == "mps":
+        torch.mps.synchronize()
+    elif device.type == "cuda":
+        torch.cuda.synchronize(device)
+
+
+def _to_numpy(
+    tensor: torch.Tensor,
+) -> np.ndarray:
+    """Copy a tensor to a NumPy array, regardless of device."""
+
+    return tensor.detach().cpu().numpy().copy()
 
 
 def _average_pytorch_nll(
@@ -214,6 +277,8 @@ def _run_pytorch_optimizer(
     target_nll: float | None,
     initial_parameters: np.ndarray | None,
     emergency_maximum_epochs: int,
+    device: str | torch.device,
+    dtype: torch.dtype,
     momentum: float = 0.9,
     beta_1: float = 0.9,
     beta_2: float = 0.999,
@@ -246,14 +311,24 @@ def _run_pytorch_optimizer(
             "emergency_maximum_epochs must be positive"
         )
 
+    selected_device, selected_dtype = (
+        _resolve_device_and_dtype(
+            device,
+            dtype,
+        )
+    )
+
     comparison_tensor = _prepare_comparisons(
         number_of_items,
         comparisons,
+        selected_device,
     )
 
     parameters = _prepare_initial_parameters(
         number_of_items,
         initial_parameters,
+        selected_device,
+        selected_dtype,
     )
 
     number_of_observations = len(
@@ -296,7 +371,7 @@ def _run_pytorch_optimizer(
     ]
 
     parameter_history = [
-        parameters.detach().numpy().copy()
+        _to_numpy(parameters)
     ]
 
     update_count_history = [0]
@@ -311,6 +386,7 @@ def _run_pytorch_optimizer(
         target_nll=target_nll,
     )
 
+    _synchronize_device(selected_device)
     start_time = perf_counter()
 
     while (
@@ -322,10 +398,12 @@ def _run_pytorch_optimizer(
             observation_indices = torch.randperm(
                 number_of_observations,
                 generator=random_generator,
-            )
+                device="cpu",
+            ).to(selected_device)
         else:
             observation_indices = torch.arange(
-                number_of_observations
+                number_of_observations,
+                device=selected_device,
             )
 
         for start_index in range(
@@ -376,7 +454,7 @@ def _run_pytorch_optimizer(
         )
 
         parameter_history.append(
-            parameters.detach().numpy().copy()
+            _to_numpy(parameters)
         )
 
         update_count_history.append(
@@ -390,9 +468,8 @@ def _run_pytorch_optimizer(
             target_nll=target_nll,
         )
 
-    runtime_seconds = (
-        perf_counter() - start_time
-    )
+    _synchronize_device(selected_device)
+    runtime_seconds = perf_counter() - start_time
 
     if stopping_reason is None:
         stopping_reason = (
@@ -407,7 +484,7 @@ def _run_pytorch_optimizer(
     return OptimizationResult(
         optimizer_name=optimizer_name,
         parameters=(
-            parameters.detach().numpy().copy()
+            _to_numpy(parameters)
         ),
         nll_history=np.asarray(
             nll_history,
@@ -440,6 +517,8 @@ def optimize_with_pytorch_full_batch_gradient_descent(
     target_nll: float | None = None,
     initial_parameters: np.ndarray | None = None,
     emergency_maximum_epochs: int = 100_000,
+    device: str | torch.device = "cpu",
+    dtype: torch.dtype = torch.float64,
 ) -> OptimizationResult:
     """Run PyTorch full-batch gradient descent."""
 
@@ -458,6 +537,8 @@ def optimize_with_pytorch_full_batch_gradient_descent(
         emergency_maximum_epochs=(
             emergency_maximum_epochs
         ),
+        device=device,
+        dtype=dtype,
     )
 
 
@@ -471,6 +552,8 @@ def optimize_with_pytorch_stochastic_gradient_descent(
     target_nll: float | None = None,
     initial_parameters: np.ndarray | None = None,
     emergency_maximum_epochs: int = 10_000,
+    device: str | torch.device = "cpu",
+    dtype: torch.dtype = torch.float64,
 ) -> OptimizationResult:
     """Run PyTorch stochastic gradient descent."""
 
@@ -489,6 +572,8 @@ def optimize_with_pytorch_stochastic_gradient_descent(
         emergency_maximum_epochs=(
             emergency_maximum_epochs
         ),
+        device=device,
+        dtype=dtype,
     )
 
 
@@ -503,6 +588,8 @@ def optimize_with_pytorch_minibatch_gradient_descent(
     target_nll: float | None = None,
     initial_parameters: np.ndarray | None = None,
     emergency_maximum_epochs: int = 10_000,
+    device: str | torch.device = "cpu",
+    dtype: torch.dtype = torch.float64,
 ) -> OptimizationResult:
     """Run PyTorch mini-batch gradient descent."""
 
@@ -521,6 +608,8 @@ def optimize_with_pytorch_minibatch_gradient_descent(
         emergency_maximum_epochs=(
             emergency_maximum_epochs
         ),
+        device=device,
+        dtype=dtype,
     )
 
 
@@ -536,6 +625,8 @@ def optimize_with_pytorch_momentum_gradient_descent(
     target_nll: float | None = None,
     initial_parameters: np.ndarray | None = None,
     emergency_maximum_epochs: int = 10_000,
+    device: str | torch.device = "cpu",
+    dtype: torch.dtype = torch.float64,
 ) -> OptimizationResult:
     """Run PyTorch mini-batch SGD with momentum."""
 
@@ -554,6 +645,8 @@ def optimize_with_pytorch_momentum_gradient_descent(
         emergency_maximum_epochs=(
             emergency_maximum_epochs
         ),
+        device=device,
+        dtype=dtype,
         momentum=momentum,
     )
 
@@ -572,6 +665,8 @@ def optimize_with_pytorch_adam(
     target_nll: float | None = None,
     initial_parameters: np.ndarray | None = None,
     emergency_maximum_epochs: int = 10_000,
+    device: str | torch.device = "cpu",
+    dtype: torch.dtype = torch.float64,
 ) -> OptimizationResult:
     """Run the PyTorch Adam optimizer."""
 
@@ -590,6 +685,8 @@ def optimize_with_pytorch_adam(
         emergency_maximum_epochs=(
             emergency_maximum_epochs
         ),
+        device=device,
+        dtype=dtype,
         beta_1=beta_1,
         beta_2=beta_2,
         epsilon=epsilon,
