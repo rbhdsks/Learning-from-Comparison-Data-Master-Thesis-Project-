@@ -24,4 +24,4 @@ If changes were made directly in Overleaf, copy and run:
 ```bash
 git subtree pull --prefix=docs/thesis overleaf main --squash
 git push
-```
+``` 
