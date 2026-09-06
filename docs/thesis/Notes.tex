@@ -106,7 +106,7 @@ alternatives appear. Such behaviour is described as a violation of the
 Independence of Irrelevant Alternatives property
 \citep{seshadri2019}.
 
-\section{Objectives}
+% \section{Objectives}
 
 \chapter{Background and Choice Models}
 
@@ -156,8 +156,6 @@ then their relative odds should not change merely because other alternatives
 have been added or removed.
 
 \subsection{Worked Example}
-
-For convenience, denote the alternatives as follows:
 
 \begin{table}[htbp]
     \centering
@@ -290,8 +288,7 @@ The scores are shift-invariant. A common identification constraint is
     \label{eq:mnl-identification}
 \end{equation}
 
-\subsection{Reason for the Identification Constraint}
-
+\subsection{Shift Invariance and the Zero-Sum Constraint}
 Consider two alternatives, car and taxi, with scores
 
 \begin{align}
@@ -372,7 +369,23 @@ Thus, adding the same constant to every score does not change the choice
 probabilities. The zero-sum constraint selects one representative from all
 score vectors that produce the same probabilities.
 
-\section{Context-Dependent Utility}
+% =========================================================
+% CHAPTER 3
+% =========================================================
+
+\chapter{From Multinomial Logit to Context-Dependent Choice Models}
+
+\section{Motivation of Seshadri et al.}
+
+% TODO: Explain why violations of IIA motivate a model in which the
+% composition of the choice set can affect an alternative's utility.
+
+\section{General Choice Systems}
+
+% TODO: Define a choice system as a collection of choice-probability
+% distributions, one for every possible choice set.
+
+\section{Universal Logit Representation}
 
 In a universal logit model, the utility of an alternative can depend on the
 choice set in which it appears. Instead of assigning only one utility to an
@@ -397,7 +410,9 @@ An identification constraint can be imposed separately for each choice set:
     \text{for every }C\subseteq\X.
 \end{equation}
 
-\section{Decomposition of Context Effects}
+\section{Decomposition of Context-Dependent Utility}
+
+\subsection{Statement of Lemma 1}
 
 \begin{lemma}[Decomposition of context-dependent utility]
 For a universal logit model, the context-dependent utility \(u(x\mid C)\)
@@ -438,6 +453,10 @@ The parameters satisfy
 \end{equation}
 \end{lemma}
 
+\subsection{Interpretation of the Different Orders}
+
+% TODO: Explain the meanings of the first-order, second-order and
+% higher-order terms in the decomposition.
 
 \subsection{Worked Example}
 
@@ -537,11 +556,97 @@ is
     9-4=5.
 \end{equation}
 
+\section{Hierarchy of Choice Models}
+
+\subsection{The Model Classes $\mathcal{M}_p$}
+
+% TODO: Define the p-th order model by setting all terms of order greater
+% than p equal to zero.
+
+\subsection{Number of Free Parameters}
+
+% TODO: Record and explain the parameter-count formula from the paper.
+
+\subsection{MNL as the First-Order Model}
+
+% TODO: Show that retaining only first-order terms gives the multinomial
+% logit model.
+
+\section{Context-Dependent Random Utility Model}
+
+\subsection{Second-Order Truncation}
+
+% TODO: Obtain the CDM by retaining first-order and pairwise contextual
+% terms and setting higher-order terms equal to zero.
+
+% \subsection{Pairwise Context Effects}
+
+% TODO: Explain how one alternative can increase or decrease the utility
+% of another alternative in the same choice set.
+
+% \subsection{Reparameterisation of the Model}
+
+% % TODO: Introduce the pairwise parameters u_{xz} and explain their roles.
+
+% \subsection{CDM Choice Probability}
+
+% % TODO: Write the full-rank CDM choice-probability equation.
+
+% \subsection{Interpretation of the Parameters}
+
+% % TODO: Explain the direction and possible asymmetry of a context effect.
+
+% \subsection{Number of Parameters}
+
+% % TODO: Explain why the full-rank CDM has n(n-1)-1 free parameters after
+% % accounting for shift invariance.
+
+% \subsection{Relationship Between MNL and CDM}
+
+% % TODO: Explain in what sense the CDM contains the MNL as a special case.
+
+% \section{Low-Rank Context-Dependent Model}
+
+% \subsection{Motivation for a Low-Rank Representation}
+
+% % TODO: Explain why the full pairwise parameterisation becomes expensive
+% % when the number of alternatives is large.
+
+% \subsection{Target and Context Vectors}
+
+% % TODO: Introduce the target vector t_x and context vector c_x associated
+% % with every alternative.
+
+% \subsection{Low-Rank Factorisation}
+
+% % TODO: Introduce the factorisation u_{xz}=c_z^{\mathsf T}t_x.
+
+% \subsection{Low-Rank Choice Probability}
+
+% % TODO: Substitute the low-rank factorisation into the CDM probability.
+
+% \subsection{Parameter Count and Degrees of Freedom}
+
+% % TODO: Distinguish the 2nr stored parameters from the effective degrees
+% % of freedom stated in the paper.
+
+% \subsection{Interpretation and Advantages}
+
+% % TODO: Explain how latent target and context vectors reduce the number of
+% % parameters and can provide an interpretable representation.
+
+\section{Summary of the Paper Studied So Far}
+
+% TODO: Summarise the progression from IIA and MNL to the full-rank and
+% low-rank CDM. Stop here until the later parts of the paper are studied.
+
 % =========================================================
-% CHAPTER 3
+% CHAPTER 4
 % =========================================================
 
 \chapter{Bradley--Terry Model and Maximum Likelihood}
+
+\section{Pairwise Comparison Setting}
 
 To understand the underlying mechanics of a model for choice data, we
 consider observed pairwise comparisons and assume a probabilistic model.
@@ -574,242 +679,349 @@ Dividing the numerator and denominator by \(\exp(\theta_i)\) gives
 Therefore, the probability depends only on the score difference
 \(\theta_i-\theta_j\).
 
-\section{Likelihood and Log-Likelihood}
+% \section{Parameter Identifiability and Centring}
 
-\subsection{Assumptions Used for Estimation}
+% % TODO: Explain additive shift invariance and why the implementation centres
+% % both the true and estimated parameter vectors to have zero mean.
 
-The assumptions typically used when working with repeated Bernoulli
-observations include independence and identical distribution.
+% \section{Likelihood and Log-Likelihood}
 
-\paragraph{Independence.}
+% \subsection{Assumptions Used for Estimation}
 
-For \(i\neq j\),
+% The assumptions typically used when working with repeated Bernoulli
+% observations include independence and identical distribution.
 
-\begin{equation}
-    P(X_i=x_i,X_j=x_j)
-    =
-    P(X_i=x_i)P(X_j=x_j).
-\end{equation}
+% \paragraph{Independence.}
 
-Equivalently, when the required conditional probabilities are defined,
+% For \(i\neq j\),
 
-\begin{equation}
-    P(X_i=x_i\mid X_j=x_j)
-    =
-    P(X_i=x_i).
-\end{equation}
+% \begin{equation}
+%     P(X_i=x_i,X_j=x_j)
+%     =
+%     P(X_i=x_i)P(X_j=x_j).
+% \end{equation}
 
-\paragraph{Identically distributed.}
+% Equivalently, when the required conditional probabilities are defined,
 
-For all \(i\) and \(j\),
+% \begin{equation}
+%     P(X_i=x_i\mid X_j=x_j)
+%     =
+%     P(X_i=x_i).
+% \end{equation}
 
-\begin{equation}
-    P(X_i=1)
-    =
-    P(X_j=1)
-    =
-    p.
-\end{equation}
+% \paragraph{Identically distributed.}
 
-\subsection{Likelihood Function}
+% For all \(i\) and \(j\),
 
-To obtain a principled estimate from observed data, we use a likelihood
-function. The likelihood indicates which value of the unknown parameter
-makes the observed data most probable.
+% \begin{equation}
+%     P(X_i=1)
+%     =
+%     P(X_j=1)
+%     =
+%     p.
+% \end{equation}
 
-Following Fisher's principle of maximum likelihood
-\citep{fisher1922}, suppose that
+% \subsection{Likelihood Function}
 
-\begin{equation}
-    x_1,x_2,\ldots,x_n
-\end{equation}
+% To obtain a principled estimate from observed data, we use a likelihood
+% function. The likelihood indicates which value of the unknown parameter
+% makes the observed data most probable.
 
-are observations drawn from a distribution parameterised by \(p\).
-The likelihood is the joint probability of the observed data, viewed as
-a function of \(p\):
+% Following Fisher's principle of maximum likelihood
+% \citep{fisher1922}, suppose that
 
-\begin{align}
-    L(p;\{x_1,x_2,\ldots,x_n\})
-    &=
-    P(x_1,x_2,\ldots,x_n;p)
-    \\
-    &=
-    P(x_1;p)P(x_2;p)\cdots P(x_n;p)
-    \qquad\text{(by independence)}
-    \\
-    &=
-    \prod_{i=1}^{n}
-    p^{x_i}(1-p)^{1-x_i}.
-    \label{eq:bernoulli-likelihood}
-\end{align}
+% \begin{equation}
+%     x_1,x_2,\ldots,x_n
+% \end{equation}
 
-The last line follows by treating each \(x_i\) as a Bernoulli observation
-with success probability \(p\), so that
+% are observations drawn from a distribution parameterised by \(p\).
+% The likelihood is the joint probability of the observed data, viewed as
+% a function of \(p\):
 
-\begin{equation}
-    P(x_i;p)
-    =
-    p^{x_i}(1-p)^{1-x_i}.
-\end{equation}
+% \begin{align}
+%     L(p;\{x_1,x_2,\ldots,x_n\})
+%     &=
+%     P(x_1,x_2,\ldots,x_n;p)
+%     \\
+%     &=
+%     P(x_1;p)P(x_2;p)\cdots P(x_n;p)
+%     \qquad\text{(by independence)}
+%     \\
+%     &=
+%     \prod_{i=1}^{n}
+%     p^{x_i}(1-p)^{1-x_i}.
+%     \label{eq:bernoulli-likelihood}
+% \end{align}
 
-The maximum likelihood estimate \(\widehat{p}\) is the value of \(p\)
-that maximises the likelihood in \cref{eq:bernoulli-likelihood}.
+% The last line follows by treating each \(x_i\) as a Bernoulli observation
+% with success probability \(p\), so that
 
-\subsection{Log-Likelihood}
+% \begin{equation}
+%     P(x_i;p)
+%     =
+%     p^{x_i}(1-p)^{1-x_i}.
+% \end{equation}
 
-% \TODO{Continue the existing likelihood derivation by applying the logarithm.
-% Explain how the product becomes a sum and connect the Bernoulli likelihood
-% to the Bradley--Terry comparison likelihood.}
+% The maximum likelihood estimate \(\widehat{p}\) is the value of \(p\)
+% that maximises the likelihood in \cref{eq:bernoulli-likelihood}.
+
+% \subsection{Log-Likelihood}
+
+% % TODO: Derive the Bradley--Terry log-likelihood directly for the observed
+% % winner--loser pairs (w_t,l_t), rather than assuming that comparisons of
+% % different pairs share one common Bernoulli probability.
 
 % \section{Negative Log-Likelihood}
 
-% \TODO{Explain why maximising the log-likelihood is equivalent to minimising
-% the negative log-likelihood. Include the exact loss function used in the
-% implementation.}
+% % TODO: Explain why maximising the log-likelihood is equivalent to minimising
+% % the negative log-likelihood, and record the average NLL used in the code.
 
 % \section{Gradient and Gradient Descent}
 
-% \TODO{Derive the partial derivative of the Bradley--Terry negative
-% log-likelihood with respect to each score. State the gradient-descent update
-% rule and explain the centring step used in the implementation.}
+% % TODO: Derive the gradient contribution from one observed winner--loser pair,
+% % give the full-batch update, and explain the centring step after an update.
 
-% \section{Identifiability, Existence, and Uniqueness}
+% \section{Existence and Uniqueness of the MLE}
 
-% Since the Bradley--Terry probability depends only on score differences,
-% adding the same constant \(c\) to all scores leaves every probability
-% unchanged:
+% \subsection{Undirected Comparison Graph}
 
-% \begin{equation}
-%     \frac{\exp(\theta_i+c)}
-%     {\exp(\theta_i+c)+\exp(\theta_j+c)}
-%     =
-%     \frac{\exp(\theta_i)}
-%     {\exp(\theta_i)+\exp(\theta_j)}.
-% \end{equation}
+% % TODO: Explain what graph connectivity guarantees and what it does not
+% % guarantee about a finite unregularised MLE.
 
-% A common identification constraint is
+% \subsection{Directed Win Graph and Ford's Condition}
 
-% \begin{equation}
-%     \sum_{i=1}^{m}\theta_i=0.
-% \end{equation}
+% % TODO: State Ford's condition using directed winner-to-loser paths and
+% % distinguish it from ordinary undirected connectivity.
 
-% \TODO{Add the conditions involving the undirected comparison graph and
-% directed win graph for uniqueness and existence of a finite MLE. Include
-% only claims that have been verified mathematically or experimentally.}
+% \section{Chapter Summary}
+
+% % TODO: Summarise the model, likelihood, identification constraint, gradient,
+% % and the condition for a finite unique normalised MLE in about one paragraph.
 
 % % =========================================================
-% % CHAPTER 4
+% % CHAPTER 5: PARAMETER RECOVERY
 % % =========================================================
 
-% \chapter{Experimental Methodology}
+% \chapter{Parameter Recovery under Different Data and Graph Structures}
 
-% \section{Data Generation}
+% \section{Common Simulation and Estimation Framework}
 
-% \TODO{Describe how the true scores are generated or fixed, how pairs are
-% sampled, how the winner is generated from the Bradley--Terry probability,
-% and how the random-number generator and seed are used.}
+% \subsection{Simulation of Pairwise Comparisons}
 
-% \TODO{Record the number of items, comparison budgets, repeated runs, and
-% sampling schemes used in the final experiments.}
+% % TODO: Explain the true centred parameters, pair sampling, Bradley--Terry win
+% % probability, random-number draw, and storage as (winner, loser) observations.
 
-% \section{Recovery Error}
+% \subsection{Parameter Estimation}
 
-% \TODO{Define the ground-truth score vector, the estimated centred score
-% vector, and the exact recovery-error metric used in the notebook.}
+% % TODO: Describe zero initialisation, gradient descent, learning rate, maximum
+% % iterations, average NLL, and centring of the estimated parameters.
 
-% \section{Optimization Methods}
+% \subsection{Parameter-Recovery Metric}
 
-% \subsection{Handcrafted Gradient Descent}
+% % TODO: Insert the centred parameter-recovery RMSE used by both notebooks.
 
-% \TODO{Describe the initial scores, learning rate, maximum number of
-% iterations, stopping tolerance, centring constraint, and implementation
-% details.}
+% \subsection{Repeated Trials and Reproducibility}
 
-% \subsection{PyTorch Optimization}
+% % TODO: Record the base seed 20260831, the number of independent runs for each
+% % setting, and why mean and standard deviation are reported.
 
-% \TODO{Describe full-batch or mini-batch training, Adam settings,
-% initialisation, stopping rule, data type, and centring procedure.}
+% \section{Recovery as the Amount of Comparison Data Increases}
 
-% \section{Evaluation Criteria}
+% \subsection{Questions and Controlled Setup}
 
-% \begin{itemize}
-%     \item Recovery accuracy:
-%     \TODO{Insert the recovery-error metric.}
+% % TODO: State the two questions: how recovery changes with the number of
+% % comparisons, and how it changes jointly with items and comparisons.
 
-%     \item Convergence:
-%     \TODO{State whether convergence is measured by iterations, gradient
-%     norm, parameter change, objective change, or a combination.}
+% \subsection{Baseline Parameter Recovery}
 
-%     \item Runtime:
-%     \TODO{Describe the use of \texttt{perf\_counter}, repeated timings,
-%     warm-up runs if any, and the statistic reported.}
+% % TODO: Briefly record n=10, m=1000, the fixed centred parameter vector,
+% % initial/final NLL, and baseline recovery RMSE. Do not reproduce every table.
 
-%     \item Reproducibility:
-%     \TODO{List the random seeds and the number of repeated runs.}
-% \end{itemize}
+% \subsection{Effect of the Number of Comparisons}
 
-% \chapter{Results}
+% % TODO: Record m in {50,100,200,500,1000,2000,5000,10000,20000}, n=10,
+% % 20 independent runs, and the observed log--log slope of approximately -0.43.
 
-% \section{Scaling with the Number of Items}
+% % Recommended figure:
+% % Scaling of mean parameter-recovery RMSE against number of comparisons,
+% % including error bars, fitted slope, and the m^{-1/2} reference line.
+% %
+% % \begin{figure}[htbp]
+% %     \centering
+% %     \includegraphics[width=0.78\textwidth]
+% %     {results/figures/recovery_error_scaling.pdf}
+% %     \caption{Parameter-recovery error as the number of comparisons increases.}
+% %     \label{fig:recovery-error-scaling}
+% % \end{figure}
 
-% \TODO{Insert the corresponding figure or table and interpret the mean
-% recovery error and variability as the number of items changes.}
+% \section{Joint Scaling with Items and Comparisons}
 
-% \section{Scaling with the Number of Comparisons}
+% % TODO: Record n in {10,20,50,100,200}, m in
+% % {1000,5000,20000,100000}, and five independent runs per setting.
 
-% \TODO{Insert the corresponding figure or table. Explain why a single random
-% run may be irregular and why averages over repeated runs provide stronger
-% evidence.}
+% % Recommended figure:
+% % Use only one joint-scaling plot that clearly compares recovery across n and m.
 
-% \section{Effect of Sampling Scheme}
+% \subsection{Observed Trends and Limitations}
 
-% \TODO{Insert the comparison between the sampling schemes. Describe which
-% pairs are sampled more frequently and how this affects recovery.}
+% % TODO: Separate statistical recovery from optimizer convergence. Mention the
+% % finite number of runs and fixed hyperparameters before making conclusions.
 
-% \section{Comparison of Optimization Methods}
+% \section{Influence of the Comparison-Graph Structure}
 
-% \TODO{Report the final loss, recovery error, number of iterations, runtime,
-% and reproducibility for handcrafted gradient descent and the PyTorch
-% optimisers.}
+% \subsection{Compared Graph Topologies}
 
-% \section{Finite-Solution and Uniqueness Experiments}
+% % TODO: Define the complete, cycle, star, two-cluster-with-bridge, and connected
+% % Erdos--Renyi graphs. Record n=20 and the number/density of edges in each graph.
 
-% \TODO{Report experiments involving connected and disconnected comparison
-% graphs, strongly connected and non-strongly-connected win graphs, and the
-% behaviour of the estimated scores.}
+% % Recommended figure:
+% % Combine the five graph drawings into one multi-panel figure rather than
+% % inserting five full pages of separate graph plots.
+
+% \subsection{Controlled Comparison Budget}
+
+% % TODO: Record budgets {500,2000,10000,50000}, five independent runs, and explain
+% % that the same total budget implies different comparisons per allowed edge.
+
+% \subsection{Recovery Across Graph Structures}
+
+% % Recommended figure:
+% % Mean parameter-recovery RMSE against comparison budget for all five graphs.
+% %
+% % \begin{figure}[htbp]
+% %     \centering
+% %     \includegraphics[width=0.80\textwidth]
+% %     {results/figures/recovery_by_graph_structure.pdf}
+% %     \caption{Recovery error under different comparison-graph structures.}
+% %     \label{fig:recovery-by-graph}
+% % \end{figure}
+
+% \subsection{Interpretation and Limitations}
+
+% % TODO: Explain the observed differences without claiming that sparse connected
+% % graphs have a permanent error floor. The fixed 2000-iteration budget and graph
+% % conditioning may also influence the apparent plateau.
+
+% \section{Chapter Summary}
+
+% % TODO: Give one short paragraph connecting amount of data, number of items,
+% % allocation of comparisons, and comparison-graph structure.
 
 % % =========================================================
-% % CHAPTER 6
+% % CHAPTER 6: EXISTENCE AND NUMERICAL OPTIMIZATION
 % % =========================================================
 
-% \chapter{Discussion and Conclusion}
+% \chapter{Existence and Numerical Optimization of the Bradley--Terry MLE}
 
-% \section{Discussion}
+% \section{Additive Shift Invariance and Normalisation}
 
-% \TODO{Interpret the completed results without claiming more than the
-% experiments establish. Distinguish observations from mathematical
-% conclusions.}
+% % TODO: Describe the original and shifted five-item parameter vectors, show
+% % that probabilities remain equal, and show that centring recovers the same
+% % representative parameter vector.
+
+% \section{Graph Conditions for a Finite MLE}
+
+% \subsection{Strong Connectivity and Finite Estimates}
+
+% % TODO: Record the five-item directed win cycle, the 74 observations, strong
+% % connectivity, decreasing NLL, finite parameter trajectories, and zero-sum
+% % normalisation.
+
+% % Recommended figure:
+% % Use one figure showing either the finite parameter trajectories or NLL
+% % convergence, accompanied by the graph-diagnostic table.
+
+% \section{Failure of a Finite MLE under Perfect Separation}
+
+% % TODO: Explain the ordering A>B>C>D>E, connected undirected graph, failure of
+% % strong directed connectivity, NLL approaching zero, and growing parameter
+% % range. Distinguish an infimum from a finite minimiser.
+
+% % Recommended figure:
+% % Parameter range or trajectories demonstrating divergence under separation.
+
+% \section{Theoretical and Numerical Interpretation}
+
+% % TODO: State separately what Ford's condition proves and what the numerical
+% % plots merely illustrate for the constructed datasets.
+
+% \section{Optimization Framework}
+
+% \subsection{Common Dataset and Stopping Criterion}
+
+% % TODO: Record n=10, m=10000, seed 20260831, mini-batch size 128, zero
+% % initialisation, Ford-condition check, and the common full-data NLL target.
+
+% \section{Compared Optimization Methods}
+
+% \subsection{Handcrafted Implementations}
+
+% % TODO: Briefly describe full-batch GD, SGD, mini-batch GD, momentum, and Adam.
+% % Keep optimizer update derivations in an appendix if they exceed the page limit.
+
+% \subsection{PyTorch Implementations}
+
+% % TODO: Explain that the same optimizer families and dataset were implemented
+% % with PyTorch, using the same reporting quantities.
+
+% \section{Evaluation Protocol}
+
+% % TODO: Define final NLL, NLL target, recovery RMSE, epochs, parameter updates,
+% % and runtime. Record that learning rates differ and were selected separately.
+
+% \section{Accuracy, Parameter Updates, and Runtime}
+
+% % Recommended table:
+% % Include one combined handcrafted/PyTorch table with implementation, optimizer,
+% % final NLL, recovery RMSE, epochs, updates, runtime, and target reached.
+
+% % Recommended figure:
+% % Select parameter updates or runtime to the common target NLL. Do not insert
+% % every individual optimizer convergence plot into the main report.
+
+% \section{Scaling with Problem Size and Hardware}
+
+% % TODO: Record Adam, item counts {10,50,100}, 100000 comparisons, ten runs per
+% % setting, handcrafted CPU implementation, and PyTorch MPS implementation.
+
+% % Recommended figure:
+% % Mean runtime with variability against number of items for CPU and MPS.
+
+% \section{Computational Interpretation and Limitations}
+
+% % TODO: Report the observed results as specific to this implementation and
+% % hardware. Do not generalise that PyTorch or accelerators are always slower;
+% % overhead may dominate at the tested problem sizes.
+
+% \section{Chapter Summary}
+
+% % TODO: Connect the theoretical MLE conditions to the optimizer results and
+% % summarise the accuracy--updates--runtime trade-offs.
+
+% % =========================================================
+% % CHAPTER 7
+% % =========================================================
+
+% \chapter{Discussion and Next Steps}
+
+% \section{Work Completed So Far}
+
+% % TODO: Summarise the Bradley--Terry theory, four completed notebooks, and the
+% % study of Seshadri et al. through the low-rank CDM.
 
 % \section{Limitations}
 
-% \TODO{Discuss limitations related to simulated data, finite repeated runs,
-% parameter settings, sampling assumptions, model assumptions, and runtime
-% measurements.}
+% % TODO: Discuss simulated data, fixed seeds and hyperparameters, limited runs,
+% % graph choices, stopping rules, and hardware-specific runtime measurements.
 
-% \section{Conclusion}
+% \section{Next Step: Implementation of the CDM}
 
-% \TODO{Summarise the completed theoretical and experimental work in your
-% own words.}
+% % TODO: State that the next phase will translate the studied full-rank and
+% % low-rank CDM formulations into reusable code and controlled numerical studies.
 
-% \section{Future Work}
-
-% \TODO{List realistic extensions connected directly to the results, such as
-% larger experiments, alternative comparison-graph structures, real datasets,
-% context-dependent models, regularisation, or additional optimisers.}
-
-% =========================================================
-% APPENDICES
-% =========================================================
+% % =========================================================
+% % APPENDICES
+% % =========================================================
 
 \appendix
 
