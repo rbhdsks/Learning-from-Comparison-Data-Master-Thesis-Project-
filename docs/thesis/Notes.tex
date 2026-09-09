@@ -574,19 +574,181 @@ choice data which will make it computationally more heavy with the increase in t
 
 % TODO: Define the p-th order model by setting all terms of order greater
 % than p equal to zero.
+\subsection{The Model Classes $\mathcal{M}_p$}
+
+Let $\mathcal{M}_p$ denote the model obtained by retaining utility terms
+up to order $p$ and setting all higher-order terms equal to zero, producing the 
+nested hierarchy. Mathematically, 
+
+\begin{equation}
+    \mathcal{M}_1
+    \subseteq
+    \mathcal{M}_2
+    \subseteq
+    \cdots
+    \subseteq
+    \mathcal{M}_{n-1}.
+\end{equation}
+
+The first-order model retains only the individual utility term,
+
+\begin{equation}
+    u(x\mid C)=v(x).
+\end{equation}
+
+The second-order model additionally includes the effect of individual
+alternatives appearing alongside $x$:
+
+\begin{equation}
+    u(x\mid C)
+    =
+    v(x)
+    +
+    \sum_{y\in C\setminus\{x\}}
+    v(x\mid\{y\}).
+    \label{eq:second-order-utility}
+\end{equation}
+
+The third-order model additionally allows the joint presence of two
+other alternatives to contribute to the utility of $x$:
+
+\begin{equation}
+\begin{split}
+    u(x\mid C)
+    &=
+    v(x)
+    +
+    \sum_{y\in C\setminus\{x\}}
+    v(x\mid\{y\})
+    \\
+    &\quad+
+    \sum_{\{y,z\}\subseteq C\setminus\{x\}}
+    v(x\mid\{y,z\}).
+\end{split}
+\end{equation}
+
+Higher-order models continue in the same manner. Thus, moving upward in
+the hierarchy allows increasingly complicated interactions between an
+alternative and the composition of its choice set.
+
 
 \subsection{Number of Free Parameters}
+The increase in flexibility across the hierarchy comes with an increase
+in the number of parameters. The first-order model requires only
+item-level intrinsic utility parameters. The second-order model additionally
+contains pairwise contextual effects, while higher-order models contain
+parameters associated with increasingly larger subsets of alternatives.
 
-% TODO: Record and explain the parameter-count formula from the paper.
+This growth is important because the number of possible subsets
+increases rapidly with the size of the universal set. Therefore,
+although higher-order models can represent more complicated context
+effects, they also require substantially more data for reliable
+estimation.
+
+
+
+
 
 \subsection{MNL as the First-Order Model}
+The multinomial logit model introduced earlier appears naturally as the
+first-order member of this hierarchy. In $\mathcal{M}_1$, all contextual
+interaction terms are set to zero, leaving
 
+\begin{equation}
+    u(x\mid C)=v(x).
+\end{equation}
+
+Substituting this expression into the universal logit representation
+gives
+
+\begin{equation}
+    P(x\mid C)
+    =
+    \frac{\exp(v(x))}
+    {\displaystyle\sum_{y\in C}\exp(v(y))},
+\end{equation}
+
+which the multinomial logit model.
+
+Thus, in the first-order model, the utility associated with an
+alternative does not change with the composition of the choice set.
+This is the key restriction that is relaxed when moving to the
+second-order model and so on.
 % TODO: Show that retaining only first-order terms gives the multinomial
 % logit model.
 
 \section{Context-Dependent Random Utility Model}
+The first-order model does not allow the utility of an alternative to
+change when other alternatives are added to or removed from the choice
+set. To represent such context effects without retaining all possible
+higher-order interactions, we consider the second-order model
+$\mathcal{M}_2$.
+
+The second-order model retains intrinsic utility terms and pairwise
+contextual terms. It therefore provides a relatively simple way of
+allowing one alternative to affect the utility associated with another
+alternative.
 
 \subsection{Second-Order Truncation}
+Starting from the universal logits decomposition,
+
+\begin{equation}
+\begin{split}
+    u(x\mid C)
+    &=
+    v(x)
+    +
+    \sum_{z\in C\setminus\{x\}}
+    v(x\mid\{z\})
+    \\
+    &\quad+
+    \sum_{\{y,z\}\subseteq C\setminus\{x\}}
+    v(x\mid\{y,z\})
+    +\cdots,
+\end{split}
+\end{equation}
+
+the second-order model sets all terms involving two or more contextual
+alternatives equal to zero. Hence,
+
+\begin{equation}
+    u(x\mid C)
+    =
+    v(x)
+    +
+    \sum_{z\in C\setminus\{x\}}
+    v(x\mid\{z\}).
+    \label{eq:second-order-truncation}
+\end{equation}
+
+The corresponding choice probability is
+
+\begin{equation}
+    P(x\mid C)
+    =
+    \frac{
+        \exp\left(
+            v(x)
+            +
+            \displaystyle\sum_{z\in C\setminus\{x\}}
+            v(x\mid\{z\})
+        \right)
+    }{
+        \displaystyle\sum_{y\in C}
+        \exp\left(
+            v(y)
+            +
+            \displaystyle\sum_{z\in C\setminus\{y\}}
+            v(y\mid\{z\})
+        \right)
+    }.
+    \label{eq:second-order-choice-probability}
+\end{equation}
+
+Here, $v(x)$ represents the individual contribution associated with
+alternative $x$, while $v(x\mid\{z\})$ represents a pairwise contextual
+contribution associated with the presence of alternative $z$.
+
 
 % TODO: Obtain the CDM by retaining first-order and pairwise contextual
 % terms and setting higher-order terms equal to zero.
