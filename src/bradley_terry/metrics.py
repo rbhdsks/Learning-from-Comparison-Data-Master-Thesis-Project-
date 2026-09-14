@@ -4,7 +4,15 @@ import numpy as np
 
 from .model import center_parameters
 
+from collections.abc import Sequence
 
+import choix
+import numpy as np
+
+from .choix_estimation import (
+    ChoiceObservation,
+    convert_choice_observations_to_choix_top1,
+)
 def parameter_recovery_error(
     true_parameters,
     estimated_parameters
@@ -62,4 +70,34 @@ def parameter_recovery_error(
         np.sqrt(
             np.mean(parameter_differences**2)
         )
+    )
+def average_top1_negative_log_likelihood(
+    observations: Sequence[ChoiceObservation],
+    parameters: np.ndarray,
+) -> float:
+    """Compute the average NLL of an MNL/Luce model on top-1 observations."""
+
+    top1_observations = (
+        convert_choice_observations_to_choix_top1(
+            observations
+        )
+    )
+
+    parameters = np.asarray(
+        parameters,
+        dtype=float,
+    )
+
+    if parameters.ndim != 1:
+        raise ValueError(
+            "parameters must be a one-dimensional array"
+        )
+
+    total_log_likelihood = choix.log_likelihood_top1(
+        data=top1_observations,
+        params=parameters,
+    )
+
+    return -float(total_log_likelihood) / len(
+        top1_observations
     )
