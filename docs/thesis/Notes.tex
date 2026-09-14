@@ -1073,9 +1073,251 @@ Thus, in this experimental setting, increasing the amount of observed
 comparison data improves both the average recovery accuracy and the
 consistency of the estimates across independent datasets.
 
-\section{MLE Existence, Uniqueness and Optimization}
+\section{Existence and Uniqueness of the MLE}
 
+\subsection{Ford's Condition}
 
+For the Bradley--Terry model, the existence of a finite maximum
+likelihood estimate depends on the observed comparison outcomes.
+These outcomes can be represented using a directed win graph, in which
+each vertex represents an item and an edge \(i\to j\) indicates that
+item \(i\) has defeated item \(j\).
+
+Ford's condition holds when this directed win graph is strongly
+connected. Equivalently, for every nonempty proper subset of items,
+there must be at least one observed win from an item inside the subset
+against an item outside it, and vice versa.
+
+When Ford's condition holds, the Bradley--Terry maximum likelihood
+estimate is finite. After imposing the centring constraint
+\[
+    \sum_{i=1}^{n}\theta_i=0,
+\]
+the estimate is unique.
+
+\subsection{Case Where a Finite MLE Exists}
+
+In the first experiment, the comparison outcomes are constructed so
+that the directed win graph is strongly connected. Consequently,
+Ford's condition holds.
+
+Figure~\ref{fig:finite-mle-diagnostics} shows the optimization
+behaviour. The negative log-likelihood converges to a finite value,
+while the centred parameter estimates stabilize. This behaviour is
+consistent with the existence of a finite Bradley--Terry MLE.
+
+\begin{figure}[H]
+    \centering
+
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[
+            width=\textwidth
+        ]{images/experiments/bradley_terry/mle_existence/finite_mle_nll.pdf}
+        \caption{Negative log-likelihood during optimization.}
+        \label{fig:finite-mle-nll}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[
+            width=\textwidth
+        ]{images/experiments/bradley_terry/mle_existence/finite_mle_parameter_trajectories.pdf}
+        \caption{Trajectories of the centred parameters.}
+        \label{fig:finite-mle-parameters}
+    \end{subfigure}
+
+    \caption{Optimization behaviour when Ford's condition holds.}
+    \label{fig:finite-mle-diagnostics}
+\end{figure}
+
+\subsection{Perfect Separation and Nonexistence of a Finite MLE}
+
+In the second experiment, the observed outcomes follow a perfectly
+separated ordering. Although the corresponding undirected comparison
+graph is connected, the directed win graph is not strongly connected.
+Therefore, Ford's condition fails.
+
+As shown in Figure~\ref{fig:nonfinite-mle-diagnostics}, the negative
+log-likelihood continues to decrease, while the range of the estimated
+parameters continues to increase. Thus, the likelihood can be improved
+by increasing the parameter differences, but no finite parameter
+vector attains the maximum likelihood value.
+
+\begin{figure}[H]
+    \centering
+
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[
+            width=\textwidth
+        ]{images/experiments/bradley_terry/mle_existence/nonfinite_mle_nll.pdf}
+        \caption{Negative log-likelihood under perfect separation.}
+        \label{fig:nonfinite-mle-nll}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[
+            width=\textwidth
+        ]{images/experiments/bradley_terry/mle_existence/nonfinite_mle_parameter_growth.pdf}
+        \caption{Growth of the parameter range.}
+        \label{fig:nonfinite-mle-parameters}
+    \end{subfigure}
+
+    \caption{Optimization behaviour when Ford's condition fails.}
+    \label{fig:nonfinite-mle-diagnostics}
+\end{figure}
+
+These experiments illustrate that ordinary connectivity of the
+comparison graph is not sufficient for the existence of a finite MLE.
+The direction of the observed wins, and hence strong connectivity of
+the directed win graph, is essential.
+\section{Comparison of Optimization Methods}
+
+\subsection{Experimental Setup}
+
+The Bradley--Terry negative log-likelihood was minimized using five
+optimization methods: full-batch gradient descent, stochastic gradient
+descent (SGD), mini-batch gradient descent, gradient descent with
+momentum, and Adam.
+
+Each method was implemented in two ways: a handcrafted implementation
+and an implementation using PyTorch. The same simulated comparison
+dataset and initial parameter vector were used for all methods.
+
+A maximum budget of \(10{,}000\) epochs was used. Convergence was
+measured using the norm of the gradient evaluated on the complete
+dataset. The convergence tolerance was set to
+
+\begin{equation}
+    \left\lVert \nabla \mathcal{L}(\boldsymbol{\theta}) \right\rVert_2
+    \leq 10^{-4}.
+\end{equation}
+
+For easier comparison, define the convergence ratio
+
+\begin{equation}
+    r
+    =
+    \frac{
+        \left\lVert
+        \nabla \mathcal{L}(\boldsymbol{\theta})
+        \right\rVert_2
+    }{
+        10^{-4}
+    }.
+\end{equation}
+
+Thus, a run satisfies the convergence criterion when \(r\leq 1\).
+
+\subsection{Final Solution Quality}
+
+Table~\ref{tab:optimizer-comparison} summarizes the parameter-recovery
+error, convergence ratio, and relative runtime. Here, H and P denote
+the handcrafted and PyTorch implementations, respectively.
+
+\begin{table}[H]
+    \centering
+    \caption{Comparison of the optimization methods. The runtime ratio
+    is PyTorch runtime divided by handcrafted runtime.}
+    \label{tab:optimizer-comparison}
+    \small
+    \begin{tabular}{lccc}
+        \toprule
+        Optimizer
+        & RMSE (H/P)
+        & \(r\) (H/P)
+        & Runtime ratio (P/H) \\
+        \midrule
+        Full-batch GD
+        & \(0.0381/0.0381\)
+        & \(1.00/1.00\)
+        & \(1.34\) \\
+
+        SGD
+        & \(0.0393/0.0395\)
+        & \(4.80/4.54\)
+        & \(2.59\) \\
+
+        Mini-batch GD
+        & \(0.0384/0.0387\)
+        & \(0.90/6.31\)
+        & \(27.82\) \\
+
+        Momentum GD
+        & \(0.0404/0.0360\)
+        & \(7.92/9.82\)
+        & \(2.15\) \\
+
+        Adam
+        & \(0.0408/0.0438\)
+        & \(24.94/29.12\)
+        & \(2.31\) \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The recovery RMSE values are similar across the different methods,
+lying between \(0.0360\) and \(0.0438\). Therefore, all methods produced
+parameter estimates close to the true parameters in this experiment.
+However, similar recovery errors do not imply that every method
+satisfied the numerical convergence criterion.
+
+\subsection{Convergence Criterion}
+
+Figure~\ref{fig:optimizer-convergence-distance} shows the final
+gradient norm relative to the selected tolerance.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[
+        width=0.88\textwidth
+    ]{images/experiments/bradley_terry/optimization/fixed_budget/06_distance_from_convergence.pdf}
+
+    \caption{Final gradient norm relative to the convergence tolerance.
+    Values at or below one satisfy the convergence criterion.}
+    \label{fig:optimizer-convergence-distance}
+\end{figure}
+
+Both implementations of full-batch gradient descent satisfied the
+convergence criterion. The handcrafted mini-batch implementation also
+satisfied the criterion. The remaining methods did not reach the
+specified tolerance within the fixed epoch budget.
+
+In particular, stochastic methods continue to fluctuate near a
+solution because their updates are computed using individual
+observations or mini-batches. Consequently, a small recovery error may
+still be obtained even when the full-gradient norm remains above the
+strict convergence tolerance.
+
+\subsection{Handcrafted and PyTorch Runtime}
+
+Figure~\ref{fig:pytorch-runtime-overhead} compares the runtime of the
+PyTorch implementation with its corresponding handcrafted
+implementation.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[
+        width=0.82\textwidth
+    ]{images/experiments/bradley_terry/optimization/fixed_budget/07_pytorch_to_handcrafted_runtime_ratio.pdf}
+
+    \caption{Ratio of PyTorch runtime to handcrafted runtime for each
+    optimization method. A value greater than one indicates that the
+    PyTorch implementation required more time.}
+    \label{fig:pytorch-runtime-overhead}
+\end{figure}
+
+For this small Bradley--Terry problem, the handcrafted implementations
+were faster than their PyTorch counterparts. The additional runtime
+is consistent with the overhead introduced by tensor operations and
+automatic differentiation on a small CPU-based problem.
+
+This observation is specific to the present implementation and problem
+size. It should not be interpreted as a general comparison of PyTorch
+and handcrafted optimization, since PyTorch may become advantageous
+for larger models, larger datasets, or GPU-based computation.
 \appendix
 \chapter{Additional Derivations}
 \chapter{Reproducibility Details}
