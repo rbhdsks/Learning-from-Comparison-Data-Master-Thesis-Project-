@@ -11,9 +11,13 @@ name="learning-from-comparison-data-mtp"
 version="0.1.0"
 description="Modular implementations and experiments for learning preference models from comparison and choice data."
 requires-python=">=3.10"
-dependencies=[
+dependencies = [
     "numpy",
-    "scipy"
+    "pandas",
+    "matplotlib",
+    "jupyter",
+    "choix",
+    "torch",
 ]
 
 [project.optional-dependencies]
