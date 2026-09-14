@@ -343,28 +343,176 @@ test winners, test, losers....
 \end{weeklybox}
 
 % =========================================================
-% BLANK PAGE FOR THE NEXT WEEK
-% Duplicate this page and replace the dashes each week.
+% WEEK 11
 % =========================================================
 
 \newpage
-\weekheading{11}{7--13 September 2026}{Main focus: \textemdash}
+
+\weekheading{11}{7--13 September 2026}
+{Understanding the full CDM and its reparameterization}
 
 \begin{weeklybox}{What I did this week}
-  \blankentry
+
+  \small
+
+  \begin{itemize}
+
+    \item Studied the initial sections of Seshadri et al.,
+    \emph{Discovering Context Effects from Raw Choice Data},
+    with particular focus on the full Context-Dependent Model.
+
+    \item Studied the reparameterization of the full CDM and understood it. 
+    
+    \item Prepared handwritten notes covering the reparameterization
+    part of the paper, later wrote in overleaf.
+
+    \item Continued reorganising the Bradley--Terry notebooks and
+    reusable source functions according to the earlier feedback.
+
+  \end{itemize}
+
 \end{weeklybox}
 
 \begin{weeklybox}{Suggestions and feedback required}
-  \blankentry
+
+  \small
+
+  \begin{itemize}
+
+    \item Is my current understanding of the full CDM
+    reparameterization sufficient before proceeding to its
+    low-rank formulation and coding?
+
+
+  \end{itemize}
+
 \end{weeklybox}
 
-\begin{weeklybox}{During the meeting: points and decisions}
-  \blankentry
+\begin{weeklybox}{Feedback received and points decided}
+
+  \small
+
+  \begin{itemize}
+
+    \item Begin with a small experiment involving \(5\)--\(10\) items
+    and approximately \(1{,}000\) choice observations.
+
+    \item Quickly increase the number of items and observations to
+    examine when estimation of the full CDM becomes computationally
+    expensive.
+
+    \item Systematically generate data from the CDM and fit a BTL
+    model, and also generate BTL data and fit a CDM.
+
+    \item Incorporate the completed experiments and their results into
+    the Overleaf thesis document.
+
+  \end{itemize}
+
 \end{weeklybox}
 
 \begin{weeklybox}{What I intend to do next week}
-  \blankentry
+
+  \small
+
+  \begin{itemize}
+
+    \item Implement the full CDM using PyTorch.
+
+    \item Generate synthetic CDM choice observations and test whether
+    the true interaction parameters can be recovered.
+
+    \item Study recovery as the number of observations and the number
+    of items increase.
+
+    \item Examine the computational scaling of the full CDM.
+
+    \item Add the completed experiments and figures to Overleaf.
+
+  \end{itemize}
+
 \end{weeklybox}
+
+
+
+\newpage
+
+\weekheading{12}{14--20 September 2026}
+{Full CDM recovery and scaling experiments}
+
+\begin{weeklybox}{What I did this week}
+
+  \small
+
+  \begin{itemize}
+
+    \item Implemented the full CDM-CDM entirely using
+    PyTorch.
+
+    \item Observed that parameter recovery deteriorated as the number
+    of items increased because the number of full-CDM parameters grows
+    approximately quadratically while the amount of data remained fixed.
+
+    \item Saved the parameter-recovery, observation-scaling, and
+    item-scaling figures as PDF files for use in Overleaf.
+
+    \item Added a preliminary Overleaf chapter structure containing
+    the CDM-to-CDM experiment sections, tables, figures, and labels.
+
+  \end{itemize}
+
+\end{weeklybox}
+
+\begin{weeklybox}{Suggestions and feedback required}
+
+  \small
+
+  \begin{itemize}
+
+
+    \item For the cross-model experiments, should the comparison focus
+    mainly on test NLL, or should additional predictive metrics also
+    be included?
+
+  \end{itemize}
+
+\end{weeklybox}
+
+\begin{weeklybox}{During the meeting: points and decisions}
+
+  \small
+
+  \begin{itemize}
+
+    \item No meeting has been held so far this week, to ask sir to fix one.
+
+  \end{itemize}
+
+\end{weeklybox}
+
+\begin{weeklybox}{What I intend to do next week}
+
+  \small
+
+  \begin{itemize}
+
+    \item Generate choice data from the CDM and estimate it using the
+    BTL model.
+
+    \item Generate choice data from the BTL model and estimate it using
+    the full CDM.
+
+    \item Continue studying the mathematical formulation and parameter
+    count of the low-rank CDM.
+
+    \item Write the interpretation and conclusions of the completed
+    CDM-to-CDM experiments in Overleaf.
+
+  \end{itemize}
+
+\end{weeklybox}
+
+\vfill
 
 \vfill
 

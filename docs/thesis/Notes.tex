@@ -7,6 +7,7 @@
 \usepackage{enumitem}
 \usepackage{xcolor}
 \usepackage{microtype}
+\usepackage{booktabs}
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{algorithm}
@@ -1318,6 +1319,134 @@ This observation is specific to the present implementation and problem
 size. It should not be interpreted as a general comparison of PyTorch
 and handcrafted optimization, since PyTorch may become advantageous
 for larger models, larger datasets, or GPU-based computation.
+
+\chapter{Experimental Study of the Full Context-Dependent Model}
+\label{chap:full-cdm-experiments}
+
+\section{Experimental Setup}
+\label{sec:cdm-experimental-setup}
+
+% Experimental setup and implementation details will be added later.
+
+
+\section{CDM-to-CDM Parameter Recovery}
+\label{sec:cdm-parameter-recovery}
+
+\subsection{Baseline Recovery Experiment}
+\label{subsec:cdm-baseline-recovery}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Average negative log-likelihood in the baseline CDM-to-CDM recovery experiment.}
+    \label{tab:cdm-baseline-nll}
+    \begin{tabular}{lc}
+        \toprule
+        Evaluation & Average NLL \\
+        \midrule
+        Uniform baseline---training       & 0.9015 \\
+        True parameters---training        & 0.8275 \\
+        Estimated parameters---training   & 0.8169 \\
+        True parameters---test            & 0.8020 \\
+        Estimated parameters---test       & 0.8190 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[
+        width=\textwidth
+    ]{images/experiments/context_dependent_model/cdm_cdm/01_full_cdm_parameter_recovery.pdf}
+    \caption{Recovery of the full CDM interaction matrix.}
+    \label{fig:full-cdm-parameter-recovery}
+\end{figure}
+
+
+\section{Recovery as the Number of Observations Increases}
+\label{sec:cdm-observation-scaling}
+
+\subsection{Observation-Scaling Results}
+\label{subsec:cdm-observation-scaling-results}
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \caption{Full CDM recovery as the number of observations increases.}
+    \label{tab:cdm-observation-scaling}
+    \resizebox{\textwidth}{!}{
+        \begin{tabular}{rrrrrr}
+            \toprule
+            Observations &
+            Runs &
+            Mean RMSE &
+            RMSE standard deviation &
+            Mean correlation &
+            Mean excess test NLL \\
+            \midrule
+            1,000  & 10 & 0.3243 & 0.0888 & 0.7519 & 0.0100 \\
+            5,000  & 10 & 0.1216 & 0.0321 & 0.9493 & 0.0023 \\
+            10,000 & 10 & 0.0984 & 0.0247 & 0.9673 & 0.0016 \\
+            50,000 & 10 & 0.0482 & 0.0115 & 0.9920 & 0.0003 \\
+            \bottomrule
+        \end{tabular}
+    }
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[
+        width=\textwidth
+    ]{images/experiments/context_dependent_model/cdm_cdm/02_recovery_vs_observations.pdf}
+    \caption{Full CDM recovery as the number of observations increases.}
+    \label{fig:cdm-recovery-vs-observations}
+\end{figure}
+
+
+\section{Scaling with the Number of Items}
+\label{sec:cdm-item-scaling}
+
+\subsection{Fixed-Observation Results}
+\label{subsec:cdm-fixed-observation-results}
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \caption{Full CDM recovery with 50,000 observations as the number of items increases.}
+    \label{tab:cdm-item-scaling}
+    \resizebox{\textwidth}{!}{
+        \begin{tabular}{rrrrrrr}
+            \toprule
+            Items &
+            Free parameters &
+            Runs &
+            Mean RMSE &
+            RMSE standard deviation &
+            Mean correlation &
+            Mean excess test NLL \\
+            \midrule
+            5  & 19    & 5 & 0.0520 & 0.0132 & 0.9843 & 0.0000 \\
+            10 & 89    & 5 & 0.0945 & 0.0114 & 0.9692 & 0.0009 \\
+            20 & 379   & 5 & 0.1683 & 0.0054 & 0.9192 & 0.0052 \\
+            40 & 1,559 & 5 & 0.3303 & 0.0118 & 0.7860 & 0.0190 \\
+            80 & 6,319 & 5 & 0.8017 & 0.0210 & 0.5099 & 0.1152 \\
+            \bottomrule
+        \end{tabular}
+    }
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[
+        width=\textwidth
+    ]{images/experiments/context_dependent_model/cdm_cdm/03_recovery_vs_items.pdf}
+    \caption{Full CDM recovery with a fixed number of observations as the number of items increases.}
+    \label{fig:cdm-recovery-vs-items}
+\end{figure}
+
+
+
+% Discussion, limitations, CDM-to-BTL experiments, and motivation
+% for the low-rank CDM will be added later.
 \appendix
 \chapter{Additional Derivations}
 \chapter{Reproducibility Details}
