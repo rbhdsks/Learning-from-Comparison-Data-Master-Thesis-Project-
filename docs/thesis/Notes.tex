@@ -14,6 +14,7 @@
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage[hidelinks]{hyperref}
 \usepackage{cleveref}
+\usepackage{float}
 \onehalfspacing
 \setcounter{secnumdepth}{3}
 \setcounter{tocdepth}{2}
@@ -653,6 +654,12 @@ This is consistent with the five free parameters obtained in
 \cref{eq:three-alternative-free-parameters}.
 % Stop here for the current update.
 % The relationship with MNL and the low-rank CDM will be added next.
+
+
+
+
+
+
 \chapter{Bradley--Terry Model and Maximum Likelihood}
 \section{Pairwise Comparison Setting}
 To understand the underlying mechanics of a model for choice data, we
@@ -660,7 +667,7 @@ consider observed pairwise comparisons and assume a probabilistic model.
 The Bradley--Terry model is used for this purpose.
 The goal is to estimate unknown parameters that provide a compressed
 representation of the observed comparison data.
-For items \(i\) and \(j\), with scores \(\theta_i\) and \(\theta_j\), the
+For items \(i\) and \(j\), with parameters \(\theta_i\) and \(\theta_j\), the
 Bradley--Terry model defines
 \begin{equation}
     P(i\succ j)
@@ -676,239 +683,399 @@ Dividing the numerator and denominator by \(\exp(\theta_i)\) gives
     \frac{1}
     {1+\exp\left(-(\theta_i-\theta_j)\right)}.
 \end{equation}
-Therefore, the probability depends only on the score difference
+Therefore, the probability depends only on the parameter difference
 \(\theta_i-\theta_j\).
-% \section{Parameter Identifiability and Centring}
-% % TODO: Explain additive shift invariance and why the implementation centres
-% % both the true and estimated parameter vectors to have zero mean.
-% \section{Likelihood and Log-Likelihood}
-% \subsection{Assumptions Used for Estimation}
-% The assumptions typically used when working with repeated Bernoulli
-% observations include independence and identical distribution.
-% \paragraph{Independence.}
-% For \(i\neq j\),
-% \begin{equation}
-%     P(X_i=x_i,X_j=x_j)
-%     =
-%     P(X_i=x_i)P(X_j=x_j).
-% \end{equation}
-% Equivalently, when the required conditional probabilities are defined,
-% \begin{equation}
-%     P(X_i=x_i\mid X_j=x_j)
-%     =
-%     P(X_i=x_i).
-% \end{equation}
-% \paragraph{Identically distributed.}
-% For all \(i\) and \(j\),
-% \begin{equation}
-%     P(X_i=1)
-%     =
-%     P(X_j=1)
-%     =
-%     p.
-% \end{equation}
-% \subsection{Likelihood Function}
-% To obtain a principled estimate from observed data, we use a likelihood
-% function. The likelihood indicates which value of the unknown parameter
-% makes the observed data most probable.
-% Following Fisher's principle of maximum likelihood
-% \citep{fisher1922}, suppose that
-% \begin{equation}
-%     x_1,x_2,\ldots,x_n
-% \end{equation}
-% are observations drawn from a distribution parameterised by \(p\).
-% The likelihood is the joint probability of the observed data, viewed as
-% a function of \(p\):
-% \begin{align}
-%     L(p;\{x_1,x_2,\ldots,x_n\})
-%     &=
-%     P(x_1,x_2,\ldots,x_n;p)
-%     \\
-%     &=
-%     P(x_1;p)P(x_2;p)\cdots P(x_n;p)
-%     \qquad\text{(by independence)}
-%     \\
-%     &=
-%     \prod_{i=1}^{n}
-%     p^{x_i}(1-p)^{1-x_i}.
-%     \label{eq:bernoulli-likelihood}
-% \end{align}
-% The last line follows by treating each \(x_i\) as a Bernoulli observation
-% with success probability \(p\), so that
-% \begin{equation}
-%     P(x_i;p)
-%     =
-%     p^{x_i}(1-p)^{1-x_i}.
-% \end{equation}
-% The maximum likelihood estimate \(\widehat{p}\) is the value of \(p\)
-% that maximises the likelihood in \cref{eq:bernoulli-likelihood}.
-% \subsection{Log-Likelihood}
-% % TODO: Derive the Bradley--Terry log-likelihood directly for the observed
-% % winner--loser pairs (w_t,l_t), rather than assuming that comparisons of
-% % different pairs share one common Bernoulli probability.
-% \section{Negative Log-Likelihood}
-% % TODO: Explain why maximising the log-likelihood is equivalent to minimising
-% % the negative log-likelihood, and record the average NLL used in the code.
-% \section{Gradient and Gradient Descent}
-% % TODO: Derive the gradient contribution from one observed winner--loser pair,
-% % give the full-batch update, and explain the centring step after an update.
-% \section{Existence and Uniqueness of the MLE}
-% \subsection{Undirected Comparison Graph}
-% % TODO: Explain what graph connectivity guarantees and what it does not
-% % guarantee about a finite unregularised MLE.
-% \subsection{Directed Win Graph and Ford's Condition}
-% % TODO: State Ford's condition using directed winner-to-loser paths and
-% % distinguish it from ordinary undirected connectivity.
-% \section{Chapter Summary}
-% % TODO: Summarise the model, likelihood, identification constraint, gradient,
-% % and the condition for a finite unique normalised MLE in about one paragraph.
-% % =========================================================
-% % CHAPTER 5: PARAMETER RECOVERY
-% % =========================================================
-% \chapter{Parameter Recovery under Different Data and Graph Structures}
-% \section{Common Simulation and Estimation Framework}
-% \subsection{Simulation of Pairwise Comparisons}
-% % TODO: Explain the true centred parameters, pair sampling, Bradley--Terry win
-% % probability, random-number draw, and storage as (winner, loser) observations.
-% \subsection{Parameter Estimation}
-% % TODO: Describe zero initialisation, gradient descent, learning rate, maximum
-% % iterations, average NLL, and centring of the estimated parameters.
-% \subsection{Parameter-Recovery Metric}
-% % TODO: Insert the centred parameter-recovery RMSE used by both notebooks.
-% \subsection{Repeated Trials and Reproducibility}
-% % TODO: Record the base seed 20260831, the number of independent runs for each
-% % setting, and why mean and standard deviation are reported.
-% \section{Recovery as the Amount of Comparison Data Increases}
-% \subsection{Questions and Controlled Setup}
-% % TODO: State the two questions: how recovery changes with the number of
-% % comparisons, and how it changes jointly with items and comparisons.
-% \subsection{Baseline Parameter Recovery}
-% % TODO: Briefly record n=10, m=1000, the fixed centred parameter vector,
-% % initial/final NLL, and baseline recovery RMSE. Do not reproduce every table.
-% \subsection{Effect of the Number of Comparisons}
-% % TODO: Record m in {50,100,200,500,1000,2000,5000,10000,20000}, n=10,
-% % 20 independent runs, and the observed log--log slope of approximately -0.43.
-% % Recommended figure:
-% % Scaling of mean parameter-recovery RMSE against number of comparisons,
-% % including error bars, fitted slope, and the m^{-1/2} reference line.
-% %
-% % \begin{figure}[htbp]
-% %     \centering
-% %     \includegraphics[width=0.78\textwidth]
-% %     {results/figures/recovery_error_scaling.pdf}
-% %     \caption{Parameter-recovery error as the number of comparisons increases.}
-% %     \label{fig\:recovery-error-scaling}
-% % \end{figure}
-% \section{Joint Scaling with Items and Comparisons}
-% % TODO: Record n in {10,20,50,100,200}, m in
-% % {1000,5000,20000,100000}, and five independent runs per setting.
-% % Recommended figure:
-% % Use only one joint-scaling plot that clearly compares recovery across n and m.
-% \subsection{Observed Trends and Limitations}
-% % TODO: Separate statistical recovery from optimizer convergence. Mention the
-% % finite number of runs and fixed hyperparameters before making conclusions.
-% \section{Influence of the Comparison-Graph Structure}
-% \subsection{Compared Graph Topologies}
-% % TODO: Define the complete, cycle, star, two-cluster-with-bridge, and connected
-% % Erdos--Renyi graphs. Record n=20 and the number/density of edges in each graph.
-% % Recommended figure:
-% % Combine the five graph drawings into one multi-panel figure rather than
-% % inserting five full pages of separate graph plots.
-% \subsection{Controlled Comparison Budget}
-% % TODO: Record budgets {500,2000,10000,50000}, five independent runs, and explain
-% % that the same total budget implies different comparisons per allowed edge.
-% \subsection{Recovery Across Graph Structures}
-% % Recommended figure:
-% % Mean parameter-recovery RMSE against comparison budget for all five graphs.
-% %
-% % \begin{figure}[htbp]
-% %     \centering
-% %     \includegraphics[width=0.80\textwidth]
-% %     {results/figures/recovery_by_graph_structure.pdf}
-% %     \caption{Recovery error under different comparison-graph structures.}
-% %     \label{fig\:recovery-by-graph}
-% % \end{figure}
-% \subsection{Interpretation and Limitations}
-% % TODO: Explain the observed differences without claiming that sparse connected
-% % graphs have a permanent error floor. The fixed 2000-iteration budget and graph
-% % conditioning may also influence the apparent plateau.
-% \section{Chapter Summary}
-% % TODO: Give one short paragraph connecting amount of data, number of items,
-% % allocation of comparisons, and comparison-graph structure.
-% % =========================================================
-% % CHAPTER 6: EXISTENCE AND NUMERICAL OPTIMIZATION
-% % =========================================================
-% \chapter{Existence and Numerical Optimization of the Bradley--Terry MLE}
-% \section{Additive Shift Invariance and Normalisation}
-% % TODO: Describe the original and shifted five-item parameter vectors, show
-% % that probabilities remain equal, and show that centring recovers the same
-% % representative parameter vector.
-% \section{Graph Conditions for a Finite MLE}
-% \subsection{Strong Connectivity and Finite Estimates}
-% % TODO: Record the five-item directed win cycle, the 74 observations, strong
-% % connectivity, decreasing NLL, finite parameter trajectories, and zero-sum
-% % normalisation.
-% % Recommended figure:
-% % Use one figure showing either the finite parameter trajectories or NLL
-% % convergence, accompanied by the graph-diagnostic table.
-% \section{Failure of a Finite MLE under Perfect Separation}
-% % TODO: Explain the ordering A>B>C>D>E, connected undirected graph, failure of
-% % strong directed connectivity, NLL approaching zero, and growing parameter
-% % range. Distinguish an infimum from a finite minimiser.
-% % Recommended figure:
-% % Parameter range or trajectories demonstrating divergence under separation.
-% \section{Theoretical and Numerical Interpretation}
-% % TODO: State separately what Ford's condition proves and what the numerical
-% % plots merely illustrate for the constructed datasets.
-% \section{Optimization Framework}
-% \subsection{Common Dataset and Stopping Criterion}
-% % TODO: Record n=10, m=10000, seed 20260831, mini-batch size 128, zero
-% % initialisation, Ford-condition check, and the common full-data NLL target.
-% \section{Compared Optimization Methods}
-% \subsection{Handcrafted Implementations}
-% % TODO: Briefly describe full-batch GD, SGD, mini-batch GD, momentum, and Adam.
-% % Keep optimizer update derivations in an appendix if they exceed the page limit.
-% \subsection{PyTorch Implementations}
-% % TODO: Explain that the same optimizer families and dataset were implemented
-% % with PyTorch, using the same reporting quantities.
-% \section{Evaluation Protocol}
-% % TODO: Define final NLL, NLL target, recovery RMSE, epochs, parameter updates,
-% % and runtime. Record that learning rates differ and were selected separately.
-% \section{Accuracy, Parameter Updates, and Runtime}
-% % Recommended table:
-% % Include one combined handcrafted/PyTorch table with implementation, optimizer,
-% % final NLL, recovery RMSE, epochs, updates, runtime, and target reached.
-% % Recommended figure:
-% % Select parameter updates or runtime to the common target NLL. Do not insert
-% % every individual optimizer convergence plot into the main report.
-% \section{Scaling with Problem Size and Hardware}
-% % TODO: Record Adam, item counts {10,50,100}, 100000 comparisons, ten runs per
-% % setting, handcrafted CPU implementation, and PyTorch MPS implementation.
-% % Recommended figure:
-% % Mean runtime with variability against number of items for CPU and MPS.
-% \section{Computational Interpretation and Limitations}
-% % TODO: Report the observed results as specific to this implementation and
-% % hardware. Do not generalise that PyTorch or accelerators are always slower;
-% % overhead may dominate at the tested problem sizes.
-% \section{Chapter Summary}
-% % TODO: Connect the theoretical MLE conditions to the optimizer results and
-% % summarise the accuracy--updates--runtime trade-offs.
-% % =========================================================
-% % CHAPTER 7
-% % =========================================================
-% \chapter{Discussion and Next Steps}
-% \section{Work Completed So Far}
-% % TODO: Summarise the Bradley--Terry theory, four completed notebooks, and the
-% % study of Seshadri et al. through the low-rank CDM.
-% \section{Limitations}
-% % TODO: Discuss simulated data, fixed seeds and hyperparameters, limited runs,
-% % graph choices, stopping rules, and hardware-specific runtime measurements.
-% \section{Next Step: Implementation of the CDM}
-% % TODO: State that the next phase will translate the studied full-rank and
-% % low-rank CDM formulations into reusable code and controlled numerical studies.
-% % =========================================================
-% % APPENDICES
-% % =========================================================
+
+\section{Parameter Identifiability and Centring}
+
+The Bradley--Terry probability depends only on the difference between
+two parameters. Consequently, adding the same constant \(c\) to every
+parameter does not change any pairwise comparison probability:
+\begin{align}
+    P(i\succ j)
+    &=
+    \frac{\exp(\theta_i+c)}
+    {\exp(\theta_i+c)+\exp(\theta_j+c)}
+    \\
+    &=
+    \frac{\exp(\theta_i)}
+    {\exp(\theta_i)+\exp(\theta_j)}.
+\end{align}
+
+Therefore, the parameter vectors
+\[
+(\theta_1,\ldots,\theta_n)
+\qquad\text{and}\qquad
+(\theta_1+c,\ldots,\theta_n+c)
+\]
+represent the same Bradley--Terry model. The individual parameter
+values are consequently not identifiable without an additional
+constraint.
+
+We remove this additive ambiguity using the zero-sum constraint
+\begin{equation}
+    \sum_{i=1}^{n}\theta_i=0.
+    \label{eq:btl-zero-sum}
+\end{equation}
+
+For any parameter vector \(\boldsymbol{\theta}\), a centred version can
+be obtained by subtracting its mean:
+\begin{equation}
+    \theta_i^{\mathrm{centred}}
+    =
+    \theta_i
+    -
+    \frac{1}{n}
+    \sum_{j=1}^{n}\theta_j.
+    \label{eq:btl-centring}
+\end{equation}
+
+This transformation preserves every parameter difference and therefore
+does not change the pairwise comparison probabilities. In the numerical
+experiments, both the true and estimated parameter vectors are centred
+before their recovery error is calculated.
+
+
+\section{Maximum Likelihood Estimation}
+
+Suppose that the observed dataset contains \(m\) pairwise comparisons:
+\begin{equation}
+    \mathcal{D}
+    =
+    \{(w_t,l_t)\}_{t=1}^{m},
+\end{equation}
+where \(w_t\) and \(l_t\) denote the winner and loser of comparison
+\(t\), respectively.
+
+Conditional on the compared pairs, the observed comparison outcomes are
+modelled as independent. The probability of the observed outcome in
+comparison \(t\) is
+\begin{equation}
+    p_t
+    =
+    P(w_t\succ l_t)
+    =
+    \frac{\exp(\theta_{w_t})}
+    {\exp(\theta_{w_t})+\exp(\theta_{l_t})}.
+    \label{eq:btl-observation-probability}
+\end{equation}
+
+The likelihood of the complete dataset is therefore
+\begin{equation}
+    L(\boldsymbol{\theta};\mathcal{D})
+    =
+    \prod_{t=1}^{m}
+    \frac{\exp(\theta_{w_t})}
+    {\exp(\theta_{w_t})+\exp(\theta_{l_t})}.
+    \label{eq:btl-likelihood}
+\end{equation}
+
+Taking the logarithm gives the log-likelihood
+\begin{align}
+    \ell(\boldsymbol{\theta};\mathcal{D})
+    &=
+    \sum_{t=1}^{m}
+    \log
+    \left(
+        \frac{\exp(\theta_{w_t})}
+        {\exp(\theta_{w_t})+\exp(\theta_{l_t})}
+    \right)
+    \\
+    &=
+    \sum_{t=1}^{m}
+    \left[
+        \theta_{w_t}
+        -
+        \log
+        \left(
+            \exp(\theta_{w_t})
+            +
+            \exp(\theta_{l_t})
+        \right)
+    \right].
+    \label{eq:btl-log-likelihood}
+\end{align}
+
+Maximizing the log-likelihood is equivalent to minimizing its negative.
+In the implementation, we use the average negative log-likelihood
+\begin{align}
+    \mathcal{L}(\boldsymbol{\theta})
+    &=
+    -\frac{1}{m}
+    \ell(\boldsymbol{\theta};\mathcal{D})
+    \\
+    &=
+    \frac{1}{m}
+    \sum_{t=1}^{m}
+    \log
+    \left(
+        1+
+        \exp(\theta_{l_t}-\theta_{w_t})
+    \right).
+    \label{eq:btl-average-nll}
+\end{align}
+
+Using the average rather than the total negative log-likelihood makes
+the reported loss values comparable across datasets containing
+different numbers of comparisons.
+
+The maximum likelihood estimate is written as
+\begin{equation}
+    \widehat{\boldsymbol{\theta}}
+    =
+    \arg\min_{\boldsymbol{\theta}}
+    \mathcal{L}(\boldsymbol{\theta}),
+    \qquad
+    \text{subject to}
+    \qquad
+    \sum_{i=1}^{n}\theta_i=0.
+    \label{eq:btl-mle}
+\end{equation}
+
+
+\section{Gradient-Based Estimation}
+
+The average negative log-likelihood in
+\cref{eq:btl-average-nll} is minimized using gradient descent. For one
+observed winner--loser pair \((w_t,l_t)\), the loss contribution is
+\begin{equation}
+    \mathcal{L}_t
+    =
+    \log
+    \left(
+        1+\exp(\theta_{l_t}-\theta_{w_t})
+    \right).
+\end{equation}
+
+Let
+\begin{equation}
+    p_t
+    =
+    P(w_t\succ l_t).
+\end{equation}
+
+The derivative of this loss with respect to the winner parameter is
+\begin{equation}
+    \frac{\partial\mathcal{L}_t}
+    {\partial\theta_{w_t}}
+    =
+    p_t-1,
+    \label{eq:btl-winner-gradient}
+\end{equation}
+while the derivative with respect to the loser parameter is
+\begin{equation}
+    \frac{\partial\mathcal{L}_t}
+    {\partial\theta_{l_t}}
+    =
+    1-p_t.
+    \label{eq:btl-loser-gradient}
+\end{equation}
+
+Therefore, when the observed winner is assigned a small winning
+probability, the magnitude of the update is larger. When the model
+already assigns the observed winner a probability close to one, the
+magnitude of the update is smaller.
+
+The gradient of the average negative log-likelihood with respect to an
+arbitrary parameter \(\theta_k\) is
+\begin{equation}
+    \frac{\partial\mathcal{L}}
+    {\partial\theta_k}
+    =
+    \frac{1}{m}
+    \sum_{t=1}^{m}
+    \left[
+        (p_t-1)\mathbb{I}\{k=w_t\}
+        +
+        (1-p_t)\mathbb{I}\{k=l_t\}
+    \right],
+    \label{eq:btl-full-gradient}
+\end{equation}
+where \(\mathbb{I}\{\cdot\}\) is the indicator function.
+
+At gradient-descent iteration \(s\), the complete parameter vector is
+updated according to
+\begin{equation}
+    \boldsymbol{\theta}^{(s+1)}
+    =
+    \boldsymbol{\theta}^{(s)}
+    -
+    \eta
+    \nabla
+    \mathcal{L}
+    \left(
+        \boldsymbol{\theta}^{(s)}
+    \right),
+    \label{eq:btl-gradient-descent-update}
+\end{equation}
+where \(\eta>0\) is the learning rate.
+
+After an update, the parameter vector is centred using
+\begin{equation}
+    \theta_i^{(s+1)}
+    \leftarrow
+    \theta_i^{(s+1)}
+    -
+    \frac{1}{n}
+    \sum_{j=1}^{n}
+    \theta_j^{(s+1)}.
+    \label{eq:btl-gradient-centring}
+\end{equation}
+
+This centring step enforces the zero-sum constraint while preserving all
+pairwise parameter differences. The numerical experiments use this
+gradient-based procedure to estimate the Bradley--Terry parameters from
+the simulated winner--loser observations.
+
+\section{Numerical Experiments}
+
+\subsection{Baseline Parameter Recovery}
+
+The first experiment checks whether the parameters used to generate
+simulated Bradley--Terry comparisons can be recovered from the observed
+data.
+
+We consider \(n=10\) items. The true parameter vector is constructed
+using equally spaced values between \(-1.5\) and \(1.5\). The vector is
+centred so that
+\begin{equation}
+    \sum_{i=1}^{n}\theta_i=0.
+\end{equation}
+
+A total of \(m=1000\) pairwise comparisons are generated. Each pair is
+sampled uniformly, and the winner is sampled according to the
+Bradley--Terry probability in \cref{eq:bradley-terry}. The random seed is
+fixed at \(20260831\) to make the experiment reproducible.
+
+The unknown parameters are estimated by minimizing the average negative
+log-likelihood using gradient descent. The learning rate is set to
+\(0.1\), and the optimizer is run for a maximum of \(1000\) iterations.
+
+The parameter-recovery error is measured using the root mean squared
+error
+\begin{equation}
+    \operatorname{RMSE}
+    =
+    \sqrt{
+        \frac{1}{n}
+        \sum_{i=1}^{n}
+        \left(
+            \widehat{\theta}_i-\theta_i
+        \right)^2
+    },
+    \label{eq:btl-recovery-rmse}
+\end{equation}
+where \(\theta_i\) is the true parameter and
+\(\widehat{\theta}_i\) is its estimate.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Configuration and result of the baseline
+    Bradley--Terry parameter-recovery experiment.}
+    \label{tab:btl-baseline-recovery}
+    \begin{tabular}{lc}
+        \toprule
+        Quantity & Value \\
+        \midrule
+        Number of items, \(n\) & \(10\) \\
+        Number of comparisons, \(m\) & \(1000\) \\
+        Random seed & \(20260831\) \\
+        Learning rate & \(0.1\) \\
+        Maximum iterations & \(1000\) \\
+        Parameter-recovery RMSE & \(0.1224\) \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[
+        width=0.90\textwidth
+    ]{images/experiments/bradley_terry/baseline_parameter_recovery.pdf}
+    \caption{Comparison of the true and estimated parameters for the
+    baseline Bradley--Terry experiment with \(10\) items and \(1000\)
+    pairwise comparisons.}
+    \label{fig:btl-baseline-recovery}
+\end{figure}
+
+As shown in \cref{fig:btl-baseline-recovery}, the estimated parameters
+follow the ordering and approximate magnitudes of the true parameters.
+The parameter-recovery RMSE for this simulated dataset is \(0.1224\).
+
+This result provides a baseline example of parameter recovery. Since it
+is obtained from a single simulated dataset, it does not describe the
+variation across independent datasets. Repeated experiments are used in
+the next subsection to study how the recovery error changes with the
+number of observed comparisons.
+
+\subsection{Effect of the Number of Comparisons}
+
+The second experiment studies how the number of observed pairwise
+comparisons affects parameter recovery. The number of items is fixed at
+\(n=10\), and the same centred true parameter vector used in the
+baseline experiment is retained.
+
+The number of comparisons is varied over
+\begin{equation}
+    m
+    \in
+    \{50,100,200,500,1000,2000,5000\}.
+\end{equation}
+
+For each value of \(m\), the experiment is repeated independently
+\(20\) times. A new comparison dataset is generated in every run, while
+the true parameters, pair-sampling method, learning rate, and maximum
+number of gradient-descent iterations are kept fixed. The mean
+parameter-recovery RMSE and its standard deviation are then computed
+over the \(20\) runs.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Parameter-recovery error for different numbers of
+    pairwise comparisons. Each result is computed over \(20\)
+    independent runs.}
+    \label{tab:btl-comparison-scaling}
+    \begin{tabular}{rcc}
+        \toprule
+        Number of comparisons
+        & Mean RMSE
+        & Standard deviation \\
+        \midrule
+        \(50\)   & \(0.7225\) & \(0.2172\) \\
+        \(100\)  & \(0.4600\) & \(0.1247\) \\
+        \(200\)  & \(0.3213\) & \(0.0819\) \\
+        \(500\)  & \(0.1786\) & \(0.0487\) \\
+        \(1000\) & \(0.1412\) & \(0.0388\) \\
+        \(2000\) & \(0.1095\) & \(0.0309\) \\
+        \(5000\) & \(0.0780\) & \(0.0203\) \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[
+        width=0.68\textwidth
+    ]{images/experiments/bradley_terry/recovery_error_vs_comparisons.pdf}
+    \caption{Mean Bradley--Terry parameter-recovery RMSE as the number
+    of comparisons increases. The error bars show one standard
+    deviation across \(20\) independent runs.}
+    \label{fig:btl-recovery-vs-comparisons}
+\end{figure}
+
+As shown in \cref{tab:btl-comparison-scaling,fig:btl-recovery-vs-comparisons},
+the mean parameter-recovery RMSE decreases as the number of observed
+comparisons increases. It decreases from \(0.7225\) with \(50\)
+comparisons to \(0.0780\) with \(5000\) comparisons.
+
+The standard deviation also decreases from \(0.2172\) to \(0.0203\).
+Thus, in this experimental setting, increasing the amount of observed
+comparison data improves both the average recovery accuracy and the
+consistency of the estimates across independent datasets.
+
+\section{MLE Existence, Uniqueness and Optimization}
+
+
 \appendix
 \chapter{Additional Derivations}
 \chapter{Reproducibility Details}
