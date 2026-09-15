@@ -1442,7 +1442,77 @@ for larger models, larger datasets, or GPU-based computation.
     \caption{Full CDM recovery with a fixed number of observations as the number of items increases.}
     \label{fig:cdm-recovery-vs-items}
 \end{figure}
+\section{Learning CDM-Generated Choices with a BTL/Luce Model}
+\label{sec:cdm-to-btl}
 
+\subsection{Objective}
+\label{subsec:cdm-to-btl-objective}
+
+% TODO: State the objective of fitting a context-independent
+% BTL/Luce model to data generated from a full CDM.
+
+
+\subsection{Experimental Setup}
+\label{subsec:cdm-to-btl-setup}
+
+% TODO: Describe the number of items, choice-set sizes,
+% train--test split, random seeds, and NLL evaluation.
+
+
+\subsection{Baseline CDM-to-BTL Comparison}
+\label{subsec:cdm-to-btl-baseline}
+
+% TODO: Describe the initial single-dataset comparison between
+% the uniform baseline, true CDM, and fitted BTL/Luce model.
+
+
+\subsection{Effect of the Number of Observations}
+\label{subsec:cdm-to-btl-observations}
+
+% TODO: Describe the observation counts and repeated trials.
+
+\input{tables/experiments/context_dependent_model/cdm_btl/01_observation_scaling_summary.tex}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/experiments/context_dependent_model/cdm_btl/02_misspecification_gap_vs_observations.pdf}
+    \caption{Predictive performance and test misspecification gap for BTL/Luce models fitted to CDM-generated choice data as the number of observations increases. Points represent means over ten independent runs, and error bars represent one standard deviation.}
+    \label{fig:cdm-btl-observation-scaling}
+\end{figure}
+
+
+\subsection{Effect of Context-Interaction Strength}
+\label{subsec:cdm-to-btl-context-strength}
+
+% TODO: Explain the interaction-scale multiplier and the
+% five-item and ten-item experimental settings.
+
+\input{tables/experiments/context_dependent_model/cdm_btl/02_context_strength_summary.tex}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/experiments/context_dependent_model/cdm_btl/03_context_strength_comparison.pdf}
+    \caption{Effect of CDM interaction strength on the predictive performance and test misspecification gap of the fitted BTL/Luce model. Points represent means over ten independent runs, and error bars represent one standard deviation.}
+    \label{fig:cdm-btl-context-strength}
+\end{figure}
+
+
+\subsection{Key Observations}
+\label{subsec:cdm-to-btl-observations-summary}
+
+\begin{itemize}
+    \item % TODO: BTL/Luce performance relative to the uniform baseline.
+    \item % TODO: Persistence of the gap with increasing observations.
+    \item % TODO: Effect of increasing context-interaction strength.
+    \item % TODO: Comparison between five and ten items.
+\end{itemize}
+
+
+\subsection{Summary}
+\label{subsec:cdm-to-btl-summary}
+
+% TODO: Summarise the evidence of BTL/Luce model
+% misspecification on CDM-generated choice data.
 
 
 % Discussion, limitations, CDM-to-BTL experiments, and motivation
