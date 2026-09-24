@@ -197,3 +197,16 @@ def generate_uniform_comparison_data(
         number_of_comparisons=number_of_comparisons,
         rng=rng,
     )
+def generate_top1_choice_data_on_sets(true_parameters, choice_sets, rng):
+    """Sample one BTL winner from each supplied choice set."""
+    parameters = np.asarray(true_parameters, dtype=float)
+    observations = []
+
+    for choice_set in choice_sets:
+        items = tuple(int(item) for item in choice_set)
+        utilities = parameters[list(items)]
+        weights = np.exp(utilities - utilities.max())
+        winner = int(rng.choice(items, p=weights / weights.sum()))
+        observations.append((winner, items))
+
+    return observations

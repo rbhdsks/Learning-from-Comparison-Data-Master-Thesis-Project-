@@ -57,6 +57,7 @@ from .sampling import (
 from .simulation import (
     generate_comparison_data_from_edges,
     generate_uniform_comparison_data,
+    generate_top1_choice_data_on_sets,
 )
 
 
@@ -99,4 +100,5 @@ __all__ = [
     "parameter_recovery_error",
     "run_parameter_recovery_trials",
     "sigmoid",
+    "generate_top1_choice_data_on_sets"
 ]
