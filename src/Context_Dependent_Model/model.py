@@ -1,328 +1,183 @@
-"""Probability, likelihood and gradient functions for MNL and CDM."""
-from collections.abc import Sequence
-import numpy as np
-ChoiceObservation = tuple[int, tuple[int, ...]]
+"""Core PyTorch functions for the Context-Dependent Model."""
 
+from __future__ import annotations
 
-def _validate_choice_set(
-    choice_set: Sequence[int],
-    number_of_items: int,
-) -> np.ndarray:
-    """Validate a choice set and return it as an integer array."""
-
-    items = np.asarray(choice_set, dtype=int)
-
-    if items.ndim != 1:
-        raise ValueError("choice_set must be one-dimensional")
-
-    if len(items) < 2:
-        raise ValueError("choice_set must contain at least two items")
-
-    if len(np.unique(items)) != len(items):
-        raise ValueError("choice_set cannot contain repeated items")
-
-    if np.any(items < 0) or np.any(items >= number_of_items):
-        raise ValueError("choice_set contains an invalid item index")
-
-    return items
-
-
-def _softmax(values: np.ndarray) -> np.ndarray:
-    """Calculate numerically stable softmax probabilities."""
-
-    shifted_values = values - np.max(values)
-    exponentials = np.exp(shifted_values)
-
-    return exponentials / exponentials.sum()
-
-
-def center_mnl_parameters(
-    parameters: np.ndarray,
-) -> np.ndarray:
-    """Shift MNL parameters so their mean is zero."""
-
-    parameters = np.asarray(parameters, dtype=float)
-
-    if parameters.ndim != 1:
-        raise ValueError("MNL parameters must be one-dimensional")
-
-    return parameters - parameters.mean()
+import torch
+import torch.nn.functional as F
+from torch import nn
 
 
 def center_cdm_parameters(
-    parameters: np.ndarray,
-) -> np.ndarray:
-    """Set the diagonal to zero and centre all off-diagonal parameters."""
+    interaction_matrix: torch.Tensor,
+) -> torch.Tensor:
+    """Set the diagonal to zero and center all off-diagonal entries."""
 
-    parameters = np.asarray(
-        parameters,
-        dtype=float,
-    ).copy()
+    if interaction_matrix.ndim != 2:
+        raise ValueError("interaction_matrix must be two-dimensional.")
 
-    if (
-        parameters.ndim != 2
-        or parameters.shape[0] != parameters.shape[1]
-    ):
-        raise ValueError(
-            "CDM parameters must be a square matrix"
+    if interaction_matrix.shape[0] != interaction_matrix.shape[1]:
+        raise ValueError("interaction_matrix must be square.")
+
+    number_of_items = interaction_matrix.shape[0]
+
+    off_diagonal_mask = (
+        1.0
+        - torch.eye(
+            number_of_items,
+            device=interaction_matrix.device,
+            dtype=interaction_matrix.dtype,
         )
-
-    np.fill_diagonal(parameters, 0.0)
-
-    off_diagonal_mask = ~np.eye(
-        parameters.shape[0],
-        dtype=bool,
     )
 
-    parameters[off_diagonal_mask] -= (
-        parameters[off_diagonal_mask].mean()
-    )
+    off_diagonal_mean = (
+        interaction_matrix * off_diagonal_mask
+    ).sum() / off_diagonal_mask.sum()
 
-    return parameters
-
-
-def mnl_choice_probabilities(
-    parameters: np.ndarray,
-    choice_set: Sequence[int],
-) -> np.ndarray:
-    """Calculate context-free choice probabilities."""
-
-    parameters = np.asarray(parameters, dtype=float)
-
-    if parameters.ndim != 1:
-        raise ValueError("MNL parameters must be one-dimensional")
-
-    items = _validate_choice_set(
-        choice_set,
-        len(parameters),
-    )
-
-    return _softmax(parameters[items])
+    return (
+        interaction_matrix - off_diagonal_mean
+    ) * off_diagonal_mask
 
 
 def cdm_choice_utilities(
-    parameters: np.ndarray,
-    choice_set: Sequence[int],
-) -> np.ndarray:
-    """Calculate CDM utilities for the items in one choice set."""
+    interaction_matrix: torch.Tensor,
+    choice_sets: torch.Tensor,
+    choice_mask: torch.Tensor | None = None,
+) -> torch.Tensor:
+    """Calculate CDM utilities for a batch of padded choice sets."""
 
-    parameters = np.asarray(parameters, dtype=float)
+    if choice_sets.ndim != 2:
+        raise ValueError("choice_sets must have shape (observations, positions).")
 
-    if (
-        parameters.ndim != 2
-        or parameters.shape[0] != parameters.shape[1]
-    ):
-        raise ValueError(
-            "CDM parameters must be a square matrix"
-        )
+    if choice_sets.dtype != torch.long:
+        raise TypeError("choice_sets must use torch.long indices.")
 
-    items = _validate_choice_set(
-        choice_set,
-        parameters.shape[0],
+    if choice_mask is None:
+        choice_mask = choice_sets >= 0
+
+    if choice_mask.shape != choice_sets.shape:
+        raise ValueError("choice_mask and choice_sets must have the same shape.")
+
+    safe_choice_sets = choice_sets.masked_fill(~choice_mask, 0)
+
+    target_indices = safe_choice_sets.unsqueeze(2)
+    context_indices = safe_choice_sets.unsqueeze(1)
+
+    pairwise_effects = interaction_matrix[
+        target_indices,
+        context_indices,
+    ]
+
+    maximum_choice_set_size = choice_sets.shape[1]
+
+    different_positions = ~torch.eye(
+        maximum_choice_set_size,
+        device=choice_sets.device,
+        dtype=torch.bool,
+    ).unsqueeze(0)
+
+    valid_pairs = (
+        choice_mask.unsqueeze(2)
+        & choice_mask.unsqueeze(1)
+        & different_positions
     )
 
-    contextual_parameters = parameters[
-        np.ix_(items, items)
-    ].copy()
+    utilities = (
+        pairwise_effects * valid_pairs.to(pairwise_effects.dtype)
+    ).sum(dim=2)
 
-    # An item cannot provide context to itself.
-    np.fill_diagonal(contextual_parameters, 0.0)
-
-    return contextual_parameters.sum(axis=1)
+    return utilities.masked_fill(~choice_mask, -torch.inf)
 
 
 def cdm_choice_probabilities(
-    parameters: np.ndarray,
-    choice_set: Sequence[int],
-) -> np.ndarray:
+    interaction_matrix: torch.Tensor,
+    choice_sets: torch.Tensor,
+    choice_mask: torch.Tensor | None = None,
+) -> torch.Tensor:
     """Calculate CDM choice probabilities."""
 
     utilities = cdm_choice_utilities(
-        parameters,
-        choice_set,
+        interaction_matrix,
+        choice_sets,
+        choice_mask,
     )
 
-    return _softmax(utilities)
-
-
-def average_mnl_negative_log_likelihood(
-    parameters: np.ndarray,
-    observations: Sequence[ChoiceObservation],
-) -> float:
-    """Calculate average MNL negative log-likelihood."""
-
-    if len(observations) == 0:
-        raise ValueError("observations cannot be empty")
-
-    total_nll = 0.0
-
-    for chosen_item, choice_set in observations:
-        items = _validate_choice_set(
-            choice_set,
-            len(parameters),
-        )
-
-        chosen_positions = np.flatnonzero(
-            items == chosen_item
-        )
-
-        if len(chosen_positions) != 1:
-            raise ValueError(
-                "chosen item must occur in its choice set"
-            )
-
-        probabilities = mnl_choice_probabilities(
-            parameters,
-            items,
-        )
-
-        total_nll -= np.log(
-            probabilities[chosen_positions[0]]
-        )
-
-    return total_nll / len(observations)
+    return torch.softmax(utilities, dim=1)
 
 
 def average_cdm_negative_log_likelihood(
-    parameters: np.ndarray,
-    observations: Sequence[ChoiceObservation],
-) -> float:
-    """Calculate average CDM negative log-likelihood."""
+    interaction_matrix: torch.Tensor,
+    choice_sets: torch.Tensor,
+    chosen_positions: torch.Tensor,
+    choice_mask: torch.Tensor | None = None,
+) -> torch.Tensor:
+    """Calculate the average CDM negative log-likelihood."""
 
-    if len(observations) == 0:
-        raise ValueError("observations cannot be empty")
+    utilities = cdm_choice_utilities(
+        interaction_matrix,
+        choice_sets,
+        choice_mask,
+    )
 
-    total_nll = 0.0
+    return F.cross_entropy(
+        utilities,
+        chosen_positions,
+        reduction="mean",
+    )
 
-    for chosen_item, choice_set in observations:
-        items = _validate_choice_set(
-            choice_set,
-            parameters.shape[0],
-        )
 
-        chosen_positions = np.flatnonzero(
-            items == chosen_item
-        )
+class FullContextDependentModel(nn.Module):
+    """Trainable full-rank Context-Dependent Model."""
 
-        if len(chosen_positions) != 1:
-            raise ValueError(
-                "chosen item must occur in its choice set"
+    def __init__(
+        self,
+        number_of_items: int,
+        *,
+        device: str | torch.device = "cpu",
+        dtype: torch.dtype = torch.float64,
+    ) -> None:
+        super().__init__()
+
+        if number_of_items < 2:
+            raise ValueError("number_of_items must be at least two.")
+
+        self.number_of_items = number_of_items
+
+        self.raw_interactions = nn.Parameter(
+            torch.zeros(
+                number_of_items,
+                number_of_items,
+                device=device,
+                dtype=dtype,
             )
-
-        probabilities = cdm_choice_probabilities(
-            parameters,
-            items,
         )
 
-        total_nll -= np.log(
-            probabilities[chosen_positions[0]]
+    @property
+    def interaction_matrix(self) -> torch.Tensor:
+        """Return the identifiable, centered interaction matrix."""
+
+        return center_cdm_parameters(self.raw_interactions)
+
+    def forward(
+        self,
+        choice_sets: torch.Tensor,
+        choice_mask: torch.Tensor | None = None,
+    ) -> torch.Tensor:
+        """Return the utility of every available item."""
+
+        return cdm_choice_utilities(
+            self.interaction_matrix,
+            choice_sets,
+            choice_mask,
         )
 
-    return total_nll / len(observations)
+    def probabilities(
+        self,
+        choice_sets: torch.Tensor,
+        choice_mask: torch.Tensor | None = None,
+    ) -> torch.Tensor:
+        """Return choice probabilities for each observation."""
 
-
-def average_mnl_nll_gradient(
-    parameters: np.ndarray,
-    observations: Sequence[ChoiceObservation],
-) -> np.ndarray:
-    """Calculate the gradient of average MNL NLL."""
-
-    if len(observations) == 0:
-        raise ValueError("observations cannot be empty")
-
-    gradient = np.zeros_like(
-        parameters,
-        dtype=float,
-    )
-
-    for chosen_item, choice_set in observations:
-        items = _validate_choice_set(
-            choice_set,
-            len(parameters),
+        return torch.softmax(
+            self.forward(choice_sets, choice_mask),
+            dim=1,
         )
-
-        probabilities = mnl_choice_probabilities(
-            parameters,
-            items,
-        )
-
-        gradient[items] += probabilities
-        gradient[chosen_item] -= 1.0
-
-    return gradient / len(observations)
-
-
-def average_cdm_nll_gradient(
-    parameters: np.ndarray,
-    observations: Sequence[ChoiceObservation],
-) -> np.ndarray:
-    """Calculate the gradient of average CDM NLL."""
-
-    if len(observations) == 0:
-        raise ValueError("observations cannot be empty")
-
-    gradient = np.zeros_like(
-        parameters,
-        dtype=float,
-    )
-
-    for chosen_item, choice_set in observations:
-        items = _validate_choice_set(
-            choice_set,
-            parameters.shape[0],
-        )
-
-        probabilities = cdm_choice_probabilities(
-            parameters,
-            items,
-        )
-
-        utility_derivatives = probabilities.copy()
-
-        chosen_position = np.flatnonzero(
-            items == chosen_item
-        )[0]
-
-        utility_derivatives[chosen_position] -= 1.0
-
-        for target_position, target_item in enumerate(items):
-            for context_item in items:
-                if context_item != target_item:
-                    gradient[
-                        target_item,
-                        context_item,
-                    ] += utility_derivatives[
-                        target_position
-                    ]
-
-    gradient /= len(observations)
-    np.fill_diagonal(gradient, 0.0)
-
-    return gradient
-
-
-def convert_mnl_parameters_to_cdm(
-    mnl_parameters: np.ndarray,
-) -> np.ndarray:
-    """Represent an MNL model using equivalent CDM parameters."""
-
-    mnl_parameters = center_mnl_parameters(
-        mnl_parameters
-    )
-
-    number_of_items = len(mnl_parameters)
-
-    cdm_parameters = np.zeros(
-        (number_of_items, number_of_items),
-        dtype=float,
-    )
-
-    for target_item in range(number_of_items):
-        for context_item in range(number_of_items):
-            if target_item != context_item:
-                cdm_parameters[
-                    target_item,
-                    context_item,
-                ] = -mnl_parameters[context_item]
-
-    return center_cdm_parameters(cdm_parameters)
