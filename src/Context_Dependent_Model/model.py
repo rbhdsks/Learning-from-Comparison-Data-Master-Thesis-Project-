@@ -181,3 +181,58 @@ class FullContextDependentModel(nn.Module):
             self.forward(choice_sets, choice_mask),
             dim=1,
         )
+
+class LowRankContextDependentModel(nn.Module):
+    """CDM with learned target and context vectors."""
+
+    def __init__(
+        self,
+        number_of_items: int,
+        rank: int,
+        *,
+        initial_scale: float = 0.1,
+        random_seed: int = 0,
+        device: str | torch.device = "cpu",
+        dtype: torch.dtype = torch.float64,
+    ) -> None:
+        super().__init__()
+
+        if number_of_items < 2 or rank < 1 or initial_scale <= 0:
+            raise ValueError("Check number_of_items, rank, and initial_scale.")
+
+        self.number_of_items = number_of_items
+        self.rank = rank
+
+        generator = torch.Generator(device="cpu")
+        generator.manual_seed(random_seed)
+        shape = (number_of_items, rank)
+
+        self.target_vectors = nn.Parameter(
+            (initial_scale * torch.randn(shape, generator=generator, dtype=dtype))
+            .to(device)
+        )
+        self.context_vectors = nn.Parameter(
+            (initial_scale * torch.randn(shape, generator=generator, dtype=dtype))
+            .to(device)
+        )
+
+    @property
+    def interaction_matrix(self) -> torch.Tensor:
+        raw_interactions = self.target_vectors @ self.context_vectors.T
+        return center_cdm_parameters(raw_interactions)
+
+    def forward(
+        self,
+        choice_sets: torch.Tensor,
+        choice_mask: torch.Tensor | None = None,
+    ) -> torch.Tensor:
+        return cdm_choice_utilities(
+            self.interaction_matrix, choice_sets, choice_mask
+        )
+
+    def probabilities(
+        self,
+        choice_sets: torch.Tensor,
+        choice_mask: torch.Tensor | None = None,
+    ) -> torch.Tensor:
+        return torch.softmax(self.forward(choice_sets, choice_mask), dim=1)
