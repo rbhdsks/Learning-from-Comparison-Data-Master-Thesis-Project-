@@ -225,3 +225,32 @@ def split_cdm_choice_data(
     )
 
     return training_data, test_data
+
+
+def generate_cdm_choice_data_on_sets(
+    interaction_matrix: torch.Tensor,
+    choice_sets: torch.Tensor,
+    choice_mask: torch.Tensor,
+    *,
+    random_seed: int = 0,
+) -> CDMChoiceData:
+    """Sample CDM choices from supplied choice sets."""
+    with torch.no_grad():
+        probabilities = cdm_choice_probabilities(
+            interaction_matrix, choice_sets, choice_mask
+        )
+
+    generator = torch.Generator(device="cpu")
+    generator.manual_seed(random_seed)
+
+    chosen_positions = torch.multinomial(
+        probabilities.cpu(),
+        num_samples=1,
+        generator=generator,
+    ).squeeze(1)
+
+    return CDMChoiceData(
+        choice_sets=choice_sets,
+        choice_mask=choice_mask,
+        chosen_positions=chosen_positions.to(choice_sets.device),
+    )

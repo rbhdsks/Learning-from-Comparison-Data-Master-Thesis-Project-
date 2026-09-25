@@ -25,6 +25,7 @@ from .simulation import (
     generate_cdm_parameters,
     generate_uniform_choice_sets,
     split_cdm_choice_data,
+    generate_cdm_choice_data_on_sets,
 )
 
 from .experiments import (
@@ -51,4 +52,5 @@ __all__ = [
     "run_cdm_to_btl_experiment",
     "split_cdm_choice_data",
     "run_cdm_to_btl_context_strength_experiment",
+    "generate_cdm_choice_data_on_sets",
 ]
