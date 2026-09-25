@@ -50,9 +50,16 @@ Context-Dependent Model using small examples.
 
 | Notebook | Experiment |
 | --- | --- |
-| `01_CDM.ipynb` | Initial implementation and validation of the Context-Dependent Model |
+| `01_CDM-CDM.ipynb` | Generate choices with CDM, fit CDM, and study parameter recovery |
+| `02_CDM-BTL.ipynb` | Generate choices with CDM and fit BTL |
+| `03_BTL-CDM.ipynb` | Generate choices with BTL and fit CDM |
+| `04-Unifiednotebook.ipynb` | Compare BTL, full CDM, and low-rank CDM on shared synthetic choice sets using held-out likelihood and runtime |
+| `05-CDM-Paper-reproduction-beyond-6-items.ipynb` | Reproduce and extend experiments from the CDM paper; planned work |
 
-The Context-Dependent Model experiments are currently under development.
+The first three CDM notebooks examine individual settings. Notebook 04
+brings the models together under one experimental setup. Notebook 05 is
+reserved for the paper reproduction and its extensions. All five belong
+to the Context-Dependent Model phase of the project.
 
 ## Notebook conventions
 
@@ -60,9 +67,6 @@ The Context-Dependent Model experiments are currently under development.
 - Each experiment uses explicit configuration values and random seeds.
 - The term *parameter* is used consistently for model parameters.
 - Reusable functions should be moved to `src/`.
-- Generated notebook outputs are stored in the corresponding `outputs/`
-  directory.
-- Figures selected for the thesis are stored under
-  `docs/thesis/images/`.
-- Notebooks should be restarted and run from beginning to end before
-  being committed.
+- Generated data, settings, diagnostics, and runtimes should be logged with their experiment.
+- Figures selected for the thesis are stored under `docs/thesis/images/`.
+- Notebooks should be restarted and run from beginning to end before being committed.
