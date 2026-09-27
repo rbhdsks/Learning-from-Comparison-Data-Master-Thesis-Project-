@@ -57,3 +57,7 @@ results/
 /docs/thesis/Weekly-log.pdf
 # Local VS Code workspace files
 *.code-workspace
+
+
+/Datasets/feature-context-effects-datasets-txt-format
+!/Datasets/CDM-Paper-Dataset/*.csv
