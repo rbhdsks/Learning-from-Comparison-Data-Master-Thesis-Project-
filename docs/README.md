@@ -37,7 +37,7 @@ document compiles locally. Then copy and run:
 ```bash
 git add docs/thesis
 
-git commit -m "docs: update thesis documentation"
+git commit -m ".."
 
 git push
 
