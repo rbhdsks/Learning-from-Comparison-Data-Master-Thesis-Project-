@@ -1,0 +1,348 @@
+% !TeX program = lualatex
+\DocumentMetadata{lang=en-GB,pdfversion=2.0,pdfstandard={ua-2,a-4f},tagging=on,tagging-setup={math/alt/use,math/setup=mathml-SE}}
+\documentclass[white,aspect-ratio=16:9]{uom_ltx_talk_casson}
+
+% The class already loads lua-unicode-math. Loading amsmath/amssymb again
+% causes duplicate command definitions under LuaLaTeX.
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{array}
+
+\definecolor{IITMBlue}{HTML}{123B67}
+\definecolor{IITMLightBlue}{HTML}{EAF2F8}
+\definecolor{IITMGold}{HTML}{D69A2D}
+\definecolor{ResultGreen}{HTML}{287A5B}
+\definecolor{MutedGray}{HTML}{606A73}
+\definecolor{RuleGray}{HTML}{D6DCE1}
+
+% Disable the class logo hook. The IITM logo is placed only on the title slide.
+\renewcommand{\uomlogo}{}
+
+% The template's default title adds a large horizontal offset and uses \huge.
+% A smaller, left-aligned title leaves more room for plots and avoids clipping.
+\EditInstance{frametitle}{header}{
+  font = \bfseries\LARGE
+}
+
+\newcommand{\sectionemphasis}[1]{\textcolor{IITMBlue}{\textbf{#1}}}
+\newcommand{\result}[1]{\textcolor{ResultGreen}{\textbf{#1}}}
+
+% Support compilation from either docs/thesis/ or its presentation subfolder.
+\newcommand{\plotbox}[4]{%
+  \IfFileExists{images/#1}{%
+    \includegraphics[alt={#2},width=#3,keepaspectratio=true]{images/#1}%
+  }{%
+    \IfFileExists{../images/#1}{%
+      \includegraphics[alt={#2},width=#3,keepaspectratio=true]{../images/#1}%
+    }{%
+      \fcolorbox{RuleGray}{white}{\parbox[c][#4][c]{#3}{\centering\color{MutedGray}\footnotesize Plot not found\\[0.12cm]\texttt{\detokenize{#1}}}}%
+    }%
+  }%
+}
+
+\newcommand{\iitmlogo}{%
+  \IfFileExists{images/iitm-logo.png}{%
+    \includegraphics[alt={Indian Institute of Technology Madras logo},width=0.090\paperwidth,keepaspectratio=true]{images/iitm-logo.png}%
+  }{%
+    \IfFileExists{../images/iitm-logo.png}{%
+      \includegraphics[alt={Indian Institute of Technology Madras logo},width=0.090\paperwidth,keepaspectratio=true]{../images/iitm-logo.png}%
+    }{%
+      \fcolorbox{RuleGray}{white}{\parbox[c][1.0cm][c]{2.3cm}{\centering\scriptsize IITM logo}}%
+    }%
+  }%
+}
+
+\newcommand{\BTLRecoveryPlot}{experiments/bradley_terry/bt_choix_recovery_vs_comparisons.pdf}
+\newcommand{\CDMRecoveryPlot}{experiments/context_dependent_model/cdm_cdm/02_recovery_vs_observations.pdf}
+\newcommand{\CDMToBTLPlot}{experiments/context_dependent_model/cdm_btl/03_context_strength_comparison.pdf}
+\newcommand{\BTLToCDMPlot}{experiments/context_dependent_model/btl_cdm/03_pairwise_probability_recovery.pdf}
+\newcommand{\CrossFitPlot}{experiments/context_dependent_model/unified/n10_m10000_seed20260831_scale0.4/04_cross_fit_nll_gap.pdf}
+\newcommand{\LowRankPlot}{experiments/context_dependent_model/unified/n10_m10000_seed20260831_scale0.4/04_low_rank_paired_test_nll_gaps.pdf}
+
+\title[short-title={M.Tech Thesis Progress}]{Learning Preference Models from Choice Data}
+\subtitle{M.Tech thesis progress update}
+\author{Nitesh Kumar Shah}
+\date{4 October 2026}
+
+\begin{document}
+
+% 1. Title
+\begin{frame}
+  \vspace*{-0.62cm}
+  \noindent\hspace*{-0.035\paperwidth}\iitmlogo
+
+  \vspace{0.08cm}
+  \centering
+  {\fontsize{24pt}{28pt}\selectfont\bfseries
+    Learning Preference Models from Choice Data\par}
+
+  \vspace{0.11cm}
+  {\color{IITMGold}\rule{0.72\textwidth}{1.2pt}\par}
+
+  \vspace{0.16cm}
+    {\normalsize M.tech thesis Project \par}
+
+  {\normalsize Bradley-Terry, Full CDM, and Low-rank CDM\par}
+
+
+  \vspace{0.24cm}
+  {\footnotesize Advisor: Prof.\ Suryanarayana Sankagiri\par}
+  \vspace{0.10cm}
+  {\normalsize Nitesh Kumar Shah\par}
+  \vspace{0.07cm}
+  {\footnotesize M.Tech I2MP Data Science and Artificial Intelligence, IIT Madras\par}
+
+  \vfill
+  \raggedleft\scriptsize 4 October 2026
+\end{frame}
+
+% 2. Recap
+\begin{frame}
+  \frametitle{Progress recap}
+  \scriptsize
+  \setlength{\tabcolsep}{4pt}
+  \begin{table}
+    \centering
+    \tagpdfsetup{table/header-rows={1}}
+    \begin{tabular}{
+      >{\raggedright\arraybackslash}p{0.14\textwidth}
+      >{\raggedright\arraybackslash}p{0.25\textwidth}
+      >{\raggedright\arraybackslash}p{0.49\textwidth}}
+      \toprule
+      \textbf{Stage} & \textbf{Objective} & \textbf{Completed work} \\
+      \midrule
+      BTL & Recover pairwise strengths & Simulation, Choix estimation, recovery scaling, sampling, MLE diagnostics, and optimizer comparisons \\
+      \addlinespace
+      Full CDM & Learn context effects & Full-matrix simulation and estimation. Observation scaling used $n=5$ and 1,000--50,000 choices; item scaling used $n=5$--80 with 50,000 choices \\
+      \addlinespace
+      Cross fitting & Measure model mismatch and examine misspecification & BTL data fitted with CDM and CDM data fitted with BTL under controlled splits \\
+      \addlinespace
+      Low-rank CDM & Control model complexity & Ranks 1--3 with three restarts per rank on the same data but different initialization seeds; rank selection by validation NLL and held-out NLL evaluation \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+  \vfill
+  \centering
+  \result{I am updating code, experiment figures, and the thesis skeleton in Overleaf.}
+\end{frame}
+
+% 3. BTL recovery
+\begin{frame}
+  \frametitle{Bradley--Terry recovery improves with data}
+  \centering
+  \plotbox{\BTLRecoveryPlot}{Bradley--Terry parameter recovery as the number of comparisons increases}{0.58\textwidth}{0.62\textheight}
+
+  \vspace{0.08cm}
+  {\footnotesize\result{Note:} More comparisons reduce recovery error and trial-to-trial variation.}
+\end{frame}
+
+% 4. Full CDM recovery
+\begin{frame}
+  \frametitle{Full CDM recovery improves with observations}
+  \centering
+  \plotbox{\CDMRecoveryPlot}{Full CDM recovery as the observation count increases}{0.50\textwidth}{0.62\textheight}
+
+  \vspace{0.08cm}
+  {\footnotesize\result{Note:} Recovery improves as the number of observed choices grows.}
+\end{frame}
+
+% 5. BTL data fitted with CDM
+\begin{frame}
+  \frametitle{BTL-generated data fitted with a full CDM}
+  \centering
+  \plotbox{\BTLToCDMPlot}{Pairwise probability recovery when a full CDM is fitted to Bradley--Terry data}{0.90\textwidth}{0.61\textheight}
+
+  \vspace{0.06cm}
+  {\footnotesize\result{Result:} Full CDM matches BTL pairwise probabilities, but pairwise data do not identify unique CDM parameters.}
+\end{frame}
+
+% 6. CDM data fitted with BTL
+\begin{frame}
+  \frametitle{CDM-generated data fitted with BTL/Luce}
+  \centering
+  \plotbox{\CDMToBTLPlot}{Held-out misspecification when a Bradley--Terry Luce model is fitted to CDM-generated choices}{0.90\textwidth}{0.61\textheight}
+
+  \vspace{0.06cm}
+  {\footnotesize\result{Result:} Ignoring context produces a positive held-out NLL gap that grows with interaction strength.}
+\end{frame}
+
+% 7. Misspecification definition and numerical evidence
+\begin{frame}
+  \frametitle{BTL/Luce misspecification}
+  \footnotesize
+  \centering
+  \sectionemphasis{Held-out misspecification gap}
+  \vspace{-0.10cm}
+  \begin{minipage}{0.84\textwidth}
+    \[
+      \Delta_{\mathrm{NLL}}
+      =L_{\mathrm{test}}(\widehat\theta_{\mathrm{BTL}})
+      -L_{\mathrm{test}}(\theta_{\mathrm{CDM}}).
+    \]
+    \centering
+    $\Delta_{\mathrm{NLL}}\approx 0$ means BTL is sufficient.\quad
+    $\Delta_{\mathrm{NLL}}>0$ measures the predictive cost of ignoring context.
+  \end{minipage}
+
+  \vspace{0.18cm}
+  \sectionemphasis{Mean test NLL across 10 runs}
+  \begin{table}
+    \centering
+    \setlength{\tabcolsep}{8pt}
+    \tagpdfsetup{table/header-rows={1}}
+    \begin{tabular}{ccccc}
+      \toprule
+      \textbf{Items} & \textbf{Interaction scale} & \textbf{True CDM} & \textbf{Fitted BTL} & \textbf{$\Delta_{\mathrm{NLL}}$} \\
+      \midrule
+      5  & 0.00 & 0.8949 & 0.8949 & 0.0000 \\
+      5  & 0.50 & 0.7914 & 0.8456 & 0.0542 \\
+      5  & 1.00 & 0.6237 & 0.7773 & 0.1536 \\
+      \addlinespace
+      10 & 0.00 & 0.8949 & 0.8949 & 0.0001 \\
+      10 & 0.50 & 0.8226 & 0.8823 & 0.0597 \\
+      10 & 1.00 & 0.6889 & 0.8617 & 0.1728 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+  {\scriptsize Controlled setting: 50,000 observations, choice-set sizes 2 and 3, common train/test protocol.}
+
+  \vfill
+  \colorbox{IITMLightBlue}{\parbox{0.88\textwidth}{\centering\footnotesize Stronger context effects produce a larger predictive penalty for BTL/Luce.}}
+\end{frame}
+
+% 8. Cross-fit result
+\begin{frame}
+  \frametitle{Held-out loss separates native and mismatched fits}
+  \centering
+  \plotbox{\CrossFitPlot}{Held-out negative log-likelihood gaps for native and cross-model fits}{0.90\textwidth}{0.62\textheight}
+
+  \vspace{0.08cm}
+  {\footnotesize\result{Interpretation:} Test NLL gaps quantify predictive loss under model misspecification.}
+\end{frame}
+
+% 9. Reparameterization
+\begin{frame}
+  \frametitle{Low-rank CDM reparameterization}
+  \small
+  \begin{minipage}[t]{0.45\textwidth}
+    \vspace{0pt}
+    \sectionemphasis{Full CDM}
+    \vspace{0.08cm}
+    \[
+      u_i(S)=\sum_{\substack{j\in S\\j\neq i}} A_{ij}
+    \]
+    \[
+      P(i\mid S)=\frac{e^{u_i(S)}}{\sum_{k\in S}e^{u_k(S)}}
+    \]
+    $A\in\mathbb{R}^{n\times n}$ stores a directed context effect for each ordered item pair.
+
+    \vspace{0.12cm}
+    \centering\textbf{Parameter scale: $O(n^2)$}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.45\textwidth}
+    \vspace{0pt}
+    \textcolor{IITMGold}{\textbf{Low-rank CDM}}
+    \vspace{0.08cm}
+    \[
+      A=TC^{\mathsf T}
+    \]
+    \[
+      A_{ij}=t_i^{\mathsf T}c_j
+      =\sum_{k=1}^{r}t_{ik}c_{jk}
+    \]
+    Item $i$ has target vector $t_i\in\mathbb{R}^{r}$ and context vector $c_i\in\mathbb{R}^{r}$.
+
+    \vspace{0.12cm}
+    \centering\textbf{Parameter scale: $O(nr)$}
+  \end{minipage}
+
+  \vfill
+  \centering
+  {\footnotesize\result{Rank $r$ controls the number of latent interaction directions represented by the model.}}
+\end{frame}
+
+% 10. Rank selection and guarantee
+\begin{frame}
+  \frametitle{Rank selection and uniform performance guarantee}
+  \small
+  \begin{minipage}[t]{0.39\textwidth}
+    \vspace{0pt}
+    \sectionemphasis{Rank-selection procedure}
+    \begin{enumerate}
+      \item Fit each candidate rank using multiple initialization seeds.
+      \item Retain converged solutions.
+      \item Select rank using validation NLL.
+      \item Evaluate the selected model once on test data.
+    \end{enumerate}
+    Validation controls capacity without reusing the held-out test set.
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.55\textwidth}
+    \vspace{0pt}
+    \sectionemphasis{Uniform performance guarantee}
+    \[
+      \Pr\!\left(
+        \sup_{\theta\in\Theta_r}
+        \left|\widehat L_m(\theta)-L(\theta)\right|
+        \leq \varepsilon
+      \right)\geq 1-\delta.
+    \]
+    With probability at least $1-\delta$, empirical loss stays within $\varepsilon$ of population loss for every model in the rank-$r$ class $\Theta_r$.
+
+    \vspace{0.18cm}
+    \result{More observations tighten the bound. Lower rank reduces model complexity.}
+
+    \vspace{0.10cm}
+    {\scriptsize Exact constants depend on the assumptions in Seshadri et al.}
+  \end{minipage}
+\end{frame}
+
+% 11. Low-rank experiment
+\begin{frame}
+  \frametitle{Current low-rank experiment}
+  \centering
+  \plotbox{\LowRankPlot}{Paired held-out negative log-likelihood gaps for low-rank CDM fits across ranks and restarts}{0.52\textwidth}{0.60\textheight}
+
+  \vspace{0.10cm}
+  {\small Ranks 1--3, three restarts per rank on the same data with different initialization seeds.}
+
+  \vspace{0.06cm}
+  {\footnotesize\textcolor{MutedGray}{Current limitation: some runs did not meet the convergence criterion, so the rank comparison is preliminary.}}
+\end{frame}
+
+% 12. Next steps
+\begin{frame}
+  \frametitle{Next steps}
+  \normalsize
+  \begin{minipage}[t]{0.45\textwidth}
+    \vspace{0pt}
+    \sectionemphasis{Complete the low-rank study}
+    \begin{enumerate}
+      \item Extend the grid to ranks 4 and 5.
+      \item Diagnose non-converged runs.
+      \item Select rank using validation NLL.
+      \item Evaluate once on held-out test data.
+    \end{enumerate}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.45\textwidth}
+    \vspace{0pt}
+    \sectionemphasis{Complete the comparison}
+    \begin{enumerate}
+      \item Compare full and low-rank CDM runtime.
+      \item Compare test NLL and parameter count.
+      \item Reproduce the paper's testing experiments.
+      \item Also to write and  add verified figures and tables to Overleaf.
+    \end{enumerate}
+  \end{minipage}
+
+  \vfill
+  \centering
+  {\small\result{Immediate priority: establish a reliable rank-versus-performance curve and understand Uniform performance guarantee in depth}}
+\end{frame}
+
+\end{document}
