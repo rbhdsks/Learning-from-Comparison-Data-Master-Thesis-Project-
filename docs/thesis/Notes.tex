@@ -36,7 +36,7 @@
     \vspace{0.35in}
     {\Large\textbf{INDIAN INSTITUTE OF TECHNOLOGY MADRAS}\par}
     \vspace{0.70in}
-    {\Large\textbf{Learning from Comparison Data}\par}
+    {\Large\textbf{Learning from Comparison Data (First draft)}\par}
     \vspace{0.45in}
     {\large A Project Report\par}
     \vspace{0.18in}
@@ -167,7 +167,7 @@ have been added or removed.
     \end{tabular}
 \end{table}
 Consider the following two choice sets:
-\begin{align}
+\begin{align*}
     A &= \{C,T,Bi\},
     &
     \sum_{x\in A}w_x &= 0.80,
@@ -175,7 +175,7 @@ Consider the following two choice sets:
     B &= \{C,T,W\},
     &
     \sum_{x\in B}w_x &= 0.73.
-\end{align}
+\end{align*}
 We want to verify whether
 \begin{equation}
     \frac{P(C\mid A)}{P(T\mid A)}
@@ -183,7 +183,7 @@ We want to verify whether
     \frac{P(C\mid B)}{P(T\mid B)}.
 \end{equation}
 For choice set \(A\),
-\begin{align}
+\begin{align*}
     P(C\mid A)
     &=
     \frac{w_C}{\sum_{x\in A}w_x}
@@ -199,7 +199,7 @@ For choice set \(A\),
     \frac{0.25}{0.80}
     =
     0.3125.
-\end{align}
+\end{align*}
 Therefore,
 \begin{equation}
     \frac{P(C\mid A)}{P(T\mid A)}
@@ -211,7 +211,7 @@ Therefore,
     1.6.
 \end{equation}
 For choice set \(B\),
-\begin{align}
+\begin{align*}
     P(C\mid B)
     &=
     \frac{w_C}{\sum_{x\in B}w_x}
@@ -223,7 +223,7 @@ For choice set \(B\),
     \frac{w_T}{\sum_{x\in B}w_x}
     =
     \frac{0.25}{0.73}.
-\end{align}
+\end{align*}
 Therefore,
 \begin{equation}
     \frac{P(C\mid B)}{P(T\mid B)}
@@ -260,12 +260,12 @@ The scores are shift-invariant. A common identification constraint is
 \end{equation}
 \subsection{Shift Invariance and the Zero-Sum Constraint}
 Consider two alternatives, car and taxi, with scores
-\begin{align}
+\begin{align*}
     v(C)&=2.5,\\
     v(T)&=-0.9.
-\end{align}
+\end{align*}
 Their exponentiated scores are
-\begin{align}
+\begin{align*}
     \exp(v(C))
     &=
     \exp(2.5)
@@ -277,10 +277,10 @@ Their exponentiated scores are
     \exp(-0.9)
     \approx
     0.407.
-\end{align}
+\end{align*}
 Therefore, the probability of choosing car from the set
 \(\{C,T\}\) is
-\begin{align}
+\begin{align*}
     P(C\mid\{C,T\})
     &=
     \frac{\exp(2.5)}
@@ -291,25 +291,25 @@ Therefore, the probability of choosing car from the set
     \\
     &\approx
     0.968.
-\end{align}
+\end{align*}
 However,
 \begin{equation}
     v(C)+v(T)=2.5-0.9=1.6\neq 0.
 \end{equation}
 Suppose the same constant \(k\) is added to both scores. To satisfy the
 zero-sum constraint, choose \(k\) such that
-\begin{align}
+\begin{align*}
     (2.5+k)+(-0.9+k)&=0,\\
     1.6+2k&=0,\\
     k&=-0.8.
-\end{align}
+\end{align*}
 After applying this shift,
-\begin{align}
+\begin{align*}
     v(C)&=2.5-0.8=1.7,\\
     v(T)&=-0.9-0.8=-1.7.
-\end{align}
+\end{align*}
 The probability obtained using these centred scores is
-\begin{align}
+\begin{align*}
     P(C\mid\{C,T\})
     &=
     \frac{\exp(1.7)}
@@ -320,7 +320,7 @@ The probability obtained using these centred scores is
     \\
     &\approx
     0.968.
-\end{align}
+\end{align*}
 Thus, adding the same constant to every score does not change the choice
 probabilities. The zero-sum constraint selects one representative from all
 score vectors that produce the same probabilities.
@@ -412,16 +412,16 @@ The subsets of $A$ are
 \end{split}
 \end{equation}
 The utility expansions are
-\begin{align}
+\begin{align*}
     u(C\mid A)
     &=v(C)+v(C\mid\{T\})+v(C\mid\{Bi\})+v(C\mid\{T,Bi\}),\\
     u(T\mid A)
     &=v(T)+v(T\mid\{C\})+v(T\mid\{Bi\})+v(T\mid\{C,Bi\}),\\
     u(Bi\mid A)
     &=v(Bi)+v(Bi\mid\{C\})+v(Bi\mid\{T\})+v(Bi\mid\{C,T\}).
-\end{align}
+\end{align*}
 The corresponding constraints are
-\begin{align}
+\begin{align*}
     v(C)+v(T)+v(Bi)&=0,\label{eq:constraint-empty}\\
     v(T\mid\{C\})+v(Bi\mid\{C\})&=0,\\
     v(C\mid\{T\})+v(Bi\mid\{T\})&=0,\\
@@ -429,17 +429,17 @@ The corresponding constraints are
     v(C\mid\{T,Bi\})&=0,\\
     v(T\mid\{C,Bi\})&=0,\\
     v(Bi\mid\{C,T\})&=0.
-\end{align}
+\end{align*}
 The final three constraints force the highest-order terms to zero. Therefore,
 the utilities reduce to
-\begin{align}
+\begin{align*}
     u(C\mid A)
     &=v(C)+v(C\mid\{T\})+v(C\mid\{Bi\}),\\
     u(T\mid A)
     &=v(T)+v(T\mid\{C\})+v(T\mid\{Bi\}),\\
     u(Bi\mid A)
     &=v(Bi)+v(Bi\mid\{C\})+v(Bi\mid\{T\}).
-\end{align}
+\end{align*}
 There are nine remaining parameters and four independent constraints. Hence,
 the number of free parameters is
 \begin{equation}
@@ -560,7 +560,7 @@ be combined into a single set of pairwise parameters. For $x\neq z$, define
 \end{equation}
 Here, $x$ is the target alternative and $z$ is the context alternative. Using
 this definition, the reparameterised utility is
-\begin{align}
+\begin{align*}
     \widetilde{u}(x\mid C)
     &=\sum_{z\in C\setminus\{x\}}u_{xz}\\
     &=\sum_{z\in C\setminus\{x\}}
@@ -569,7 +569,7 @@ this definition, the reparameterised utility is
       -\sum_{z\in C}v(z)\\
     &=u(x\mid C)-\sum_{z\in C}v(z).
     \label{eq:reparameterised-utility}
-\end{align}
+\end{align*}
 The term $\sum_{z\in C}v(z)$ depends only on the choice set $C$ and is the
 same for every candidate in that choice set. Subtracting the same quantity
 from every candidate utility does not change the softmax probabilities:
@@ -692,7 +692,7 @@ Therefore, the probability depends only on the parameter difference
 The Bradley--Terry probability depends only on the difference between
 two parameters. Consequently, adding the same constant \(c\) to every
 parameter does not change any pairwise comparison probability:
-\begin{align}
+\begin{align*}
     P(i\succ j)
     &=
     \frac{\exp(\theta_i+c)}
@@ -701,7 +701,7 @@ parameter does not change any pairwise comparison probability:
     &=
     \frac{\exp(\theta_i)}
     {\exp(\theta_i)+\exp(\theta_j)}.
-\end{align}
+\end{align*}
 
 Therefore, the parameter vectors
 \[
@@ -772,7 +772,7 @@ The likelihood of the complete dataset is therefore
 \end{equation}
 
 Taking the logarithm gives the log-likelihood
-\begin{align}
+\begin{align*}
     \ell(\boldsymbol{\theta};\mathcal{D})
     &=
     \sum_{t=1}^{m}
@@ -795,7 +795,7 @@ Taking the logarithm gives the log-likelihood
         \right)
     \right].
     \label{eq:btl-log-likelihood}
-\end{align}
+\end{align*}
 
 Maximizing the log-likelihood is equivalent to minimizing its negative.
 In the implementation, we use the average negative log-likelihood
