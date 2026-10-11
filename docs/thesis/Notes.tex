@@ -333,6 +333,8 @@ score vectors that produce the same probabilities.
 % =========================================================
 \chapter{From Multinomial Logit to Context-Dependent Choice Models}
 \section{Universal Logit Representation}
+The universal logit model provides a framework for modelling
+choice probabilities \citep{mcfadden1975}.
 In a universal logit model, the utility of an alternative can depend on the
 choice set in which it appears. Instead of assigning only one fixed utility to
 an alternative, the model allows it to have different utilities in different
@@ -353,7 +355,10 @@ An identification constraint can be imposed separately for each choice set:
 \end{equation}
 \section{Decomposition of Context-Dependent Utility}
 \subsection{Statement of Lemma 1}
-\begin{lemma}[Decomposition of context-dependent utility]
+\begin{lemma}[Decomposition of context-dependent utility]Related approaches also model the influence of competing
+alternatives on choice probabilities, including the
+market-share framework proposed by Batsell and Polking
+\citep{batsell1985}.
 For a universal logit model, the context-dependent utility $u(x\mid C)$ can
 be written as a sum of terms indexed by subsets $B$ of
 $C\setminus\{x\}$ \citep{seshadri2019}:
@@ -490,20 +495,7 @@ constraints is $n+1$, and the number of free parameters is
     n^2-(n+1)=n^2-n-1.
     \label{eq:second-order-parameter-count}
 \end{equation}
-\subsection{MNL as the First-Order Model}
-The multinomial logit model is the first-order member of this hierarchy. In
-$\mathcal{M}_1$, all contextual terms are set to zero, leaving
-\begin{equation}
-    u(x\mid C)=v(x).
-\end{equation}
-Substituting this expression into the universal logit representation gives
-\begin{equation}
-    P(x\mid C)
-    =
-    \frac{\exp(v(x))}
-    {\displaystyle\sum_{y\in C}\exp(v(y))},
-\end{equation}
-which is the multinomial logit model.
+
 \section{Context-Dependent Random Utility Model}
 The first-order model does not allow the utility of an alternative to change
 when other alternatives are added to or removed from the choice set. To
@@ -665,7 +657,11 @@ This is consistent with the five free parameters obtained in
 \section{Pairwise Comparison Setting}
 To understand the underlying mechanics of a model for choice data, we
 consider observed pairwise comparisons and assume a probabilistic model.
-The Bradley--Terry model is used for this purpose.
+The Bradley--Terry model, which is originally developed for analysing
+paired comparisons, provides a probabilistic framework for
+estimating the relative strengths of competing items
+\citep{bradleyterry1952}.
+
 The goal is to estimate unknown parameters that provide a compressed
 representation of the observed comparison data.
 For items \(i\) and \(j\), with parameters \(\theta_i\) and \(\theta_j\), the
@@ -738,6 +734,11 @@ before their recovery error is calculated.
 
 
 \section{Maximum Likelihood Estimation}
+The model parameters can be estimated from observed pairwise
+outcomes using maximum likelihood. Likelihood-based estimation
+and computational algorithms for extensions of the
+Bradley--Terry model have been studied in the literature
+\citep{hunter2004}.
 
 Suppose that the observed dataset contains \(m\) pairwise comparisons:
 \begin{equation}
