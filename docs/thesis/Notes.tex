@@ -147,6 +147,23 @@ Independence of Irrelevant Alternatives property for two alternatives
 The equation states that if \(x\) and \(y\) are present in both choice sets,
 then their relative odds should not change merely because other alternatives
 have been added or removed.
+
+In the Multinomial Logit (MNL) model, each alternative $i$ is
+assigned a positive weight $w_i$, representing its relative
+attractiveness or preference in the choice process. A higher
+weight indicates that an alternative is more likely to be
+chosen, all else being equal. These weights can be converted
+into choice probabilities by normalising them over the
+available choice set $A$:
+
+\[
+P(i\mid A)=\frac{w_i}{\sum_{j\in A}w_j}.
+\]
+
+Thus, the probability of choosing an alternative depends on
+its weight relative to the total weight of all available
+alternatives. In the following example, the weights are
+assumed to sum to one across the full set of alternatives.
 \subsection{Worked Example}
 \begin{table}[htbp]
     \centering
