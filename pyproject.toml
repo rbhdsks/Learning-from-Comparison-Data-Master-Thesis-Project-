@@ -41,3 +41,57 @@ development=[
 
 [tool.setuptools.packages.find]
 where=["src"]
+
+# Create separate directories for paper-reproduction figures, tables and results.
+
+EXPERIMENT_NAME = "01_synthetic_recovery"
+
+FIGURE_DIRECTORY = (
+    PROJECT_ROOT
+    / "docs"
+    / "thesis"
+    / "images"
+    / "experiments"
+    / "cdm_paper_reproduction"
+    / EXPERIMENT_NAME
+)
+
+TABLE_DIRECTORY = (
+    PROJECT_ROOT
+    / "docs"
+    / "thesis"
+    / "tables"
+    / "experiments"
+    / "cdm_paper_reproduction"
+    / EXPERIMENT_NAME
+)
+
+RESULT_DIRECTORY = (
+    PROJECT_ROOT
+    / "results"
+    / "experiments"
+    / "cdm_paper_reproduction"
+    / EXPERIMENT_NAME
+)
+
+output_directories = {
+    "Figures": FIGURE_DIRECTORY,
+    "LaTeX tables": TABLE_DIRECTORY,
+    "Numerical results": RESULT_DIRECTORY,
+}
+
+for directory in output_directories.values():
+    directory.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+pd.DataFrame(
+    [
+        {
+            "Output": output_type,
+            "Directory": str(directory),
+        }
+        for output_type, directory in output_directories.items()
+    ]
+)
