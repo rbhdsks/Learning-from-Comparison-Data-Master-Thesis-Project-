@@ -662,8 +662,368 @@ the number of free parameters is
 \end{equation}
 This is consistent with the five free parameters obtained in
 \cref{eq:three-alternative-free-parameters}.
-% Stop here for the current update.
-% The relationship with MNL and the low-rank CDM will be added next.
+
+
+\section{Low-Rank Context-Dependent Model}
+\label{sec:low-rank-cdm}
+
+In the full context-dependent model, the parameter $u_{xz}$
+represents the effect of context alternative $z$ on target
+alternative $x$. There are $n(n-1)$ off-diagonal interaction
+parameters for $n$ alternatives. The low-rank model instead
+constructs these interactions from smaller target and context
+vectors.
+
+Each alternative $x$ has a target vector $t_x$ and a context
+vector $c_x$, each with $r$ components. For two distinct
+alternatives, their interaction is
+\begin{equation}
+    u_{xz}=t_x^\top c_z,
+    \qquad x\neq z.
+    \label{eq:low-rank-interaction}
+\end{equation}
+
+The value $r$ is selected before fitting the model. The
+target and context vectors are parameters learned from choice
+data; they are not observed features supplied in the dataset.
+
+If the target vectors form the rows of $T$ and the context
+vectors form the rows of $C$, their matrix product is
+\begin{equation}
+    M=TC^\top,
+    \qquad T,C\in\R^{n\times r}.
+    \label{eq:low-rank-product}
+\end{equation}
+
+Rows of $M$ correspond to targets and columns correspond to
+contexts. Its off-diagonal entries are the CDM interactions.
+An alternative is not its own context, so diagonal entries
+are ignored in computing choice probabilities.
+
+The factor product $M$ has rank at most $r$. Setting its
+diagonal to zero may change the matrix rank; therefore, the
+rank restriction refers to the factor product $TC^\top$.
+
+\subsection{Worked Example: Chai, Coffee, and Juice}
+\label{subsec:low-rank-worked-example}
+
+Consider three alternatives: Chai ($A$), Coffee ($B$), and
+Juice ($J$). We use $J$ for Juice so that $C$ can continue
+to denote the context-factor matrix. The same six observed
+choices will be used for ranks one, two, and three.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Choice observations used throughout the example.}
+    \label{tab:low-rank-example-data}
+    \begin{tabular}{ccc}
+        \toprule
+        Observation & Available items & Chosen item\\
+        \midrule
+        1 & $\{A,B\}$   & $A$\\
+        2 & $\{A,B\}$   & $A$\\
+        3 & $\{A,B\}$   & $B$\\
+        4 & $\{A,J\}$   & $J$\\
+        5 & $\{B,J\}$   & $B$\\
+        6 & $\{A,B,J\}$ & $B$\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The dataset tells us which items were available and which
+one was chosen. It does not give us target vectors, context
+vectors, or an interaction matrix. The following values
+are initial values chosen to demonstrate the calculations;
+they are not estimates fitted to the six observations.
+
+For a choice set $S$, the score of an available item $x$
+is the sum of the interactions contributed by the other
+items in $S$:
+\begin{equation}
+    s_x(S)=\sum_{z\in S\setminus\{x\}}u_{xz},
+    \qquad
+    P(x\mid S)=
+    \frac{\exp(s_x(S))}
+    {\sum_{y\in S}\exp(s_y(S))}.
+    \label{eq:low-rank-score-probability}
+\end{equation}
+
+\subsection{Rank One}
+
+For rank one, every target vector and context vector
+contains one number. We begin with the values used in
+the handwritten example.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Initial factor values for rank one.}
+    \label{tab:low-rank-one-factors}
+    \begin{tabular}{lcc}
+        \toprule
+        Item & Target value & Context value\\
+        \midrule
+        Chai ($A$)   & $0.2$ & $0.3$\\
+        Coffee ($B$) & $0.4$ & $0.5$\\
+        Juice ($J$)  & $0.1$ & $0.2$\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+In the order $A,B,J$, the factors and their product are
+\begin{equation}
+    T_1=
+    \begin{pmatrix}0.2\\0.4\\0.1\end{pmatrix},
+    \qquad
+    C_1=
+    \begin{pmatrix}0.3\\0.5\\0.2\end{pmatrix},
+    \qquad
+    T_1C_1^\top=
+    \begin{pmatrix}
+        0.06 & 0.10 & 0.04\\
+        0.12 & 0.20 & 0.08\\
+        0.03 & 0.05 & 0.02
+    \end{pmatrix}.
+    \label{eq:rank-one-example-product}
+\end{equation}
+
+For example, the effect of Coffee as context on Chai
+as target is $u_{AB}=0.2(0.5)=0.10$. In the reverse
+direction, $u_{BA}=0.4(0.3)=0.12$. These two effects
+need not be equal.
+
+The diagonal entries of the product are unused. Thus,
+the interactions relevant to choices are
+\begin{equation}
+    U_1=
+    \begin{pmatrix}
+        0    & 0.10 & 0.04\\
+        0.12 & 0    & 0.08\\
+        0.03 & 0.05 & 0
+    \end{pmatrix}.
+    \label{eq:rank-one-example-interactions}
+\end{equation}
+
+In observation 1, the available set is $\{A,B\}$.
+Chai's score is $0.10$, because Coffee is present;
+Coffee's score is $0.12$, because Chai is present.
+Juice is absent and contributes nothing. Hence,
+\begin{equation}
+    P_1(A\mid\{A,B\})
+    =\frac{e^{0.10}}{e^{0.10}+e^{0.12}}
+    \approx 0.495,
+    \qquad
+    P_1(B\mid\{A,B\})\approx 0.505.
+    \label{eq:rank-one-first-choice}
+\end{equation}
+
+The observed choice was Chai, even though these initial
+parameters assign Coffee a slightly higher probability.
+A probabilistic model does not require the most probable
+item to be chosen in every observation.
+
+For observation 6, all three items are available.
+Chai's score is $0.10+0.04=0.14$, Coffee's score is
+$0.12+0.08=0.20$, and Juice's score is
+$0.03+0.05=0.08$. The probabilities of Chai, Coffee,
+and Juice are approximately $0.3329$, $0.3535$, and
+$0.3135$, respectively. Coffee was the observed choice.
+
+\subsection{Rank Two}
+
+For rank two, each item receives two target components
+and two context components. We retain the rank-one
+values as the first column and add illustrative second
+components. This makes the effect of increasing the
+dimension visible without changing the dataset.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Illustrative initial factor values for rank two.}
+    \label{tab:low-rank-two-factors}
+    \begin{tabular}{lcc}
+        \toprule
+        Item & Target vector & Context vector\\
+        \midrule
+        Chai ($A$)   & $(0.2,\;0.1)$ & $(0.3,\;0.2)$\\
+        Coffee ($B$) & $(0.4,\;0.2)$ & $(0.5,\;0.1)$\\
+        Juice ($J$)  & $(0.1,\;0.3)$ & $(0.2,\;0.4)$\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The factors now have two columns, and their product is
+\begin{equation}
+    T_2=
+    \begin{pmatrix}
+        0.2 & 0.1\\
+        0.4 & 0.2\\
+        0.1 & 0.3
+    \end{pmatrix},
+    \qquad
+    C_2=
+    \begin{pmatrix}
+        0.3 & 0.2\\
+        0.5 & 0.1\\
+        0.2 & 0.4
+    \end{pmatrix},
+    \qquad
+    T_2C_2^\top=
+    \begin{pmatrix}
+        0.08 & 0.11 & 0.08\\
+        0.16 & 0.22 & 0.16\\
+        0.09 & 0.08 & 0.14
+    \end{pmatrix}.
+    \label{eq:rank-two-example-product}
+\end{equation}
+
+For example, the Chai--Coffee interaction now has
+two contributions: $u_{AB}=0.2(0.5)+0.1(0.1)=0.11$.
+Likewise, $u_{BA}=0.4(0.3)+0.2(0.2)=0.16$.
+Only off-diagonal values contribute to the choice scores.
+
+For observation 1, the scores of Chai and Coffee
+are $0.11$ and $0.16$. Therefore,
+\begin{equation}
+    P_2(A\mid\{A,B\})
+    =\frac{e^{0.11}}{e^{0.11}+e^{0.16}}
+    \approx 0.4875,
+    \qquad
+    P_2(B\mid\{A,B\})\approx 0.5125.
+    \label{eq:rank-two-first-choice}
+\end{equation}
+
+For observation 6, Chai's score is $0.11+0.08=0.19$,
+Coffee's score is $0.16+0.16=0.32$, and Juice's score
+is $0.09+0.08=0.17$. Their respective probabilities
+are approximately $0.3206$, $0.3651$, and $0.3143$.
+
+\subsection{Rank Three}
+
+For rank three, each target and context vector has
+three components. We again keep the previous columns
+and add one illustrative component for each item.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Illustrative initial factor values for rank three.}
+    \label{tab:low-rank-three-factors}
+    \begin{tabular}{lcc}
+        \toprule
+        Item & Target vector & Context vector\\
+        \midrule
+        Chai ($A$)   & $(0.2,\;0.1,\;0.3)$ & $(0.3,\;0.2,\;0.1)$\\
+        Coffee ($B$) & $(0.4,\;0.2,\;0.1)$ & $(0.5,\;0.1,\;0.4)$\\
+        Juice ($J$)  & $(0.1,\;0.3,\;0.2)$ & $(0.2,\;0.4,\;0.2)$\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The resulting factor product is
+\begin{equation}
+    T_3C_3^\top
+    =
+    \begin{pmatrix}
+        0.2 & 0.1 & 0.3\\
+        0.4 & 0.2 & 0.1\\
+        0.1 & 0.3 & 0.2
+    \end{pmatrix}
+    \begin{pmatrix}
+        0.3 & 0.5 & 0.2\\
+        0.2 & 0.1 & 0.4\\
+        0.1 & 0.4 & 0.2
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+        0.11 & 0.23 & 0.14\\
+        0.17 & 0.26 & 0.18\\
+        0.11 & 0.16 & 0.18
+    \end{pmatrix}.
+    \label{eq:rank-three-example-product}
+\end{equation}
+
+The second matrix on the left is $C_3^\top$:
+its columns are the context vectors of Chai, Coffee,
+and Juice. For instance, the Chai--Coffee interaction
+has three contributions:
+$u_{AB}=0.2(0.5)+0.1(0.1)+0.3(0.4)=0.23$.
+
+In observation 1, the scores of Chai and Coffee are
+$0.23$ and $0.17$. Thus,
+\begin{equation}
+    P_3(A\mid\{A,B\})
+    =\frac{e^{0.23}}{e^{0.23}+e^{0.17}}
+    \approx 0.5150,
+    \qquad
+    P_3(B\mid\{A,B\})\approx 0.4850.
+    \label{eq:rank-three-first-choice}
+\end{equation}
+
+For observation 6, the scores of Chai, Coffee,
+and Juice are $0.23+0.14=0.37$,
+$0.17+0.18=0.35$, and $0.11+0.16=0.27$.
+The corresponding probabilities are approximately
+$0.3466$, $0.3398$, and $0.3136$.
+
+\subsection{Comparison Across All Six Observations}
+
+For each rank, the factor product gives an interaction
+matrix. We calculate scores for the items available in
+each observation, apply the softmax, and record the
+probability assigned to the item that was actually
+chosen.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \caption{Probability assigned to each observed choice
+    under the illustrative initial values.}
+    \label{tab:low-rank-observed-choice-probabilities}
+    \begin{tabular}{ccccc}
+        \toprule
+        Observation & Chosen item & Rank 1 & Rank 2 & Rank 3\\
+        \midrule
+        1 & $A$ & 0.4950 & 0.4875 & 0.5150\\
+        2 & $A$ & 0.4950 & 0.4875 & 0.5150\\
+        3 & $B$ & 0.5050 & 0.5125 & 0.4850\\
+        4 & $J$ & 0.4975 & 0.5025 & 0.4925\\
+        5 & $B$ & 0.5075 & 0.5200 & 0.5050\\
+        6 & $B$ & 0.3535 & 0.3651 & 0.3398\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Observations 1, 2, and 3 have the same available set,
+so each rank assigns the same choice probabilities to
+all three. Their chosen-item probabilities differ
+because observations 1 and 2 selected Chai, whereas
+observation 3 selected Coffee.
+
+One way to summarize these six observations is their
+average negative log-likelihood:
+\begin{equation}
+    \overline{\mathcal L}_r
+    =-\frac{1}{6}\sum_{k=1}^{6}
+      \log P_r(y_k\mid S_k).
+    \label{eq:low-rank-example-nll}
+\end{equation}
+
+For the specific initial values above, the average
+negative log-likelihoods are approximately $0.7510$,
+$0.7425$, and $0.7536$ for ranks one, two, and three,
+respectively. These numbers compare only the chosen
+initializations. They are not fitted-model results,
+and they do not show that rank two is inherently
+better than rank three. The factors must first be
+optimized on the observations before their fitted
+likelihoods can be compared.
+
+For three items, rank three no longer provides
+parameter compression relative to an unrestricted
+$3\times3$ factor product. The reason to consider
+small fixed ranks becomes more compelling when the
+number of items grows. On a larger dataset, rank
+selection should be based on validation performance;
+test data should be reserved for the final evaluation.
 
 
 
