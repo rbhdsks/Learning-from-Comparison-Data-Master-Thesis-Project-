@@ -36,7 +36,7 @@
     \vspace{0.35in}
     {\Large\textbf{INDIAN INSTITUTE OF TECHNOLOGY MADRAS}\par}
     \vspace{0.70in}
-    {\Large\textbf{Learning from Comparison Data}\par}
+    {\Large\textbf{Learning from Comparison Data (First draft)}\par}
     \vspace{0.45in}
     {\large A Project Report\par}
     \vspace{0.18in}
@@ -147,6 +147,23 @@ Independence of Irrelevant Alternatives property for two alternatives
 The equation states that if \(x\) and \(y\) are present in both choice sets,
 then their relative odds should not change merely because other alternatives
 have been added or removed.
+
+In the Multinomial Logit (MNL) model, each alternative $i$ is
+assigned a positive weight $w_i$, representing its relative
+attractiveness or preference in the choice process. A higher
+weight indicates that an alternative is more likely to be
+chosen, all else being equal. These weights can be converted
+into choice probabilities by normalising them over the
+available choice set $A$:
+
+\[
+P(i\mid A)=\frac{w_i}{\sum_{j\in A}w_j}.
+\]
+
+Thus, the probability of choosing an alternative depends on
+its weight relative to the total weight of all available
+alternatives. In the following example, the weights are
+assumed to sum to one across the full set of alternatives.
 \subsection{Worked Example}
 \begin{table}[htbp]
     \centering
@@ -167,7 +184,7 @@ have been added or removed.
     \end{tabular}
 \end{table}
 Consider the following two choice sets:
-\begin{align}
+\begin{align*}
     A &= \{C,T,Bi\},
     &
     \sum_{x\in A}w_x &= 0.80,
@@ -175,7 +192,7 @@ Consider the following two choice sets:
     B &= \{C,T,W\},
     &
     \sum_{x\in B}w_x &= 0.73.
-\end{align}
+\end{align*}
 We want to verify whether
 \begin{equation}
     \frac{P(C\mid A)}{P(T\mid A)}
@@ -183,7 +200,7 @@ We want to verify whether
     \frac{P(C\mid B)}{P(T\mid B)}.
 \end{equation}
 For choice set \(A\),
-\begin{align}
+\begin{align*}
     P(C\mid A)
     &=
     \frac{w_C}{\sum_{x\in A}w_x}
@@ -199,7 +216,7 @@ For choice set \(A\),
     \frac{0.25}{0.80}
     =
     0.3125.
-\end{align}
+\end{align*}
 Therefore,
 \begin{equation}
     \frac{P(C\mid A)}{P(T\mid A)}
@@ -211,7 +228,7 @@ Therefore,
     1.6.
 \end{equation}
 For choice set \(B\),
-\begin{align}
+\begin{align*}
     P(C\mid B)
     &=
     \frac{w_C}{\sum_{x\in B}w_x}
@@ -223,7 +240,7 @@ For choice set \(B\),
     \frac{w_T}{\sum_{x\in B}w_x}
     =
     \frac{0.25}{0.73}.
-\end{align}
+\end{align*}
 Therefore,
 \begin{equation}
     \frac{P(C\mid B)}{P(T\mid B)}
@@ -260,12 +277,12 @@ The scores are shift-invariant. A common identification constraint is
 \end{equation}
 \subsection{Shift Invariance and the Zero-Sum Constraint}
 Consider two alternatives, car and taxi, with scores
-\begin{align}
+\begin{align*}
     v(C)&=2.5,\\
     v(T)&=-0.9.
-\end{align}
+\end{align*}
 Their exponentiated scores are
-\begin{align}
+\begin{align*}
     \exp(v(C))
     &=
     \exp(2.5)
@@ -277,10 +294,10 @@ Their exponentiated scores are
     \exp(-0.9)
     \approx
     0.407.
-\end{align}
+\end{align*}
 Therefore, the probability of choosing car from the set
 \(\{C,T\}\) is
-\begin{align}
+\begin{align*}
     P(C\mid\{C,T\})
     &=
     \frac{\exp(2.5)}
@@ -291,25 +308,25 @@ Therefore, the probability of choosing car from the set
     \\
     &\approx
     0.968.
-\end{align}
+\end{align*}
 However,
 \begin{equation}
     v(C)+v(T)=2.5-0.9=1.6\neq 0.
 \end{equation}
 Suppose the same constant \(k\) is added to both scores. To satisfy the
 zero-sum constraint, choose \(k\) such that
-\begin{align}
+\begin{align*}
     (2.5+k)+(-0.9+k)&=0,\\
     1.6+2k&=0,\\
     k&=-0.8.
-\end{align}
+\end{align*}
 After applying this shift,
-\begin{align}
+\begin{align*}
     v(C)&=2.5-0.8=1.7,\\
     v(T)&=-0.9-0.8=-1.7.
-\end{align}
+\end{align*}
 The probability obtained using these centred scores is
-\begin{align}
+\begin{align*}
     P(C\mid\{C,T\})
     &=
     \frac{\exp(1.7)}
@@ -320,7 +337,7 @@ The probability obtained using these centred scores is
     \\
     &\approx
     0.968.
-\end{align}
+\end{align*}
 Thus, adding the same constant to every score does not change the choice
 probabilities. The zero-sum constraint selects one representative from all
 score vectors that produce the same probabilities.
@@ -333,6 +350,8 @@ score vectors that produce the same probabilities.
 % =========================================================
 \chapter{From Multinomial Logit to Context-Dependent Choice Models}
 \section{Universal Logit Representation}
+The universal logit model provides a framework for modelling
+choice probabilities \citep{mcfadden1975}.
 In a universal logit model, the utility of an alternative can depend on the
 choice set in which it appears. Instead of assigning only one fixed utility to
 an alternative, the model allows it to have different utilities in different
@@ -353,7 +372,10 @@ An identification constraint can be imposed separately for each choice set:
 \end{equation}
 \section{Decomposition of Context-Dependent Utility}
 \subsection{Statement of Lemma 1}
-\begin{lemma}[Decomposition of context-dependent utility]
+\begin{lemma}[Decomposition of context-dependent utility]Related approaches also model the influence of competing
+alternatives on choice probabilities, including the
+market-share framework proposed by Batsell and Polking
+\citep{batsell1985}.
 For a universal logit model, the context-dependent utility $u(x\mid C)$ can
 be written as a sum of terms indexed by subsets $B$ of
 $C\setminus\{x\}$ \citep{seshadri2019}:
@@ -412,16 +434,16 @@ The subsets of $A$ are
 \end{split}
 \end{equation}
 The utility expansions are
-\begin{align}
+\begin{align*}
     u(C\mid A)
     &=v(C)+v(C\mid\{T\})+v(C\mid\{Bi\})+v(C\mid\{T,Bi\}),\\
     u(T\mid A)
     &=v(T)+v(T\mid\{C\})+v(T\mid\{Bi\})+v(T\mid\{C,Bi\}),\\
     u(Bi\mid A)
     &=v(Bi)+v(Bi\mid\{C\})+v(Bi\mid\{T\})+v(Bi\mid\{C,T\}).
-\end{align}
+\end{align*}
 The corresponding constraints are
-\begin{align}
+\begin{align*}
     v(C)+v(T)+v(Bi)&=0,\label{eq:constraint-empty}\\
     v(T\mid\{C\})+v(Bi\mid\{C\})&=0,\\
     v(C\mid\{T\})+v(Bi\mid\{T\})&=0,\\
@@ -429,17 +451,17 @@ The corresponding constraints are
     v(C\mid\{T,Bi\})&=0,\\
     v(T\mid\{C,Bi\})&=0,\\
     v(Bi\mid\{C,T\})&=0.
-\end{align}
+\end{align*}
 The final three constraints force the highest-order terms to zero. Therefore,
 the utilities reduce to
-\begin{align}
+\begin{align*}
     u(C\mid A)
     &=v(C)+v(C\mid\{T\})+v(C\mid\{Bi\}),\\
     u(T\mid A)
     &=v(T)+v(T\mid\{C\})+v(T\mid\{Bi\}),\\
     u(Bi\mid A)
     &=v(Bi)+v(Bi\mid\{C\})+v(Bi\mid\{T\}).
-\end{align}
+\end{align*}
 There are nine remaining parameters and four independent constraints. Hence,
 the number of free parameters is
 \begin{equation}
@@ -490,20 +512,7 @@ constraints is $n+1$, and the number of free parameters is
     n^2-(n+1)=n^2-n-1.
     \label{eq:second-order-parameter-count}
 \end{equation}
-\subsection{MNL as the First-Order Model}
-The multinomial logit model is the first-order member of this hierarchy. In
-$\mathcal{M}_1$, all contextual terms are set to zero, leaving
-\begin{equation}
-    u(x\mid C)=v(x).
-\end{equation}
-Substituting this expression into the universal logit representation gives
-\begin{equation}
-    P(x\mid C)
-    =
-    \frac{\exp(v(x))}
-    {\displaystyle\sum_{y\in C}\exp(v(y))},
-\end{equation}
-which is the multinomial logit model.
+
 \section{Context-Dependent Random Utility Model}
 The first-order model does not allow the utility of an alternative to change
 when other alternatives are added to or removed from the choice set. To
@@ -560,7 +569,7 @@ be combined into a single set of pairwise parameters. For $x\neq z$, define
 \end{equation}
 Here, $x$ is the target alternative and $z$ is the context alternative. Using
 this definition, the reparameterised utility is
-\begin{align}
+\begin{align*}
     \widetilde{u}(x\mid C)
     &=\sum_{z\in C\setminus\{x\}}u_{xz}\\
     &=\sum_{z\in C\setminus\{x\}}
@@ -569,7 +578,7 @@ this definition, the reparameterised utility is
       -\sum_{z\in C}v(z)\\
     &=u(x\mid C)-\sum_{z\in C}v(z).
     \label{eq:reparameterised-utility}
-\end{align}
+\end{align*}
 The term $\sum_{z\in C}v(z)$ depends only on the choice set $C$ and is the
 same for every candidate in that choice set. Subtracting the same quantity
 from every candidate utility does not change the softmax probabilities:
@@ -653,8 +662,368 @@ the number of free parameters is
 \end{equation}
 This is consistent with the five free parameters obtained in
 \cref{eq:three-alternative-free-parameters}.
-% Stop here for the current update.
-% The relationship with MNL and the low-rank CDM will be added next.
+
+
+\section{Low-Rank Context-Dependent Model}
+\label{sec:low-rank-cdm}
+
+In the full context-dependent model, the parameter $u_{xz}$
+represents the effect of context alternative $z$ on target
+alternative $x$. There are $n(n-1)$ off-diagonal interaction
+parameters for $n$ alternatives. The low-rank model instead
+constructs these interactions from smaller target and context
+vectors.
+
+Each alternative $x$ has a target vector $t_x$ and a context
+vector $c_x$, each with $r$ components. For two distinct
+alternatives, their interaction is
+\begin{equation}
+    u_{xz}=t_x^\top c_z,
+    \qquad x\neq z.
+    \label{eq:low-rank-interaction}
+\end{equation}
+
+The value $r$ is selected before fitting the model. The
+target and context vectors are parameters learned from choice
+data; they are not observed features supplied in the dataset.
+
+If the target vectors form the rows of $T$ and the context
+vectors form the rows of $C$, their matrix product is
+\begin{equation}
+    M=TC^\top,
+    \qquad T,C\in\R^{n\times r}.
+    \label{eq:low-rank-product}
+\end{equation}
+
+Rows of $M$ correspond to targets and columns correspond to
+contexts. Its off-diagonal entries are the CDM interactions.
+An alternative is not its own context, so diagonal entries
+are ignored in computing choice probabilities.
+
+The factor product $M$ has rank at most $r$. Setting its
+diagonal to zero may change the matrix rank; therefore, the
+rank restriction refers to the factor product $TC^\top$.
+
+\subsection{Worked Example: Chai, Coffee, and Juice}
+\label{subsec:low-rank-worked-example}
+
+Consider three alternatives: Chai ($A$), Coffee ($B$), and
+Juice ($J$). We use $J$ for Juice so that $C$ can continue
+to denote the context-factor matrix. The same six observed
+choices will be used for ranks one, two, and three.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Choice observations used throughout the example.}
+    \label{tab:low-rank-example-data}
+    \begin{tabular}{ccc}
+        \toprule
+        Observation & Available items & Chosen item\\
+        \midrule
+        1 & $\{A,B\}$   & $A$\\
+        2 & $\{A,B\}$   & $A$\\
+        3 & $\{A,B\}$   & $B$\\
+        4 & $\{A,J\}$   & $J$\\
+        5 & $\{B,J\}$   & $B$\\
+        6 & $\{A,B,J\}$ & $B$\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The dataset tells us which items were available and which
+one was chosen. It does not give us target vectors, context
+vectors, or an interaction matrix. The following values
+are initial values chosen to demonstrate the calculations;
+they are not estimates fitted to the six observations.
+
+For a choice set $S$, the score of an available item $x$
+is the sum of the interactions contributed by the other
+items in $S$:
+\begin{equation}
+    s_x(S)=\sum_{z\in S\setminus\{x\}}u_{xz},
+    \qquad
+    P(x\mid S)=
+    \frac{\exp(s_x(S))}
+    {\sum_{y\in S}\exp(s_y(S))}.
+    \label{eq:low-rank-score-probability}
+\end{equation}
+
+\subsection{Rank One}
+
+For rank one, every target vector and context vector
+contains one number. We begin with the values used in
+the handwritten example.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Initial factor values for rank one.}
+    \label{tab:low-rank-one-factors}
+    \begin{tabular}{lcc}
+        \toprule
+        Item & Target value & Context value\\
+        \midrule
+        Chai ($A$)   & $0.2$ & $0.3$\\
+        Coffee ($B$) & $0.4$ & $0.5$\\
+        Juice ($J$)  & $0.1$ & $0.2$\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+In the order $A,B,J$, the factors and their product are
+\begin{equation}
+    T_1=
+    \begin{pmatrix}0.2\\0.4\\0.1\end{pmatrix},
+    \qquad
+    C_1=
+    \begin{pmatrix}0.3\\0.5\\0.2\end{pmatrix},
+    \qquad
+    T_1C_1^\top=
+    \begin{pmatrix}
+        0.06 & 0.10 & 0.04\\
+        0.12 & 0.20 & 0.08\\
+        0.03 & 0.05 & 0.02
+    \end{pmatrix}.
+    \label{eq:rank-one-example-product}
+\end{equation}
+
+For example, the effect of Coffee as context on Chai
+as target is $u_{AB}=0.2(0.5)=0.10$. In the reverse
+direction, $u_{BA}=0.4(0.3)=0.12$. These two effects
+need not be equal.
+
+The diagonal entries of the product are unused. Thus,
+the interactions relevant to choices are
+\begin{equation}
+    U_1=
+    \begin{pmatrix}
+        0    & 0.10 & 0.04\\
+        0.12 & 0    & 0.08\\
+        0.03 & 0.05 & 0
+    \end{pmatrix}.
+    \label{eq:rank-one-example-interactions}
+\end{equation}
+
+In observation 1, the available set is $\{A,B\}$.
+Chai's score is $0.10$, because Coffee is present;
+Coffee's score is $0.12$, because Chai is present.
+Juice is absent and contributes nothing. Hence,
+\begin{equation}
+    P_1(A\mid\{A,B\})
+    =\frac{e^{0.10}}{e^{0.10}+e^{0.12}}
+    \approx 0.495,
+    \qquad
+    P_1(B\mid\{A,B\})\approx 0.505.
+    \label{eq:rank-one-first-choice}
+\end{equation}
+
+The observed choice was Chai, even though these initial
+parameters assign Coffee a slightly higher probability.
+A probabilistic model does not require the most probable
+item to be chosen in every observation.
+
+For observation 6, all three items are available.
+Chai's score is $0.10+0.04=0.14$, Coffee's score is
+$0.12+0.08=0.20$, and Juice's score is
+$0.03+0.05=0.08$. The probabilities of Chai, Coffee,
+and Juice are approximately $0.3329$, $0.3535$, and
+$0.3135$, respectively. Coffee was the observed choice.
+
+\subsection{Rank Two}
+
+For rank two, each item receives two target components
+and two context components. We retain the rank-one
+values as the first column and add illustrative second
+components. This makes the effect of increasing the
+dimension visible without changing the dataset.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Illustrative initial factor values for rank two.}
+    \label{tab:low-rank-two-factors}
+    \begin{tabular}{lcc}
+        \toprule
+        Item & Target vector & Context vector\\
+        \midrule
+        Chai ($A$)   & $(0.2,\;0.1)$ & $(0.3,\;0.2)$\\
+        Coffee ($B$) & $(0.4,\;0.2)$ & $(0.5,\;0.1)$\\
+        Juice ($J$)  & $(0.1,\;0.3)$ & $(0.2,\;0.4)$\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The factors now have two columns, and their product is
+\begin{equation}
+    T_2=
+    \begin{pmatrix}
+        0.2 & 0.1\\
+        0.4 & 0.2\\
+        0.1 & 0.3
+    \end{pmatrix},
+    \qquad
+    C_2=
+    \begin{pmatrix}
+        0.3 & 0.2\\
+        0.5 & 0.1\\
+        0.2 & 0.4
+    \end{pmatrix},
+    \qquad
+    T_2C_2^\top=
+    \begin{pmatrix}
+        0.08 & 0.11 & 0.08\\
+        0.16 & 0.22 & 0.16\\
+        0.09 & 0.08 & 0.14
+    \end{pmatrix}.
+    \label{eq:rank-two-example-product}
+\end{equation}
+
+For example, the Chai--Coffee interaction now has
+two contributions: $u_{AB}=0.2(0.5)+0.1(0.1)=0.11$.
+Likewise, $u_{BA}=0.4(0.3)+0.2(0.2)=0.16$.
+Only off-diagonal values contribute to the choice scores.
+
+For observation 1, the scores of Chai and Coffee
+are $0.11$ and $0.16$. Therefore,
+\begin{equation}
+    P_2(A\mid\{A,B\})
+    =\frac{e^{0.11}}{e^{0.11}+e^{0.16}}
+    \approx 0.4875,
+    \qquad
+    P_2(B\mid\{A,B\})\approx 0.5125.
+    \label{eq:rank-two-first-choice}
+\end{equation}
+
+For observation 6, Chai's score is $0.11+0.08=0.19$,
+Coffee's score is $0.16+0.16=0.32$, and Juice's score
+is $0.09+0.08=0.17$. Their respective probabilities
+are approximately $0.3206$, $0.3651$, and $0.3143$.
+
+\subsection{Rank Three}
+
+For rank three, each target and context vector has
+three components. We again keep the previous columns
+and add one illustrative component for each item.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Illustrative initial factor values for rank three.}
+    \label{tab:low-rank-three-factors}
+    \begin{tabular}{lcc}
+        \toprule
+        Item & Target vector & Context vector\\
+        \midrule
+        Chai ($A$)   & $(0.2,\;0.1,\;0.3)$ & $(0.3,\;0.2,\;0.1)$\\
+        Coffee ($B$) & $(0.4,\;0.2,\;0.1)$ & $(0.5,\;0.1,\;0.4)$\\
+        Juice ($J$)  & $(0.1,\;0.3,\;0.2)$ & $(0.2,\;0.4,\;0.2)$\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The resulting factor product is
+\begin{equation}
+    T_3C_3^\top
+    =
+    \begin{pmatrix}
+        0.2 & 0.1 & 0.3\\
+        0.4 & 0.2 & 0.1\\
+        0.1 & 0.3 & 0.2
+    \end{pmatrix}
+    \begin{pmatrix}
+        0.3 & 0.5 & 0.2\\
+        0.2 & 0.1 & 0.4\\
+        0.1 & 0.4 & 0.2
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+        0.11 & 0.23 & 0.14\\
+        0.17 & 0.26 & 0.18\\
+        0.11 & 0.16 & 0.18
+    \end{pmatrix}.
+    \label{eq:rank-three-example-product}
+\end{equation}
+
+The second matrix on the left is $C_3^\top$:
+its columns are the context vectors of Chai, Coffee,
+and Juice. For instance, the Chai--Coffee interaction
+has three contributions:
+$u_{AB}=0.2(0.5)+0.1(0.1)+0.3(0.4)=0.23$.
+
+In observation 1, the scores of Chai and Coffee are
+$0.23$ and $0.17$. Thus,
+\begin{equation}
+    P_3(A\mid\{A,B\})
+    =\frac{e^{0.23}}{e^{0.23}+e^{0.17}}
+    \approx 0.5150,
+    \qquad
+    P_3(B\mid\{A,B\})\approx 0.4850.
+    \label{eq:rank-three-first-choice}
+\end{equation}
+
+For observation 6, the scores of Chai, Coffee,
+and Juice are $0.23+0.14=0.37$,
+$0.17+0.18=0.35$, and $0.11+0.16=0.27$.
+The corresponding probabilities are approximately
+$0.3466$, $0.3398$, and $0.3136$.
+
+\subsection{Comparison Across All Six Observations}
+
+For each rank, the factor product gives an interaction
+matrix. We calculate scores for the items available in
+each observation, apply the softmax, and record the
+probability assigned to the item that was actually
+chosen.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \caption{Probability assigned to each observed choice
+    under the illustrative initial values.}
+    \label{tab:low-rank-observed-choice-probabilities}
+    \begin{tabular}{ccccc}
+        \toprule
+        Observation & Chosen item & Rank 1 & Rank 2 & Rank 3\\
+        \midrule
+        1 & $A$ & 0.4950 & 0.4875 & 0.5150\\
+        2 & $A$ & 0.4950 & 0.4875 & 0.5150\\
+        3 & $B$ & 0.5050 & 0.5125 & 0.4850\\
+        4 & $J$ & 0.4975 & 0.5025 & 0.4925\\
+        5 & $B$ & 0.5075 & 0.5200 & 0.5050\\
+        6 & $B$ & 0.3535 & 0.3651 & 0.3398\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Observations 1, 2, and 3 have the same available set,
+so each rank assigns the same choice probabilities to
+all three. Their chosen-item probabilities differ
+because observations 1 and 2 selected Chai, whereas
+observation 3 selected Coffee.
+
+One way to summarize these six observations is their
+average negative log-likelihood:
+\begin{equation}
+    \overline{\mathcal L}_r
+    =-\frac{1}{6}\sum_{k=1}^{6}
+      \log P_r(y_k\mid S_k).
+    \label{eq:low-rank-example-nll}
+\end{equation}
+
+For the specific initial values above, the average
+negative log-likelihoods are approximately $0.7510$,
+$0.7425$, and $0.7536$ for ranks one, two, and three,
+respectively. These numbers compare only the chosen
+initializations. They are not fitted-model results,
+and they do not show that rank two is inherently
+better than rank three. The factors must first be
+optimized on the observations before their fitted
+likelihoods can be compared.
+
+For three items, rank three no longer provides
+parameter compression relative to an unrestricted
+$3\times3$ factor product. The reason to consider
+small fixed ranks becomes more compelling when the
+number of items grows. On a larger dataset, rank
+selection should be based on validation performance;
+test data should be reserved for the final evaluation.
 
 
 
@@ -665,7 +1034,11 @@ This is consistent with the five free parameters obtained in
 \section{Pairwise Comparison Setting}
 To understand the underlying mechanics of a model for choice data, we
 consider observed pairwise comparisons and assume a probabilistic model.
-The Bradley--Terry model is used for this purpose.
+The Bradley--Terry model, which is originally developed for analysing
+paired comparisons, provides a probabilistic framework for
+estimating the relative strengths of competing items
+\citep{bradleyterry1952}.
+
 The goal is to estimate unknown parameters that provide a compressed
 representation of the observed comparison data.
 For items \(i\) and \(j\), with parameters \(\theta_i\) and \(\theta_j\), the
@@ -692,7 +1065,7 @@ Therefore, the probability depends only on the parameter difference
 The Bradley--Terry probability depends only on the difference between
 two parameters. Consequently, adding the same constant \(c\) to every
 parameter does not change any pairwise comparison probability:
-\begin{align}
+\begin{align*}
     P(i\succ j)
     &=
     \frac{\exp(\theta_i+c)}
@@ -701,7 +1074,7 @@ parameter does not change any pairwise comparison probability:
     &=
     \frac{\exp(\theta_i)}
     {\exp(\theta_i)+\exp(\theta_j)}.
-\end{align}
+\end{align*}
 
 Therefore, the parameter vectors
 \[
@@ -738,6 +1111,11 @@ before their recovery error is calculated.
 
 
 \section{Maximum Likelihood Estimation}
+The model parameters can be estimated from observed pairwise
+outcomes using maximum likelihood. Likelihood-based estimation
+and computational algorithms for extensions of the
+Bradley--Terry model have been studied in the literature
+\citep{hunter2004}.
 
 Suppose that the observed dataset contains \(m\) pairwise comparisons:
 \begin{equation}
@@ -772,7 +1150,7 @@ The likelihood of the complete dataset is therefore
 \end{equation}
 
 Taking the logarithm gives the log-likelihood
-\begin{align}
+\begin{align*}
     \ell(\boldsymbol{\theta};\mathcal{D})
     &=
     \sum_{t=1}^{m}
@@ -795,7 +1173,7 @@ Taking the logarithm gives the log-likelihood
         \right)
     \right].
     \label{eq:btl-log-likelihood}
-\end{align}
+\end{align*}
 
 Maximizing the log-likelihood is equivalent to minimizing its negative.
 In the implementation, we use the average negative log-likelihood
@@ -1310,8 +1688,8 @@ implementation.
     \label{fig:pytorch-runtime-overhead}
 \end{figure}
 
-For this small Bradley--Terry problem, the handcrafted implementations
-were faster than their PyTorch counterparts. The additional runtime
+For this Bradley--Terry problem, the handcrafted implementations
+were faster than their PyTorch counterparts, and among all those Adam optimizer performed well. The additional runtime
 is consistent with the overhead introduced by tensor operations and
 automatic differentiation on a small CPU-based problem.
 
