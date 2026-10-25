@@ -1,6 +1,6 @@
 # Learning from Comparison Data
 
-Research code and [thesis notes](https://www.overleaf.com/project/6a192de01f9877e35710e1d1) for my M.Tech project on learning preference models from observed choice data.
+Research code and [thesis notes](https://github.com/rbhdsks/Learning-from-Comparison-Data-Master-Thesis-Project-/blob/main/docs/thesis/Notes.pdf) for my M.Tech project on learning preference models from observed choice data.
 
 The project begins with the Bradley–Terry model for pairwise comparisons and extends towards context-dependent choice models.
 
