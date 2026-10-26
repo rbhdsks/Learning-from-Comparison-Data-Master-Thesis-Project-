@@ -1991,17 +1991,15 @@ affect the increase above the baseline.
     \label{fig:resource-process-memory}
 \end{figure}
 
-\subsection{Summary}
+%\subsection{Summary}
 
-The experiment shows that low-rank parameterization substantially
-reduces the number of trainable entries. However, parameter count,
+So, these experiments show that low-rank parameterization is substantially
+reducing the number of trainable parameters. However, parameter count,
 training time, and total process memory do not decrease by the same
-factor. In the present dense implementations, the low-rank models still
+factor. In these present implementations, the low-rank models still
 show approximately quadratic runtime growth over the measured range.
 The results therefore separate the storage benefit of the parameterization
-from the computational behaviour of the implementation. Comparisons of
-recovery accuracy, predictive performance, and time to convergence
-require separate experiments.
+from the computational behaviour of the implementation. 
 
 
 \appendix
