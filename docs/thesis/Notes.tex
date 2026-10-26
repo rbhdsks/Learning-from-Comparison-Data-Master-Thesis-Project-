@@ -1,24 +1,84 @@
-\documentclass[12pt,oneside]{book}
-\usepackage[a4paper,left=1.25in,right=1.0in,top=1.0in,bottom=1.0in]{geometry}
+\listfiles
+\documentclass[10pt,oneside]{report}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage{textcomp}
 \usepackage{setspace}
+\usepackage{mathptmx}
 \usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[table,svgnames]{xcolor}
 \usepackage{graphicx}
-\usepackage{booktabs,array,longtable}
+\usepackage{booktabs,array,longtable,tabularx,multirow}
 \usepackage{enumitem}
-\usepackage{xcolor}
 \usepackage{microtype}
-\usepackage{booktabs}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{float}
+\usepackage{rotating}
+\usepackage{makecell}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage[titles]{tocloft}
+\usepackage{titletoc}
+\usepackage{appendix}
 \usepackage[numbers,sort&compress]{natbib}
+\IfFileExists{sfchap.sty}{\usepackage{sfchap}}{%
+  \usepackage{titlesec}
+  \titleformat{\chapter}[display]
+    {\normalfont\sffamily\LARGE\bfseries}
+    {\large\chaptertitlename\ \thechapter}{12pt}{}
+  \titlespacing*{\chapter}{0pt}{35pt}{30pt}
+}
+\IfFileExists{sfsection.sty}{\usepackage{sfsection}}{%
+  \usepackage{titlesec}
+  \titleformat{\section}
+    {\normalfont\sffamily\large\bfseries}{\thesection}{1em}{}
+  \titleformat{\subsection}
+    {\normalfont\sffamily\normalsize\bfseries}{\thesubsection}{1em}{}
+  \titleformat{\subsubsection}
+    {\normalfont\sffamily\normalsize\bfseries}{\thesubsubsection}{1em}{}
+}
+
 \usepackage[hidelinks]{hyperref}
+\hypersetup{
+  pdftitle={Learning from Comparison Data (First draft)},
+  pdfauthor={Nitesh Kumar Shah},
+  bookmarksnumbered,
+  pdfstartview={FitH},
+  pdfborder={0 0 0},
+  plainpages=false
+}
+\usepackage[all]{hypcap}
 \usepackage{cleveref}
-\usepackage{float}
-\onehalfspacing
-\setcounter{secnumdepth}{3}
-\setcounter{tocdepth}{2}
+\urlstyle{same}
+
+\setlength{\textfloatsep}{0.4in}
+\setlength{\cftsecnumwidth}{2.8em}
+\setlength{\cftsubsecnumwidth}{3.7em}
+\setlength{\cftsubsubsecnumwidth}{4.6em}
+\setlength{\cftparanumwidth}{5.5em}
+\setlength{\cftsubparanumwidth}{6.5em}
+\setlength{\cfttabnumwidth}{3.5em}
+\setlength{\cftfignumwidth}{3.5em}
+\renewcommand{\contentsname}{TABLE OF CONTENTS}
+\renewcommand{\listfigurename}{LIST OF FIGURES}
+\renewcommand{\listtablename}{LIST OF TABLES}
+\renewcommand{\bibname}{\texorpdfstring{References\vspace{10mm}}{References}}
+\setcounter{secnumdepth}{7}
+\setcounter{tocdepth}{7}
+\interfootnotelinepenalty=10000
+\pagestyle{plain}
+
+% Keep the book-style matter commands already used in the thesis body,
+% while adopting the supplied template's report document class.
+\newcommand{\frontmatter}{\clearpage\pagenumbering{roman}\singlespacing}
+\newcommand{\mainmatter}{\clearpage\pagenumbering{arabic}\doublespacing}
+\newcommand{\backmatter}{\clearpage\singlespacing}
+\AtBeginDocument{%
+  \addtocontents{toc}{\protect\vspace{0.4in}\protect\hfill Page\protect\par}%
+  \addtocontents{lof}{\protect\vspace{0.2in}\protect\hspace{0.13in}Figure\protect\hfill Page\protect\par}%
+  \addtocontents{lot}{\protect\vspace{0.2in}\protect\hspace{0.13in}Table\protect\hfill Page\protect\par}%
+}
+
 \newtheorem{definition}{Definition}[chapter]
 \newtheorem{lemma}[definition]{Lemma}
 \newtheorem{proposition}[definition]{Proposition}
@@ -27,6 +87,7 @@
 \newcommand{\TODO}[1]{\textcolor{blue}{[TODO: #1]}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\X}{\mathcal{X}}
+
 \begin{document}
 \frontmatter
 \begin{titlepage}
@@ -1698,203 +1759,6 @@ size. It should not be interpreted as a general comparison of PyTorch
 and handcrafted optimization, since PyTorch may become advantageous
 for larger models, larger datasets, or GPU-based computation.
 
-\chapter{Experimental Study of the Full Context-Dependent Model}
-\label{chap:full-cdm-experiments}
-
-\section{Experimental Setup}
-\label{sec:cdm-experimental-setup}
-
-% Experimental setup and implementation details will be added later.
-
-
-\section{CDM-to-CDM Parameter Recovery}
-\label{sec:cdm-parameter-recovery}
-
-\subsection{Baseline Recovery Experiment}
-\label{subsec:cdm-baseline-recovery}
-
-\begin{table}[htbp]
-    \centering
-    \caption{Average negative log-likelihood in the baseline CDM-to-CDM recovery experiment.}
-    \label{tab:cdm-baseline-nll}
-    \begin{tabular}{lc}
-        \toprule
-        Evaluation & Average NLL \\
-        \midrule
-        Uniform baseline---training       & 0.9015 \\
-        True parameters---training        & 0.8275 \\
-        Estimated parameters---training   & 0.8169 \\
-        True parameters---test            & 0.8020 \\
-        Estimated parameters---test       & 0.8190 \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[
-        width=\textwidth
-    ]{images/experiments/context_dependent_model/cdm_cdm/01_full_cdm_parameter_recovery.pdf}
-    \caption{Recovery of the full CDM interaction matrix.}
-    \label{fig:full-cdm-parameter-recovery}
-\end{figure}
-
-
-\section{Recovery as the Number of Observations Increases}
-\label{sec:cdm-observation-scaling}
-
-\subsection{Observation-Scaling Results}
-\label{subsec:cdm-observation-scaling-results}
-
-\begin{table}[htbp]
-    \centering
-    \small
-    \caption{Full CDM recovery as the number of observations increases.}
-    \label{tab:cdm-observation-scaling}
-    \resizebox{\textwidth}{!}{
-        \begin{tabular}{rrrrrr}
-            \toprule
-            Observations &
-            Runs &
-            Mean RMSE &
-            RMSE standard deviation &
-            Mean correlation &
-            Mean excess test NLL \\
-            \midrule
-            1,000  & 10 & 0.3243 & 0.0888 & 0.7519 & 0.0100 \\
-            5,000  & 10 & 0.1216 & 0.0321 & 0.9493 & 0.0023 \\
-            10,000 & 10 & 0.0984 & 0.0247 & 0.9673 & 0.0016 \\
-            50,000 & 10 & 0.0482 & 0.0115 & 0.9920 & 0.0003 \\
-            \bottomrule
-        \end{tabular}
-    }
-\end{table}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[
-        width=\textwidth
-    ]{images/experiments/context_dependent_model/cdm_cdm/02_recovery_vs_observations.pdf}
-    \caption{Full CDM recovery as the number of observations increases.}
-    \label{fig:cdm-recovery-vs-observations}
-\end{figure}
-
-
-\section{Scaling with the Number of Items}
-\label{sec:cdm-item-scaling}
-
-\subsection{Fixed-Observation Results}
-\label{subsec:cdm-fixed-observation-results}
-
-\begin{table}[htbp]
-    \centering
-    \small
-    \caption{Full CDM recovery with 50,000 observations as the number of items increases.}
-    \label{tab:cdm-item-scaling}
-    \resizebox{\textwidth}{!}{
-        \begin{tabular}{rrrrrrr}
-            \toprule
-            Items &
-            Free parameters &
-            Runs &
-            Mean RMSE &
-            RMSE standard deviation &
-            Mean correlation &
-            Mean excess test NLL \\
-            \midrule
-            5  & 19    & 5 & 0.0520 & 0.0132 & 0.9843 & 0.0000 \\
-            10 & 89    & 5 & 0.0945 & 0.0114 & 0.9692 & 0.0009 \\
-            20 & 379   & 5 & 0.1683 & 0.0054 & 0.9192 & 0.0052 \\
-            40 & 1,559 & 5 & 0.3303 & 0.0118 & 0.7860 & 0.0190 \\
-            80 & 6,319 & 5 & 0.8017 & 0.0210 & 0.5099 & 0.1152 \\
-            \bottomrule
-        \end{tabular}
-    }
-\end{table}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[
-        width=\textwidth
-    ]{images/experiments/context_dependent_model/cdm_cdm/03_recovery_vs_items.pdf}
-    \caption{Full CDM recovery with a fixed number of observations as the number of items increases.}
-    \label{fig:cdm-recovery-vs-items}
-\end{figure}
-\section{Learning CDM-Generated Choices with a BTL/Luce Model}
-\label{sec:cdm-to-btl}
-
-\subsection{Objective}
-\label{subsec:cdm-to-btl-objective}
-
-% TODO: State the objective of fitting a context-independent
-% BTL/Luce model to data generated from a full CDM.
-
-
-\subsection{Experimental Setup}
-\label{subsec:cdm-to-btl-setup}
-
-% TODO: Describe the number of items, choice-set sizes,
-% train--test split, random seeds, and NLL evaluation.
-
-
-\subsection{Baseline CDM-to-BTL Comparison}
-\label{subsec:cdm-to-btl-baseline}
-
-% TODO: Describe the initial single-dataset comparison between
-% the uniform baseline, true CDM, and fitted BTL/Luce model.
-
-
-\subsection{Effect of the Number of Observations}
-\label{subsec:cdm-to-btl-observations}
-
-% TODO: Describe the observation counts and repeated trials.
-
-\input{tables/experiments/context_dependent_model/cdm_btl/01_observation_scaling_summary.tex}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\textwidth]{images/experiments/context_dependent_model/cdm_btl/02_misspecification_gap_vs_observations.pdf}
-    \caption{Predictive performance and test misspecification gap for BTL/Luce models fitted to CDM-generated choice data as the number of observations increases. Points represent means over ten independent runs, and error bars represent one standard deviation.}
-    \label{fig:cdm-btl-observation-scaling}
-\end{figure}
-
-
-\subsection{Effect of Context-Interaction Strength}
-\label{subsec:cdm-to-btl-context-strength}
-
-% TODO: Explain the interaction-scale multiplier and the
-% five-item and ten-item experimental settings.
-
-\input{tables/experiments/context_dependent_model/cdm_btl/02_context_strength_summary.tex}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\textwidth]{images/experiments/context_dependent_model/cdm_btl/03_context_strength_comparison.pdf}
-    \caption{Effect of CDM interaction strength on the predictive performance and test misspecification gap of the fitted BTL/Luce model. Points represent means over ten independent runs, and error bars represent one standard deviation.}
-    \label{fig:cdm-btl-context-strength}
-\end{figure}
-
-
-\subsection{Key Observations}
-\label{subsec:cdm-to-btl-observations-summary}
-
-\begin{itemize}
-    \item % TODO: BTL/Luce performance relative to the uniform baseline.
-    \item % TODO: Persistence of the gap with increasing observations.
-    \item % TODO: Effect of increasing context-interaction strength.
-    \item % TODO: Comparison between five and ten items.
-\end{itemize}
-
-
-\subsection{Summary}
-\label{subsec:cdm-to-btl-summary}
-
-% TODO: Summarise the evidence of BTL/Luce model
-% misspecification on CDM-generated choice data.
-
-
-% Discussion, limitations, CDM-to-BTL experiments, and motivation
-% for the low-rank CDM will be added later.
 \appendix
 \chapter{Additional Derivations}
 \chapter{Reproducibility Details}
