@@ -1759,6 +1759,251 @@ test data should be reserved for the final evaluation.
 
 
 
+\section{Computational Scaling of the Full and Low-Rank CDM}
+\label{sec:full-low-rank-resource-scaling}
+
+The low-rank model uses fewer trainable parameters than the full CDM.
+We now examine how this reduction affects the resources required for
+model fitting as the number of items increases. The experiment compares
+training time, average time per update, parameter storage, and process
+memory. It uses the existing dense-matrix implementations of the models.
+
+\subsection{Experimental Setup}
+
+The number of items was varied over
+$n\in\{250,500,1000,2000,3000,5000\}$. For each item count, we generated
+1,000 observations from a full CDM with parameter scale $0.4$ and
+choice-set sizes two and three. The full model and low-rank models with
+$r\in\{1,2,3\}$ were fitted to the same observations within each repeat.
+Five repeats were performed for every setting, giving 120 successful
+model fits in total. Dataset fingerprints were checked to verify that
+the four models received the same observations within each repeat.
+
+All models were fitted using Adam with learning rate $0.05$ for exactly
+1,000 updates. Computation was performed on the CPU using
+\texttt{float64} and one PyTorch computational thread. The base random
+seed was 20260831. Each fit ran in a separate process, and the order of
+the fits was randomly shuffled.
+
+The training time includes the optimization loop. Data generation, model
+construction, and the final loss and gradient evaluation are outside
+this timing interval. Since the update budget is fixed, this experiment
+measures computational cost rather than time to convergence. It also
+does not compare parameter recovery or held-out predictive performance.
+
+\subsection{Number of Trainable Parameters and Parameter Storage}
+
+The full implementation stores an $n\times n$ trainable matrix. The
+low-rank implementation stores two $n\times r$ factor matrices. Thus,
+the numbers of trainable entries are
+\begin{equation}
+    N_{\mathrm{full}}=n^2,
+    \qquad
+    N_{\mathrm{low\text{-}rank}}=2nr.
+    \label{eq:resource-trainable-entries}
+\end{equation}
+These counts describe the entries stored by the implementation. They
+are not the numbers of identifiable free parameters discussed earlier.
+For a fixed rank, the number of trainable entries grows linearly with
+$n$, whereas the full matrix requires quadratic storage.
+
+For example, at $n=5000$, the full model contains 25,000,000 trainable
+entries. The rank-one, rank-two, and rank-three models contain 10,000,
+20,000, and 30,000 entries, respectively. The rank-one model therefore
+uses 2,500 times fewer trainable entries than the full model.
+
+Each \texttt{float64} entry occupies eight bytes. The storage of the
+trainable tensors, measured in MiB, is therefore
+\begin{equation}
+    S_{\mathrm{parameters}}
+    =\frac{8N_{\mathrm{parameters}}}{2^{20}}.
+    \label{eq:resource-parameter-storage}
+\end{equation}
+This quantity excludes gradients, optimizer states, observations, and
+temporary allocations. It should therefore be distinguished from the
+total memory occupied by the process.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{0.80\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/experiments/context_dependent_model/05_full_vs_low_rank_resource_scaling/20261021T202900_245293Z/01_parameter_count.pdf}
+        \caption{Number of trainable entries.}
+    \end{subfigure}
+    \par\medskip
+    \begin{subfigure}{0.80\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/experiments/context_dependent_model/05_full_vs_low_rank_resource_scaling/20261021T202900_245293Z/02_parameter_storage.pdf}
+        \caption{Storage occupied by trainable tensors.}
+    \end{subfigure}
+    \caption{Trainable entries and their tensor storage for the full and low-rank CDM. Storage excludes gradients, optimizer states, data, and temporary allocations.}
+    \label{fig:resource-parameters}
+\end{figure}
+
+\subsection{Training Time and Average Time per Update}
+
+Table~\ref{tab:resource-scaling-summary} reports the mean training time,
+its standard deviation, and the mean sampled peak process memory across
+the five repeats. Training time increased substantially with the number
+of items for all four models.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Computational resources for the full and low-rank CDM.
+    Time is measured over 1,000 Adam updates. Each setting has five
+    repeats. Peak RSS is the mean sampled peak process memory.}
+    \label{tab:resource-scaling-summary}
+    \begingroup
+    \singlespacing
+    \small
+    \resizebox{\textwidth}{!}{%
+        \input{tables/experiments/context_dependent_model/05_full_vs_low_rank_resource_scaling/20261021T202900_245293Z/resource_scaling_summary.tex}%
+    }
+    \endgroup
+\end{table}
+
+At $n=5000$, the full model required $413.346\pm2.486$ seconds.
+The rank-one, rank-two, and rank-three models required
+$307.714\pm4.728$, $322.378\pm4.124$, and $319.222\pm7.053$ seconds,
+respectively. Here, the values after $\pm$ are standard deviations across
+the five repeats. The low-rank models were approximately 22--26\%
+faster at this item count. This reduction is much smaller than the
+reduction in the number of trainable entries.
+
+The average time per update was calculated by dividing the training-loop
+time by 1,000. It follows the same scaling pattern as total training
+time because every model uses the same update budget. Its error bars
+describe variation across repeats, rather than variation between
+individual updates within a fit.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{0.80\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/experiments/context_dependent_model/05_full_vs_low_rank_resource_scaling/20261021T202900_245293Z/03_training_time.pdf}
+        \caption{Total training-loop time.}
+    \end{subfigure}
+    \par\medskip
+    \begin{subfigure}{0.80\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/experiments/context_dependent_model/05_full_vs_low_rank_resource_scaling/20261021T202900_245293Z/04_time_per_update.pdf}
+        \caption{Average time per update.}
+    \end{subfigure}
+    \caption{Computational cost as the number of items increases. Points show means across five repeats, and error bars show one standard deviation. Each fit uses 1,000 Adam updates.}
+    \label{fig:resource-training-time}
+\end{figure}
+
+\subsection{Empirical Growth of Training Time}
+
+To describe the observed runtime growth, we fitted a power law to the
+mean training times:
+\begin{equation}
+    t(n)\approx a n^{\alpha},
+    \qquad
+    \log t(n)\approx\log a+\alpha\log n.
+    \label{eq:resource-runtime-power-law}
+\end{equation}
+The intercept and exponent were estimated by ordinary least squares in
+log-log coordinates. Only the four item counts with $n\geq1000$ were
+used, and each included setting had all five repeats completed.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Empirical power-law fits to mean training time for
+    $n\in\{1000,2000,3000,5000\}$. The doubling multiplier is
+    $2^{\alpha}$. Fit statistics are reported at the precision saved
+    by the notebook.}
+    \label{tab:resource-runtime-power-law}
+    \begingroup
+    \singlespacing
+    \small
+    \resizebox{\textwidth}{!}{%
+        \input{tables/experiments/context_dependent_model/05_full_vs_low_rank_resource_scaling/20261021T202900_245293Z/runtime_power_law_fits.tex}%
+    }
+    \endgroup
+\end{table}
+
+The estimated exponents were $2.069$ for the full model and $2.010$,
+$2.021$, and $2.030$ for ranks one, two, and three, respectively.
+Thus, the measured training time grew approximately quadratically over
+the fitted range for all four models. Under these fitted relationships,
+doubling the number of items multiplies the training time by approximately
+$4.197$, $4.029$, $4.059$, and $4.083$, respectively.
+
+These exponents describe the observed implementation and item range.
+They do not prove an asymptotic complexity bound. In particular, the
+linear growth of the number of low-rank trainable entries does not imply
+linear training time for the dense implementation used here.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/experiments/context_dependent_model/05_full_vs_low_rank_resource_scaling/20261021T202900_245293Z/07_empirical_runtime_exponents.pdf}
+    \caption{Empirical power-law fits to training time for $n\geq1000$.
+    Points and error bars show the mean and standard deviation across
+    five repeats. Dashed lines describe the fitted range and are not
+    proofs of asymptotic complexity.}
+    \label{fig:resource-runtime-exponents}
+\end{figure}
+
+\subsection{Process Memory}
+
+Process memory was measured using resident set size (RSS), sampled at
+intervals of $0.005$ seconds. The baseline was recorded after data
+generation and before model construction. Sampling continued through
+model fitting and the final loss and gradient evaluation. The sampled
+peak therefore includes the Python/PyTorch process, observations, model
+parameters, and allocations made during fitting. It is not a measurement
+of parameter storage alone.
+
+At $n=5000$, the mean sampled peak RSS was $1249.312$ MiB for the full
+model. The corresponding values were $1023.025$, $1013.959$, and
+$1018.731$ MiB for ranks one, two, and three, respectively. Low-rank
+parameterization reduced the measured peak at this item count, but the
+reduction was much smaller than the parameter-storage reduction.
+At the smaller item counts, process overhead and variation between runs
+also affect the ordering of the measured peaks.
+
+The notebook additionally records the increase above the baseline:
+\begin{equation}
+    \Delta\mathrm{RSS}
+    =\mathrm{RSS}_{\mathrm{sampled\ peak}}
+     -\mathrm{RSS}_{\mathrm{baseline}}.
+    \label{eq:resource-rss-increase}
+\end{equation}
+Both memory measurements are approximate. Periodic sampling can miss
+short-lived peaks, and memory retained or reused by the allocator can
+affect the increase above the baseline.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{0.80\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/experiments/context_dependent_model/05_full_vs_low_rank_resource_scaling/20261021T202900_245293Z/05_peak_process_memory.pdf}
+        \caption{Sampled peak RSS.}
+    \end{subfigure}
+    \par\medskip
+    \begin{subfigure}{0.80\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/experiments/context_dependent_model/05_full_vs_low_rank_resource_scaling/20261021T202900_245293Z/06_memory_increase.pdf}
+        \caption{Sampled peak RSS minus the pre-model baseline.}
+    \end{subfigure}
+    \caption{Sampled process memory during fitting. Points show means across five repeats, and error bars show one standard deviation. RSS includes process overhead, and periodic sampling can miss brief peaks.}
+    \label{fig:resource-process-memory}
+\end{figure}
+
+\subsection{Summary}
+
+The experiment shows that low-rank parameterization substantially
+reduces the number of trainable entries. However, parameter count,
+training time, and total process memory do not decrease by the same
+factor. In the present dense implementations, the low-rank models still
+show approximately quadratic runtime growth over the measured range.
+The results therefore separate the storage benefit of the parameterization
+from the computational behaviour of the implementation. Comparisons of
+recovery accuracy, predictive performance, and time to convergence
+require separate experiments.
+
+
 \appendix
 \chapter{Additional Derivations}
 \chapter{Reproducibility Details}
