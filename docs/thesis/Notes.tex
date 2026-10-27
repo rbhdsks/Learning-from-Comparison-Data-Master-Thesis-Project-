@@ -1532,66 +1532,118 @@ The corresponding choice probability is
 Here, $v(x)$ represents the intrinsic preference associated with $x$, while
 $v(x\mid\{z\})$ represents the contribution of context alternative $z$ to
 the utility of $x$.
+
 \subsection{Reparameterisation of the Model}
-The second-order formulation contains two types of parameters: the intrinsic
-parameters $v(x)$ and the contextual parameters $v(x\mid\{z\})$. These can
-be combined into a single set of pairwise parameters. For $x\neq z$, define
+
+The second-order utility is given by
 \begin{equation}
-    u_{xz}=v(x\mid\{z\})-v(z).
-    \label{eq:cdm-reparameterisation}
+u(x\mid C)
+=
+v(x)
++
+\sum_{z\in C\setminus\{x\}}
+v(x\mid\{z\}).
 \end{equation}
-Here, $x$ is the target alternative and $z$ is the context alternative. Using
-this definition, the reparameterised utility is
-\begin{align*}
-    \widetilde{u}(x\mid C)
-    &=\sum_{z\in C\setminus\{x\}}u_{xz}\\
-    &=\sum_{z\in C\setminus\{x\}}
-      \left(v(x\mid\{z\})-v(z)\right)\\
-    &=v(x)+\sum_{z\in C\setminus\{x\}}v(x\mid\{z\})
-      -\sum_{z\in C}v(z)\\
-    &=u(x\mid C)-\sum_{z\in C}v(z).
-    \label{eq:reparameterised-utility}
-\end{align*}
-The term $\sum_{z\in C}v(z)$ depends only on the choice set $C$ and is the
-same for every candidate in that choice set. Subtracting the same quantity
-from every candidate utility does not change the softmax probabilities:
+
+For $x\neq z$, define the pairwise interaction parameter as
 \begin{equation}
-    \frac{\exp(q_x-a)}{\sum_{y\in C}\exp(q_y-a)}
-    =
-    \frac{\exp(q_x)}{\sum_{y\in C}\exp(q_y)}.
+u_{xz}=v(x\mid\{z\})-v(z).
 \end{equation}
-Therefore, reparameterisation changes the form of the parameters without
-changing the choice probabilities.
-\subsection{CDM Choice Probability}
-After reparameterisation, the utility of alternative $x$ in choice set $C$ is
+
+Equivalently,
+\[
+v(x\mid\{z\})=u_{xz}+v(z).
+\]
+
+Substituting this into the original utility,
+\begin{align}
+u(x\mid C)
+&=
+v(x)
++
+\sum_{z\in C\setminus\{x\}}
+v(x\mid\{z\})
+\\[6pt]
+&=
+v(x)
++
+\sum_{z\in C\setminus\{x\}}u_{xz}
++
+\sum_{z\in C\setminus\{x\}}v(z)
+\\[6pt]
+&=
+\underbrace{
+v(x)+
+\sum_{z\in C\setminus\{x\}}v(z)
+}_{\displaystyle \sum_{z\in C}v(z)}
++
+\sum_{z\in C\setminus\{x\}}u_{xz}
+\\[6pt]
+&=
+\sum_{z\in C}v(z)
++
+\sum_{z\in C\setminus\{x\}}u_{xz}.
+\end{align}
+
+The first term depends only on the choice set $C$
+and is the same for every alternative $x\in C$.
+Since adding or subtracting a common constant
+does not change the softmax probabilities,
+this term can be omitted from the utility
+representation.
+
+Thus, the reparameterised utility becomes
 \begin{equation}
-    \widetilde{u}(x\mid C)
-    =
-    \sum_{z\in C\setminus\{x\}}u_{xz}.
-    \label{eq:cdm-utility}
+\boxed{
+\widetilde{u}(x\mid C)
+=
+\sum_{z\in C\setminus\{x\}}u_{xz}.
+}
 \end{equation}
-Therefore, the CDM choice probability is
+
+Using the reparameterised utility, the choice probability
+of alternative $x$ from choice set $C$ is given by
+
+\begin{align}
+P(x\mid C)
+&=
+\frac{\exp(\widetilde{u}(x\mid C))}
+{\sum_{y\in C}\exp(\widetilde{u}(y\mid C))}
+\\[6pt]
+&=
+\frac{
+\exp\left(
+\sum_{z\in C\setminus\{x\}}u_{xz}
+\right)
+}{
+\sum_{y\in C}
+\exp\left(
+\sum_{z\in C\setminus\{y\}}u_{yz}
+\right)
+}.
+\end{align}
+
+Thus, the Context-Dependent Model (CDM) is
+expressed as
+
 \begin{equation}
-    P(x\mid C)
-    =
-    \frac{
-        \exp\left(
-            \displaystyle\sum_{z\in C\setminus\{x\}}u_{xz}
-        \right)
-    }{
-        \displaystyle\sum_{y\in C}
-        \exp\left(
-            \sum_{z\in C\setminus\{y\}}u_{yz}
-        \right)
-    }.
-    \label{eq:full-rank-cdm-probability}
+\boxed{
+P(x\mid C;U)
+=
+\frac{
+\exp\left(
+\sum_{z\in C\setminus\{x\}}u_{xz}
+\right)
+}{
+\sum_{y\in C}
+\exp\left(
+\sum_{z\in C\setminus\{y\}}u_{yz}
+\right)
+}
+}.
 \end{equation}
-\subsection{Interpretation of the Parameters}
-The parameter $u_{xz}$ represents the effect of context alternative $z$ on
-target alternative $x$. For example, $u_{\mathrm{Car},\mathrm{Bus}}$
-represents the contextual effect of Bus on the utility associated with Car.
-In general, $u_{xz}$ and $u_{zx}$ can be different because they represent
-effects in opposite directions.
+
+
 \subsection{Number of Parameters}
 The reparameterised parameters can be arranged in a matrix
 $U\in\R^{n\times n}$. The diagonal entries are set to zero because an
