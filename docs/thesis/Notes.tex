@@ -88,6 +88,56 @@
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\X}{\mathcal{X}}
 
+
+% Draw the cars directly in LaTeX; no additional image files are needed.
+\usepackage{tikz}
+\definecolor{motGreen}{HTML}{176B4D}
+\definecolor{motBlue}{HTML}{356A91}
+\definecolor{motOrange}{HTML}{B76B35}
+\newcommand{\motivationcar}[1]{%
+    \begin{tikzpicture}[x=0.65cm,y=0.65cm,
+        baseline=(current bounding box.center)]
+        \path[draw=#1!80!black,fill=#1!75,line width=0.6pt,
+            rounded corners=2pt]
+        (0,0.25)--(0.20,0.65)--(0.78,0.78)--(1.20,1.25)
+        --(2.35,1.25)--(2.90,0.78)--(3.45,0.63)--(3.65,0.25)--cycle;
+        \path[fill=white!90!#1,draw=#1!80!black]
+        (1.00,0.79)--(1.32,1.10)--(1.73,1.10)--(1.73,0.79)--cycle;
+        \path[fill=white!90!#1,draw=#1!80!black]
+        (1.86,0.79)--(1.86,1.10)--(2.25,1.10)--(2.62,0.79)--cycle;
+        \fill[black!80] (0.80,0.25) circle (0.27);
+        \fill[black!80] (2.88,0.25) circle (0.27);
+        \fill[white!75!black] (0.80,0.25) circle (0.12);
+        \fill[white!75!black] (2.88,0.25) circle (0.12);
+        \fill[yellow!55] (3.37,0.44) rectangle (3.56,0.57);
+    \end{tikzpicture}%
+}
+
+% Draw buses and cameras as scalable vector illustrations.
+\newcommand{\motivationbus}[1]{%
+\begin{tikzpicture}[x=0.5cm,y=0.5cm,baseline=(current bounding box.center)]
+\draw[rounded corners=2pt,fill=#1!75,draw=#1!80!black]
+(0,0.2) rectangle (3.6,1.7);
+\foreach \x in {0.25,1.0,1.75,2.5}
+  \fill[white!85!#1] (\x,0.95) rectangle +(0.6,0.5);
+\draw[white,line width=1pt] (0.2,0.7)--(3.4,0.7);
+\foreach \x in {0.7,2.9}{
+\fill[black!85] (\x,0.2) circle (0.3);
+\fill[white!70!black] (\x,0.2) circle (0.13);}
+\end{tikzpicture}}
+\newcommand{\motivationcamera}[1]{%
+\begin{tikzpicture}[x=0.6cm,y=0.6cm,baseline=(current bounding box.center)]
+\draw[fill=#1!70,draw=#1!80!black,rounded corners=2pt]
+(0,0) rectangle (3.4,1.8);
+\draw[fill=#1!70,draw=#1!80!black] (0.65,1.8)--(0.9,2.15)--(1.8,2.15)--(2.05,1.8);
+\fill[black!80] (1.85,0.9) circle (0.72);
+\fill[white!70!#1] (1.85,0.9) circle (0.52);
+\fill[#1!50!black] (1.85,0.9) circle (0.37);
+\fill[white!80] (1.7,1.08) circle (0.12);
+\fill[white!80] (0.25,1.3) rectangle (0.65,1.55);
+\end{tikzpicture}}
+
+
 \begin{document}
 \frontmatter
 \begin{titlepage}
@@ -148,36 +198,230 @@
 \mainmatter
 \chapter{Introduction}
 \section{Motivation}
-Let us imagine that someone has to travel from IIT Madras to the airport.
-The person has four realistic choices: car, bike, taxi, and bus. Based on
-cost, comfort, and speed, the person may have a natural preference ranking
-among these alternatives. For example, the ranking may be
-\begin{equation}
-    \text{Car} \succ \text{Taxi} \succ \text{Bike} \succ \text{Bus}.
-\end{equation}
-Now suppose that a fifth alternative is added. This alternative is walking,
-which may take almost three hours and is therefore unlikely to be seriously
-considered.
-Common sense suggests that adding walking should not change the person's
-relative preference between car, taxi, bike, and bus. Walking is an
-irrelevant alternative in this situation. Therefore, the relative preference
-between the original alternatives should remain unchanged.
-This idea is called the \emph{Independence of Irrelevant Alternatives}
-property. It is one of the central properties behind classical models of
-choice.
-However, human preferences may not always behave exactly as assumed by
-classical multinomial logit models. Experimental evidence indicates that
-adding or removing alternatives can change how attractive the existing
-alternatives appear. Such behaviour is described as a violation of the
-Independence of Irrelevant Alternatives property
-\citep{seshadri2019}.
+\label{sec:motivation}
+
+It is usually seen that people do not always evaluate alternative options in isolation. The other
+options presented alongside it can change how attractive it appears and can be influenced.
+An option may lose support when a similar alternative is introduced,
+also can gain support when a poor comparison is added, or can become more appealing
+when it occupies the middle of a range. These behaviours are known as
+\emph{context effects}. And, three important examples are the attraction,
+similarity and compromise effects.
+
+\subsection{Attraction Effect: The Tesla Illustration}
+
+Can a product appear more reasonable without becoming cheaper?
+Consider Tesla's Roadster reservation options. Reuters reported
+that Tesla demonstrated thruster-assisted aerial manoeuvres on
+15 October 2026, with US\$50,000 and US\$250,000 deposits for the
+Performance and Thrust variants, respectively, and an invite-only
+Rocket variant. Shares were reported up 5\% in premarket trading
+the next day.\footnote{Reuters, \textit{Tesla's new Roadster turns in air
+with SpaceX thrusters, won't land until 2028}, 15 October 2026,
+updated 16 October 2026; available via
+\href{https://live.euronext.com/en/financial-news/teslas-new-roadster-turns-air-spacex-thrusters-wont-land-until-2028}{Euronext}.
+These are reservation deposits, not final prices. The stock movement
+does not establish that a decoy effect occurred or caused the rise.}
+
+A person may initially consider US\$50,000 expensive. After seeing
+the larger deposit and the flying-car presentation, the same amount
+may feel more reasonable. The product has not become cheaper;
+the comparison has changed.
+
+\begin{figure}[H]
+\singlespacing
+    \centering
+    \begin{minipage}{\textwidth}
+    \singlespacing
+    \centering
+    {\color{motGreen}\large\bfseries Same deposit. Different context.\par}
+    \vspace{2mm}
+    {\small Tesla Roadster: three contrasting reservation options\par}
+    \vspace{5mm}
+    \begin{minipage}[t]{0.31\linewidth}
+        \centering
+        {\bfseries\color{motOrange}ROCKET\par}
+        \vspace{3mm}
+        \motivationcar{motOrange}\par
+        {\color{motBlue}\small\(\downarrow\qquad\downarrow\)\par}
+        \vspace{1mm}
+        \textbf{No amount listed}\\[1mm]
+        {\small Invite-only variant\\Flight-system concept}
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.31\linewidth}
+        \centering
+        {\bfseries\color{motBlue}THRUST\par}
+        \vspace{3mm}
+        \motivationcar{motBlue}\par
+        {\small\strut\par}
+        \vspace{1mm}
+        \textbf{US\$250,000}\\[1mm]
+        {\small Reservation deposit\\Acceleration thrusters}
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.31\linewidth}
+        \centering
+        {\bfseries\color{motGreen}PERFORMANCE\par}
+        \vspace{3mm}
+        \motivationcar{motGreen}\par
+        {\small\strut\par}
+        \vspace{1mm}
+        \textbf{US\$50,000}\\[1mm]
+        {\small Reservation deposit\\Lower-deposit option}
+    \end{minipage}
+    \par\vspace{5mm}
+    \begingroup
+    \setlength{\fboxsep}{8pt}
+    % \colorbox{motGreen!7}{%
+    %     \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    %         \centering\small
+    %         \textbf{The behavioural question}\\[2mm]
+    %         Could the US\$50,000 deposit feel more reasonable
+    %         after seeing the other options?\\[2mm]
+    %         \textit{}
+    %     }%
+    % }
+    \endgroup
+    \end{minipage}
+    \caption[Tesla Roadster as motivation for context-dependent evaluation]{
+    Tesla Roadster as motivation for context-dependent evaluation.
+    The cars are schematic illustrations, not technical drawings.
+    Reservation information follows the Reuters report cited in the text.
+    }
+    \label{fig:motivation-tesla-context}
+\end{figure}
+
+This provides an intuition for how an additional option can make
+another option more attractive. In the classical \emph{attraction}
+or \emph{decoy effect}, the added option is dominated by a target
+alternative but not by its competitor, and its presence increases
+the target's choice probability \citep{huber1982motivation}.
+
+\subsection{Similarity Effect: The Red Bus and Blue Bus}
+
+Now consider someone travelling from IIT Madras to the airport.
+Initially, the available options are a car and a red bus. Suppose
+that half of the travellers choose each option. A blue bus is then
+introduced with the same route, fare, comfort and travel time as
+the red bus; only its colour differs.
+
+If travellers regard the two buses as interchangeable, the blue bus
+may mainly attract people who would otherwise have taken the red bus.
+For illustration, the car's share may remain at 50\%, while the two
+buses each receive 25\%. The new option draws disproportionately
+from its similar alternative, rather than equally from all options.
+This illustrates the \emph{similarity effect}, which motivates
+choice models that account for shared attributes \citep{tversky1972motivation}.
+
+\begin{figure}[H]
+\singlespacing
+\centering
+\begin{minipage}{\textwidth}
+\singlespacing\centering
+{\large\bfseries\color{motBlue}A new colour need not create a new preference.\par}
+\vspace{5mm}
+\begin{minipage}[t]{0.43\linewidth}
+\centering\textbf{Before: two options}\par\vspace{4mm}
+\begin{tabular}{cc}
+\resizebox{2cm}{!}{\motivationcar{motGreen}} & \motivationbus{red!70!black}\\[2mm]
+Car & Red bus\\[1mm]
+\textbf{50\%} & \textbf{50\%}
+\end{tabular}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.08\linewidth}
+\centering\vspace{12mm}\(\longrightarrow\)
+\end{minipage}\hfill
+\begin{minipage}[t]{0.45\linewidth}
+\centering\textbf{After: a similar bus is added}\par\vspace{4mm}
+\begin{tabular}{ccc}
+\resizebox{1.5cm}{!}{\motivationcar{motGreen}} &
+\resizebox{1.5cm}{!}{\motivationbus{red!70!black}} &
+\resizebox{1.5cm}{!}{\motivationbus{motBlue}}\\[2mm]
+Car & Red bus & Blue bus\\[1mm]
+\textbf{50\%} & \textbf{25\%} & \textbf{25\%}
+\end{tabular}
+\end{minipage}
+\par\vspace{5mm}
+{\small\color{motBlue}The two buses share the original bus demand.\par}
+\end{minipage}
+\caption[Illustration of the similarity effect]{Illustrative choice shares
+for the red-bus--blue-bus example. The percentages explain a possible
+similarity effect; they are not estimates from transport data.}
+\label{fig:motivation-similarity}
+\end{figure}
+
+The important point is not simply that the red bus loses passengers.
+It is that the loss depends on how similar the new option is to it.
+The relationship between alternatives therefore matters for prediction.
+
+\subsection{Compromise Effect: Choosing a Camera}
+
+Consider a buyer choosing between a basic camera costing US\$300
+and a more capable camera costing US\$600. The second camera offers
+better image quality, but it is also the more expensive option.
+Now add a professional camera costing US\$1,200 with still higher
+image quality. The US\$600 camera now occupies the middle position:
+it offers more quality than the basic model at a lower price than
+the professional model.
+
+The buyer may consequently regard the US\$600 camera as a balanced
+choice. If its share relative to the US\$300 camera increases when
+the premium alternative is introduced, this illustrates the
+\emph{compromise effect}. An alternative becomes more attractive
+because it lies between the extremes \citep{simonson1989motivation}.
+
+\begin{figure}[H]
+\singlespacing
+\centering
+\begin{minipage}{\textwidth}
+\singlespacing\centering
+{\large\bfseries\color{motOrange}The same camera becomes the middle option.\par}
+\vspace{5mm}
+\begin{minipage}[t]{0.30\linewidth}
+\centering\textbf{Basic}\par\vspace{3mm}
+\motivationcamera{motBlue}\par\vspace{3mm}
+\textbf{US\$300}\\[1mm]
+Lower image quality\\Lower price
+\end{minipage}\hfill
+\begin{minipage}[t]{0.34\linewidth}
+\centering\colorbox{motGreen!10}{\strut\textbf{Enthusiast: compromise}}\par\vspace{3mm}
+\motivationcamera{motGreen}\par\vspace{3mm}
+\textbf{US\$600}\\[1mm]
+Intermediate quality\\Intermediate price
+\end{minipage}\hfill
+\begin{minipage}[t]{0.30\linewidth}
+\centering\textbf{Professional: added}\par\vspace{3mm}
+\motivationcamera{motOrange}\par\vspace{3mm}
+\textbf{US\$1,200}\\[1mm]
+Higher image quality\\Higher price
+\end{minipage}
+\par\vspace{5mm}
+{\small\color{motGreen}Originally the expensive option;
+now a compromise between price and quality.\par}
+\end{minipage}
+\caption[Illustration of the compromise effect]{A hypothetical camera
+comparison. Prices and quality levels are illustrative. The effect
+concerns a change in relative choice share after adding the premium
+option, not merely the existence of a middle-priced product.}
+\label{fig:motivation-compromise}
+\end{figure}
+
+These three effects show different ways in which the available menu
+can influence choice. A similar alternative competes for the same
+support, a dominated comparison can favour a target, and an extreme
+alternative can make another option a compromise. This motivates
+learning preferences through interactions between alternatives,
+rather than assigning each item an attractiveness that is independent
+of its context. The Context-Dependent Model provides a framework
+for studying such interactions \citep{seshadri2019}.
+
 % \section{Objectives}
 \chapter{Background and Choice Models}
 \section{Choice Data and Choice Sets}
 Let \(\X\) denote the universal set of alternatives. A choice set is a
 subset of \(\X\) containing the alternatives available to a decision-maker
 at a particular time.
-For the commute-mode example, the universal set is
+As a separate example, consider travel from IIT Madras to the
+airport. The universal set of transport alternatives is
 \begin{equation}
     \X=
     \{
