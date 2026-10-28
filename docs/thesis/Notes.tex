@@ -1595,7 +1595,7 @@ representation.
 Thus, the reparameterised utility becomes
 \begin{equation}
 \boxed{
-\widetilde{u}(x\mid C)
+u(x\mid C)
 =
 \sum_{z\in C\setminus\{x\}}u_{xz}.
 }
@@ -1607,8 +1607,8 @@ of alternative $x$ from choice set $C$ is given by
 \begin{align}
 P(x\mid C)
 &=
-\frac{\exp(\widetilde{u}(x\mid C))}
-{\sum_{y\in C}\exp(\widetilde{u}(y\mid C))}
+\frac{\exp(u(x\mid C))}
+{\sum_{y\in C}\exp(u(y\mid C))}
 \\[6pt]
 &=
 \frac{
