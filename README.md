@@ -71,58 +71,13 @@ The completed experiments study:
 - failure of the finite MLE under perfect separation;
 - convergence and runtime of handcrafted and PyTorch optimizers.
 
-### Representative Bradley–Terry results
-
-<table>
-  <tr>
-    <td align="center" width="50%">
-      <img src="docs/assets/readme/btl_parameter_recovery.png"
-           alt="Bradley–Terry parameter recovery" width="420">
-      <br>
-      <sub>True and estimated Bradley–Terry parameters.</sub>
-    </td>
-    <td align="center" width="50%">
-      <img src="docs/assets/readme/btl_recovery_scaling.png"
-           alt="Recovery error versus comparisons" width="420">
-      <br>
-      <sub>Parameter-recovery error with increasing comparisons.</sub>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="50%">
-      <img src="docs/assets/readme/btl_nonfinite_mle.png"
-           alt="Parameter growth without a finite MLE" width="420">
-      <br>
-      <sub>Parameter divergence when Ford's condition fails.</sub>
-    </td>
-    <td align="center" width="50%">
-      <img src="docs/assets/readme/btl_optimizer_convergence.png"
-           alt="Optimizer convergence comparison" width="420">
-      <br>
-      <sub>Final gradient norms relative to the convergence tolerance.</sub>
-    </td>
-  </tr>
-</table>
-
 ### Phase 1: Context-Dependent Models
 
 This phase covers full-CDM estimation, BTL–CDM cross-model experiments, low-rank CDM, computational scaling, and reproduction of experiments from the CDM paper.
 
 **Unified synthetic experiment:** BTL, full CDM, and low-rank CDM are fitted to common synthetic choice sets and compared using held-out NLL, optimization diagnostics, and runtime.
 
-#### Current synthetic results
-
-<img src="docs/thesis/images/experiments/context_dependent_model/unified/n10_m10000_seed20260831_scale0.4/04_cross_fit_nll_gap.png"
-     alt="Held-out NLL gaps for BTL and CDM cross-model fits" width="780">
-
-*Held-out NLL cost of cross-model fitting on BTL- and CDM-generated choices.*
-
-<img src="docs/thesis/images/experiments/context_dependent_model/unified/n10_m10000_seed20260831_scale0.4/04_low_rank_paired_test_nll_gaps.png"
-     alt="Paired test NLL gaps for selected low-rank CDM fits" width="780">
-
-*Paired test NLL gaps for the validation-selected low-rank CDM fits.*
-
-These figures show one synthetic run. The selected rank-5 fit reached the epoch limit without meeting the gradient convergence criterion, so broader conclusions require further runs and optimization checks.
+The unified results currently cover one synthetic run. The selected rank-5 fit reached the epoch limit without meeting the gradient convergence criterion, so broader conclusions require further runs and optimization checks. See the [unified notebook](notebooks/experiments/Context_Dependent_Model/Low%20Rank%20CDM/04-Unifiednotebook.ipynb) for the paired held-out NLL comparisons and fit diagnostics.
 
 #### Full versus low-rank computational scaling
 
@@ -147,6 +102,71 @@ The foundation notebook [07 — BTL and CDM interactions and cycles](notebooks/f
 It establishes model relationships using specified parameters; it does not estimate cycles from noisy observations.
 
 The [cycle-detection design notebook](notebooks/experiments/Context_Dependent_Model/Cyclic_Preferences/01_Cycle_Detection_Design.ipynb) contains executed exact-probability checks and a plan for graph detection, sampled comparisons, simultaneous confidence intervals, and repeated experiments. The general detector and noisy-data experiments are not yet implemented.
+
+## Representative results
+
+Six figures summarize the current synthetic experiments: BTL recovery and MLE existence, full-CDM recovery, computational scaling, context-dependent misspecification, and the IIA-testing pilot. Each figure links to its source notebook.
+
+<table>
+  <tr>
+    <td align="center" width="50%" valign="top">
+      <!-- 00_BTL_recovery_noofitems.ipynb: cell 15, saved PNG output. -->
+      <img src="docs/assets/readme/btl_recovery_vs_comparisons.png"
+           alt="Bradley–Terry parameter RMSE versus comparisons for 10 to 200 items" width="420">
+      <br>
+      <sub><strong>BTL parameter recovery.</strong> Recovery improves as comparisons increase. Error bars show ±1 SD across converged fits, from up to five runs per setting; settings without a finite MLE are excluded from the recovery averages.
+      <a href="notebooks/experiments/Bradley_Terry_Model/00_BTL_recovery_noofitems.ipynb">Source notebook</a>.</sub>
+    </td>
+    <td align="center" width="50%" valign="top">
+      <!-- 03_BradleyTerry_MLE_existence_uniqueness.ipynb: cell 24, saved PNG output. -->
+      <img src="docs/assets/readme/btl_nonfinite_mle.png"
+           alt="Bradley–Terry parameter range keeps increasing under perfectly separated outcomes" width="420">
+      <br>
+      <sub><strong>When the finite MLE fails.</strong> With perfectly separated outcomes, the parameter range keeps growing: connected comparisons alone do not guarantee a finite MLE when Ford's condition fails.
+      <a href="notebooks/experiments/Bradley_Terry_Model/03_BradleyTerry_MLE_existence_uniqueness.ipynb">Source notebook</a>.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%" valign="top">
+      <!-- CDM_Paper_Reproduction/01_synthetic_recovery.ipynb: cell 37, saved PNG output. -->
+      <img src="docs/assets/readme/cdm_recovery_scaling_100k.png"
+           alt="Six-item full-CDM squared parameter error decreases from 1,000 to 100,000 observations across ten runs" width="420">
+      <br>
+      <sub><strong>Full-CDM recovery up to 100,000 choices.</strong> Mean summed squared parameter error falls from 8.90 to 0.078 across ten runs with a fixed six-item true matrix. The dashed 1/m reference is descriptive and anchored at the largest sample size.
+      <a href="notebooks/experiments/Context_Dependent_Model/CDM_Paper_Reproduction/01_synthetic_recovery.ipynb">Source notebook</a>.</sub>
+    </td>
+    <td align="center" width="50%" valign="top">
+      <!-- Low Rank CDM/01-FullvsLowrankResourceScaling.ipynb: cell 8, third saved PNG output. -->
+      <img src="docs/assets/readme/cdm_training_time_scaling.png"
+           alt="Full and rank-one to rank-three CDM training time versus item count under a fixed 1,000-update CPU budget" width="420">
+      <br>
+      <sub><strong>Full versus low-rank computational cost.</strong> Training time for 250–5,000 items using 1,000 observations and 1,000 Adam updates. Means ±1 SD across five repeats benchmark the current dense implementations; this is not time to convergence.
+      <a href="notebooks/experiments/Context_Dependent_Model/Low%20Rank%20CDM/01-FullvsLowrankResourceScaling.ipynb">Source notebook</a>.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2">
+      <!-- Full CDM/02_CDM-BTL.ipynb: cell 47, saved PNG output. -->
+      <img src="docs/assets/readme/cdm_context_strength.png"
+           alt="Increasing CDM interaction strength widens the held-out NLL gap between fitted BTL and the true CDM for five and ten items" width="860">
+      <br>
+      <sub><strong>The cost of ignoring context.</strong> For five and ten items, the held-out NLL gap between fitted BTL/Luce and the true generating CDM grows with interaction strength. Points average ten runs per setting; gap error bars show ±1 SD. The CDM curve is an oracle reference, not a fitted CDM.
+      <a href="notebooks/experiments/Context_Dependent_Model/Full%20CDM/02_CDM-BTL.ipynb">Source notebook</a>.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2">
+      <!-- CDM_Paper_Reproduction/02_synthetic_iia_tests.ipynb: cell 27, saved PNG output. -->
+      <img src="docs/assets/readme/iia_pilot_rejection_rates.png"
+           alt="IIA pilot rejection proportions for MNL, CDM, and general-choice generators with 95 percent exact binomial intervals" width="860">
+      <br>
+      <sub><strong>IIA-testing pilot.</strong> Two likelihood-ratio tests on 2,000 observations per dataset, with ten runs per generator and 95% exact binomial intervals. MNL false-positive counts are 1/10 and 2/10; both alternatives reject MNL in 10/10 runs under the other two generators. This small pilot does not establish nominal 5% calibration.
+      <a href="notebooks/experiments/Context_Dependent_Model/CDM_Paper_Reproduction/02_synthetic_iia_tests.ipynb">Source notebook</a>.</sub>
+    </td>
+  </tr>
+</table>
+
+These results describe the recorded synthetic settings. Numerical optimizer convergence does not certify a finite unregularized MLE; the paper-reproduction notebooks retain additional separation and stopping diagnostics.
 
 ## Repository structure
 
