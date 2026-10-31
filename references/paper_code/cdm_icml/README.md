@@ -41,3 +41,14 @@ reproducibility (None means no seed)
 
 *wd* - weight decay parameter for the model (similar to l2 regularization,
 but faster - see pytorch docs for more info)
+
+## Use in this project
+
+This directory preserves the paper authors' reference implementation.
+The description and example above refer to that implementation.
+
+The M.Tech project's synthetic recovery and IIA-testing work is maintained
+separately in [src/cdm_paper_reproduction](../../../src/cdm_paper_reproduction/)
+and the [paper-reproduction notebooks](../../../notebooks/experiments/Context_Dependent_Model/CDM_Paper_Reproduction/).
+See the [project README](../../../README.md) for current research progress
+and the limitations of the saved pilot results.

@@ -2,7 +2,7 @@
 
 Research code and [thesis notes](https://github.com/rbhdsks/Learning-from-Comparison-Data-Master-Thesis-Project-/blob/main/docs/thesis/Notes.pdf) for my M.Tech project on learning preference models from observed choice data.
 
-The project begins with the Bradley–Terry model for pairwise comparisons and extends towards context-dependent choice models.
+The project begins with the Bradley–Terry model for pairwise comparisons and extends to full and low-rank context-dependent choice models, synthetic paper reproduction, and the study of cyclic preferences.
 
 ## Research workflow
 
@@ -17,7 +17,10 @@ flowchart LR
     G["Full CDM<br/>Synthetic experiments"]
     H["Cross-model fits<br/>BTL and CDM"]
     I["Unified experiment<br/>BTL, full and low-rank CDM"]
-    J["CDM paper reproduction<br/>Planned"]
+    J["CDM paper reproduction<br/>Recovery and IIA pilots"]
+    K["Computational scaling<br/>Full and low-rank CDM"]
+    L["Cyclic preferences<br/>Mathematical examples verified"]
+    M["Cycle detection<br/>Design and exact checks; simulations planned"]
 
     A --> B
     B --> C
@@ -31,6 +34,9 @@ flowchart LR
     G --> I
     H --> I
     I --> J
+    I --> K
+    F --> L
+    L --> M
 
     classDef foundation fill:#f3f4f6,stroke:#6b7280,color:#111827
     classDef completed fill:#dbeafe,stroke:#2563eb,color:#111827
@@ -38,13 +44,13 @@ flowchart LR
     classDef ongoing fill:#fef3c7,stroke:#d97706,color:#111827
     classDef planned fill:#f3f4f6,stroke:#9ca3af,color:#374151
 
-    class A foundation
+    class A,L foundation
     class B completed
     class C,D,E experiment
     class F ongoing
-    class G,H experiment
-    class I ongoing
-    class J planned
+    class G,H,K experiment
+    class I,J ongoing
+    class M planned
 ```
 
 ## Research progress
@@ -52,7 +58,8 @@ flowchart LR
 | Phase | Focus | Status |
 | --- | --- | --- |
 | Phase 0 | Bradley–Terry model and maximum-likelihood estimation | Core experiments completed |
-| Phase 1 | Full and low-rank CDM, synthetic comparisons, and paper reproduction | Synthetic experiments in progress; reproduction planned |
+| Phase 1 | Full and low-rank CDM, synthetic comparisons, computational scaling, and paper reproduction | Synthetic results and paper-reproduction pilots available; broader validation ongoing |
+| Phase 1: Cyclic preferences | BTL–CDM relationships, cycle construction, and cycle-detection design | Mathematical examples verified; noisy-data detection experiments planned |
 
 ### Phase 0: Bradley–Terry Model and MLE
 
@@ -99,7 +106,7 @@ The completed experiments study:
 
 ### Phase 1: Context-Dependent Models
 
-This phase covers full-CDM estimation, BTL–CDM cross-model experiments, low-rank CDM, and reproduction of experiments from the CDM paper.
+This phase covers full-CDM estimation, BTL–CDM cross-model experiments, low-rank CDM, computational scaling, and reproduction of experiments from the CDM paper.
 
 **Unified synthetic experiment:** BTL, full CDM, and low-rank CDM are fitted to common synthetic choice sets and compared using held-out NLL, optimization diagnostics, and runtime.
 
@@ -117,7 +124,29 @@ This phase covers full-CDM estimation, BTL–CDM cross-model experiments, low-ra
 
 These figures show one synthetic run. The selected rank-5 fit reached the epoch limit without meeting the gradient convergence criterion, so broader conclusions require further runs and optimization checks.
 
-Paper reproduction, including experiments beyond six items, is planned as further work within Phase 1.
+#### Full versus low-rank computational scaling
+
+The resource-scaling notebook measures runtime, time per training step, trainable parameter count, and sampled process memory as the number of items increases. Models share observations within each repeat and use the same training-step budget.
+
+These results benchmark the existing dense-matrix implementations. Sampled process memory includes Python and PyTorch overhead; the experiment measures computational cost under a fixed step budget, rather than time to convergence or parameter recovery.
+
+#### CDM paper reproduction
+
+The paper-reproduction notebooks now contain synthetic full-CDM parameter recovery and likelihood-ratio tests of Independence of Irrelevant Alternatives (IIA):
+
+- **Synthetic recovery:** study recovery error as the number of observed choices increases, with repeated runs and diagnostics for rare choices and separation.
+- **Synthetic IIA tests:** generate choices from MNL, full CDM, and a general choice system; compare MNL against full CDM and the universal choice model using repeated-dataset pilots.
+- **Separation diagnostics:** distinguish numerical optimizer stopping from the existence of a finite unregularized CDM maximum-likelihood estimate.
+
+The IIA results are pilot experiments. Incomplete fits, separation, and boundary outcomes require care when interpreting nominal chi-square likelihood-ratio tests. Larger repeated experiments and recovery extensions beyond the six-item paper setup remain further work.
+
+#### Cyclic preferences and cycle detection
+
+The foundation notebook [07 — BTL and CDM interactions and cycles](notebooks/foundations/Bradley_Terry_Model_MLE/07_BTL_vs_CDM_Interactions_and_Cycles.ipynb) verifies the CDM utility equations, constructs a three-item majority-preference cycle, demonstrates pairwise non-identifiability, and recovers BTL as a special case of CDM.
+
+It establishes model relationships using specified parameters; it does not estimate cycles from noisy observations.
+
+The [cycle-detection design notebook](notebooks/experiments/Context_Dependent_Model/Cyclic_Preferences/01_Cycle_Detection_Design.ipynb) contains executed exact-probability checks and a plan for graph detection, sampled comparisons, simultaneous confidence intervals, and repeated experiments. The general detector and noisy-data experiments are not yet implemented.
 
 ## Repository structure
 
@@ -125,13 +154,17 @@ Paper reproduction, including experiments beyond six items, is planned as furthe
 | --- | --- |
 | `notebooks/archive/` | Earlier notebooks preserved for reference |
 | `notebooks/foundations/` | Mathematical derivations and small examples |
-| `notebooks/practice/choix/` | Practice with the Choix library |
+| `notebooks/archive/choix/` | Archived practice with the Choix library |
 | `notebooks/experiments/` | Main thesis experiments |
 | `src/bradley_terry/` | Reusable Bradley–Terry code |
 | `src/context_dependent_model/` | Reusable full and low-rank CDM code |
+| `src/cdm_paper_reproduction/` | Synthetic recovery, IIA tests, and separation diagnostics |
+| `results/experiments/` | Saved numerical results, settings, and fit diagnostics |
 | `docs/thesis/images/` | Thesis figures, including unified CDM results |
 | `docs/thesis/tables/` | Tables generated for thesis experiments |
 | `references/` | Reference implementations and supporting material |
+
+See the [notebook guide](notebooks/README.md), [source-code guide](src/README.md), and [documentation guide](docs/README.md) for the detailed layout.
 
 Code under `references/` belongs to its original authors and is kept separate from the implementation developed in this project.
 

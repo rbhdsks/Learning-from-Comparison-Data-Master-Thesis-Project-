@@ -1,5 +1,18 @@
 # choix
 
+## Use in this project
+
+This directory preserves the upstream Choix library and its documentation.
+The library description, examples, and references below belong to the
+original project.
+
+The M.Tech project uses Choix through
+[src/bradley_terry/choix_estimation.py](../../../src/bradley_terry/choix_estimation.py)
+for pairwise and top-1 estimation. Archived practice notebooks are under
+[notebooks/archive/choix](../../../notebooks/archive/choix/).
+See the [source-code guide](../../../src/README.md) for the project's
+estimation and paper-reproduction modules.
+
 [![Build package](https://github.com/lucasmaystre/choix/actions/workflows/build.yml/badge.svg)](https://github.com/lucasmaystre/choix/actions/workflows/build.yml)
 [![code coverage](https://codecov.io/gh/lucasmaystre/choix/branch/master/graph/badge.svg)](https://codecov.io/gh/lucasmaystre/choix)
 [![documentation status](https://readthedocs.org/projects/choix/badge/?version=latest)](http://choix.lum.li/en/latest/?badge=latest)
