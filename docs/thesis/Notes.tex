@@ -1,9 +1,8 @@
 \listfiles
-\documentclass[10pt,oneside]{report}
+\documentclass[12pt,oneside]{report}
 \usepackage[letterpaper,margin=1in]{geometry}
 \usepackage{textcomp}
 \usepackage{setspace}
-\usepackage{mathptmx}
 \usepackage{amsmath,amssymb,amsthm,mathtools}
 \usepackage[table,svgnames]{xcolor}
 \usepackage{graphicx}
@@ -24,18 +23,18 @@
 \IfFileExists{sfchap.sty}{\usepackage{sfchap}}{%
   \usepackage{titlesec}
   \titleformat{\chapter}[display]
-    {\normalfont\sffamily\LARGE\bfseries}
-    {\large\chaptertitlename\ \thechapter}{12pt}{}
+    {\normalfont\rmfamily\Huge\bfseries}
+    {\huge\chaptertitlename\ \thechapter}{12pt}{}
   \titlespacing*{\chapter}{0pt}{35pt}{30pt}
 }
 \IfFileExists{sfsection.sty}{\usepackage{sfsection}}{%
   \usepackage{titlesec}
   \titleformat{\section}
-    {\normalfont\sffamily\large\bfseries}{\thesection}{1em}{}
+    {\normalfont\rmfamily\Large\bfseries}{\thesection}{1em}{}
   \titleformat{\subsection}
-    {\normalfont\sffamily\normalsize\bfseries}{\thesubsection}{1em}{}
+    {\normalfont\rmfamily\large\bfseries}{\thesubsection}{1em}{}
   \titleformat{\subsubsection}
-    {\normalfont\sffamily\normalsize\bfseries}{\thesubsubsection}{1em}{}
+    {\normalfont\rmfamily\normalsize\bfseries}{\thesubsubsection}{1em}{}
 }
 
 \usepackage[hidelinks]{hyperref}
