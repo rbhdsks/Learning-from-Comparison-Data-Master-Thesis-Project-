@@ -1,24 +1,83 @@
-\documentclass[12pt,oneside]{book}
-\usepackage[a4paper,left=1.25in,right=1.0in,top=1.0in,bottom=1.0in]{geometry}
+\listfiles
+\documentclass[12pt,oneside]{report}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage{textcomp}
 \usepackage{setspace}
 \usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[table,svgnames]{xcolor}
 \usepackage{graphicx}
-\usepackage{booktabs,array,longtable}
+\usepackage{booktabs,array,longtable,tabularx,multirow}
 \usepackage{enumitem}
-\usepackage{xcolor}
 \usepackage{microtype}
-\usepackage{booktabs}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{float}
+\usepackage{rotating}
+\usepackage{makecell}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage[titles]{tocloft}
+\usepackage{titletoc}
+\usepackage{appendix}
 \usepackage[numbers,sort&compress]{natbib}
+\IfFileExists{sfchap.sty}{\usepackage{sfchap}}{%
+  \usepackage{titlesec}
+  \titleformat{\chapter}[display]
+    {\normalfont\rmfamily\Huge\bfseries}
+    {\huge\chaptertitlename\ \thechapter}{12pt}{}
+  \titlespacing*{\chapter}{0pt}{35pt}{30pt}
+}
+\IfFileExists{sfsection.sty}{\usepackage{sfsection}}{%
+  \usepackage{titlesec}
+  \titleformat{\section}
+    {\normalfont\rmfamily\Large\bfseries}{\thesection}{1em}{}
+  \titleformat{\subsection}
+    {\normalfont\rmfamily\large\bfseries}{\thesubsection}{1em}{}
+  \titleformat{\subsubsection}
+    {\normalfont\rmfamily\normalsize\bfseries}{\thesubsubsection}{1em}{}
+}
+
 \usepackage[hidelinks]{hyperref}
+\hypersetup{
+  pdftitle={Learning from Comparison Data (First draft)},
+  pdfauthor={Nitesh Kumar Shah},
+  bookmarksnumbered,
+  pdfstartview={FitH},
+  pdfborder={0 0 0},
+  plainpages=false
+}
+\usepackage[all]{hypcap}
 \usepackage{cleveref}
-\usepackage{float}
-\onehalfspacing
-\setcounter{secnumdepth}{3}
-\setcounter{tocdepth}{2}
+\urlstyle{same}
+
+\setlength{\textfloatsep}{0.4in}
+\setlength{\cftsecnumwidth}{2.8em}
+\setlength{\cftsubsecnumwidth}{3.7em}
+\setlength{\cftsubsubsecnumwidth}{4.6em}
+\setlength{\cftparanumwidth}{5.5em}
+\setlength{\cftsubparanumwidth}{6.5em}
+\setlength{\cfttabnumwidth}{3.5em}
+\setlength{\cftfignumwidth}{3.5em}
+\renewcommand{\contentsname}{TABLE OF CONTENTS}
+\renewcommand{\listfigurename}{LIST OF FIGURES}
+\renewcommand{\listtablename}{LIST OF TABLES}
+\renewcommand{\bibname}{\texorpdfstring{References\vspace{10mm}}{References}}
+\setcounter{secnumdepth}{7}
+\setcounter{tocdepth}{7}
+\interfootnotelinepenalty=10000
+\pagestyle{plain}
+
+% Keep the book-style matter commands already used in the thesis body,
+% while adopting the supplied template's report document class.
+\newcommand{\frontmatter}{\clearpage\pagenumbering{roman}\singlespacing}
+\newcommand{\mainmatter}{\clearpage\pagenumbering{arabic}\doublespacing}
+\newcommand{\backmatter}{\clearpage\singlespacing}
+\AtBeginDocument{%
+  \addtocontents{toc}{\protect\vspace{0.4in}\protect\hfill Page\protect\par}%
+  \addtocontents{lof}{\protect\vspace{0.2in}\protect\hspace{0.13in}Figure\protect\hfill Page\protect\par}%
+  \addtocontents{lot}{\protect\vspace{0.2in}\protect\hspace{0.13in}Table\protect\hfill Page\protect\par}%
+}
+
 \newtheorem{definition}{Definition}[chapter]
 \newtheorem{lemma}[definition]{Lemma}
 \newtheorem{proposition}[definition]{Proposition}
@@ -27,6 +86,57 @@
 \newcommand{\TODO}[1]{\textcolor{blue}{[TODO: #1]}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\X}{\mathcal{X}}
+
+
+% Draw the cars directly in LaTeX; no additional image files are needed.
+\usepackage{tikz}
+\definecolor{motGreen}{HTML}{176B4D}
+\definecolor{motBlue}{HTML}{356A91}
+\definecolor{motOrange}{HTML}{B76B35}
+\newcommand{\motivationcar}[1]{%
+    \begin{tikzpicture}[x=0.65cm,y=0.65cm,
+        baseline=(current bounding box.center)]
+        \path[draw=#1!80!black,fill=#1!75,line width=0.6pt,
+            rounded corners=2pt]
+        (0,0.25)--(0.20,0.65)--(0.78,0.78)--(1.20,1.25)
+        --(2.35,1.25)--(2.90,0.78)--(3.45,0.63)--(3.65,0.25)--cycle;
+        \path[fill=white!90!#1,draw=#1!80!black]
+        (1.00,0.79)--(1.32,1.10)--(1.73,1.10)--(1.73,0.79)--cycle;
+        \path[fill=white!90!#1,draw=#1!80!black]
+        (1.86,0.79)--(1.86,1.10)--(2.25,1.10)--(2.62,0.79)--cycle;
+        \fill[black!80] (0.80,0.25) circle (0.27);
+        \fill[black!80] (2.88,0.25) circle (0.27);
+        \fill[white!75!black] (0.80,0.25) circle (0.12);
+        \fill[white!75!black] (2.88,0.25) circle (0.12);
+        \fill[yellow!55] (3.37,0.44) rectangle (3.56,0.57);
+    \end{tikzpicture}%
+}
+
+% Draw buses and cameras as scalable vector illustrations.
+\newcommand{\motivationbus}[1]{%
+\begin{tikzpicture}[x=0.5cm,y=0.5cm,baseline=(current bounding box.center)]
+\draw[rounded corners=2pt,fill=#1!75,draw=#1!80!black]
+(0,0.2) rectangle (3.6,1.7);
+\foreach \x in {0.25,1.0,1.75,2.5}
+  \fill[white!85!#1] (\x,0.95) rectangle +(0.6,0.5);
+\draw[white,line width=1pt] (0.2,0.7)--(3.4,0.7);
+\foreach \x in {0.7,2.9}{
+\fill[black!85] (\x,0.2) circle (0.3);
+\fill[white!70!black] (\x,0.2) circle (0.13);}
+\end{tikzpicture}}
+\newcommand{\motivationcamera}[1]{%
+\begin{tikzpicture}[x=0.6cm,y=0.6cm,baseline=(current bounding box.center)]
+\draw[fill=#1!70,draw=#1!80!black,rounded corners=2pt]
+(0,0) rectangle (3.4,1.8);
+\draw[fill=#1!70,draw=#1!80!black] (0.65,1.8)--(0.9,2.15)--(1.8,2.15)--(2.05,1.8);
+\fill[black!80] (1.85,0.9) circle (0.72);
+\fill[white!70!#1] (1.85,0.9) circle (0.52);
+\fill[#1!50!black] (1.85,0.9) circle (0.37);
+\fill[white!80] (1.7,1.08) circle (0.12);
+\fill[white!80] (0.25,1.3) rectangle (0.65,1.55);
+\end{tikzpicture}}
+
+
 \begin{document}
 \frontmatter
 \begin{titlepage}
@@ -87,36 +197,230 @@
 \mainmatter
 \chapter{Introduction}
 \section{Motivation}
-Let us imagine that someone has to travel from IIT Madras to the airport.
-The person has four realistic choices: car, bike, taxi, and bus. Based on
-cost, comfort, and speed, the person may have a natural preference ranking
-among these alternatives. For example, the ranking may be
-\begin{equation}
-    \text{Car} \succ \text{Taxi} \succ \text{Bike} \succ \text{Bus}.
-\end{equation}
-Now suppose that a fifth alternative is added. This alternative is walking,
-which may take almost three hours and is therefore unlikely to be seriously
-considered.
-Common sense suggests that adding walking should not change the person's
-relative preference between car, taxi, bike, and bus. Walking is an
-irrelevant alternative in this situation. Therefore, the relative preference
-between the original alternatives should remain unchanged.
-This idea is called the \emph{Independence of Irrelevant Alternatives}
-property. It is one of the central properties behind classical models of
-choice.
-However, human preferences may not always behave exactly as assumed by
-classical multinomial logit models. Experimental evidence indicates that
-adding or removing alternatives can change how attractive the existing
-alternatives appear. Such behaviour is described as a violation of the
-Independence of Irrelevant Alternatives property
-\citep{seshadri2019}.
+\label{sec:motivation}
+
+It is usually seen that people do not always evaluate alternative options in isolation. The other
+options presented alongside it can change how attractive it appears and can be influenced.
+An option may lose support when a similar alternative is introduced,
+also can gain support when a poor comparison is added, or can become more appealing
+when it occupies the middle of a range. These behaviours are known as
+\emph{context effects}. And, three important examples are the attraction,
+similarity and compromise effects.
+
+\subsection{Attraction Effect: The Tesla Illustration}
+
+Can a product appear more reasonable without becoming cheaper?
+Consider Tesla's Roadster reservation options. Reuters reported
+that Tesla demonstrated thruster-assisted aerial manoeuvres on
+15 October 2026, with US\$50,000 and US\$250,000 deposits for the
+Performance and Thrust variants, respectively, and an invite-only
+Rocket variant. Shares were reported up 5\% in premarket trading
+the next day.\footnote{Reuters, \textit{Tesla's new Roadster turns in air
+with SpaceX thrusters, won't land until 2028}, 15 October 2026,
+updated 16 October 2026; available via
+\href{https://live.euronext.com/en/financial-news/teslas-new-roadster-turns-air-spacex-thrusters-wont-land-until-2028}{Euronext}.
+These are reservation deposits, not final prices. The stock movement
+does not establish that a decoy effect occurred or caused the rise.}
+
+A person may initially consider US\$50,000 expensive. After seeing
+the larger deposit and the flying-car presentation, the same amount
+may feel more reasonable. The product has not become cheaper;
+the comparison has changed.
+
+\begin{figure}[H]
+\singlespacing
+    \centering
+    \begin{minipage}{\textwidth}
+    \singlespacing
+    \centering
+    {\color{motGreen}\large\bfseries Same deposit. Different context.\par}
+    \vspace{2mm}
+    {\small Tesla Roadster: three contrasting reservation options\par}
+    \vspace{5mm}
+    \begin{minipage}[t]{0.31\linewidth}
+        \centering
+        {\bfseries\color{motOrange}ROCKET\par}
+        \vspace{3mm}
+        \motivationcar{motOrange}\par
+        {\color{motBlue}\small\(\downarrow\qquad\downarrow\)\par}
+        \vspace{1mm}
+        \textbf{No amount listed}\\[1mm]
+        {\small Invite-only variant\\Flight-system concept}
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.31\linewidth}
+        \centering
+        {\bfseries\color{motBlue}THRUST\par}
+        \vspace{3mm}
+        \motivationcar{motBlue}\par
+        {\small\strut\par}
+        \vspace{1mm}
+        \textbf{US\$250,000}\\[1mm]
+        {\small Reservation deposit\\Acceleration thrusters}
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.31\linewidth}
+        \centering
+        {\bfseries\color{motGreen}PERFORMANCE\par}
+        \vspace{3mm}
+        \motivationcar{motGreen}\par
+        {\small\strut\par}
+        \vspace{1mm}
+        \textbf{US\$50,000}\\[1mm]
+        {\small Reservation deposit\\Lower-deposit option}
+    \end{minipage}
+    \par\vspace{5mm}
+    \begingroup
+    \setlength{\fboxsep}{8pt}
+    % \colorbox{motGreen!7}{%
+    %     \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    %         \centering\small
+    %         \textbf{The behavioural question}\\[2mm]
+    %         Could the US\$50,000 deposit feel more reasonable
+    %         after seeing the other options?\\[2mm]
+    %         \textit{}
+    %     }%
+    % }
+    \endgroup
+    \end{minipage}
+    \caption[Tesla Roadster as motivation for context-dependent evaluation]{
+    Tesla Roadster as motivation for context-dependent evaluation.
+    The cars are schematic illustrations, not technical drawings.
+    Reservation information follows the Reuters report cited in the text.
+    }
+    \label{fig:motivation-tesla-context}
+\end{figure}
+
+This provides an intuition for how an additional option can make
+another option more attractive. In the classical \emph{attraction}
+or \emph{decoy effect}, the added option is dominated by a target
+alternative but not by its competitor, and its presence increases
+the target's choice probability \citep{huber1982motivation}.
+
+\subsection{Similarity Effect: The Red Bus and Blue Bus}
+
+Now consider someone travelling from IIT Madras to the airport.
+Initially, the available options are a car and a red bus. Suppose
+that half of the travellers choose each option. A blue bus is then
+introduced with the same route, fare, comfort and travel time as
+the red bus; only its colour differs.
+
+If travellers regard the two buses as interchangeable, the blue bus
+may mainly attract people who would otherwise have taken the red bus.
+For illustration, the car's share may remain at 50\%, while the two
+buses each receive 25\%. The new option draws disproportionately
+from its similar alternative, rather than equally from all options.
+This illustrates the \emph{similarity effect}, which motivates
+choice models that account for shared attributes \citep{tversky1972motivation}.
+
+\begin{figure}[H]
+\singlespacing
+\centering
+\begin{minipage}{\textwidth}
+\singlespacing\centering
+{\large\bfseries\color{motBlue}A new colour need not create a new preference.\par}
+\vspace{5mm}
+\begin{minipage}[t]{0.43\linewidth}
+\centering\textbf{Before: two options}\par\vspace{4mm}
+\begin{tabular}{cc}
+\resizebox{2cm}{!}{\motivationcar{motGreen}} & \motivationbus{red!70!black}\\[2mm]
+Car & Red bus\\[1mm]
+\textbf{50\%} & \textbf{50\%}
+\end{tabular}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.08\linewidth}
+\centering\vspace{12mm}\(\longrightarrow\)
+\end{minipage}\hfill
+\begin{minipage}[t]{0.45\linewidth}
+\centering\textbf{After: a similar bus is added}\par\vspace{4mm}
+\begin{tabular}{ccc}
+\resizebox{1.5cm}{!}{\motivationcar{motGreen}} &
+\resizebox{1.5cm}{!}{\motivationbus{red!70!black}} &
+\resizebox{1.5cm}{!}{\motivationbus{motBlue}}\\[2mm]
+Car & Red bus & Blue bus\\[1mm]
+\textbf{50\%} & \textbf{25\%} & \textbf{25\%}
+\end{tabular}
+\end{minipage}
+\par\vspace{5mm}
+{\small\color{motBlue}The two buses share the original bus demand.\par}
+\end{minipage}
+\caption[Illustration of the similarity effect]{Illustrative choice shares
+for the red-bus--blue-bus example. The percentages explain a possible
+similarity effect; they are not estimates from transport data.}
+\label{fig:motivation-similarity}
+\end{figure}
+
+The important point is not simply that the red bus loses passengers.
+It is that the loss depends on how similar the new option is to it.
+The relationship between alternatives therefore matters for prediction.
+
+\subsection{Compromise Effect: Choosing a Camera}
+
+Consider a buyer choosing between a basic camera costing US\$300
+and a more capable camera costing US\$600. The second camera offers
+better image quality, but it is also the more expensive option.
+Now add a professional camera costing US\$1,200 with still higher
+image quality. The US\$600 camera now occupies the middle position:
+it offers more quality than the basic model at a lower price than
+the professional model.
+
+The buyer may consequently regard the US\$600 camera as a balanced
+choice. If its share relative to the US\$300 camera increases when
+the premium alternative is introduced, this illustrates the
+\emph{compromise effect}. An alternative becomes more attractive
+because it lies between the extremes \citep{simonson1989motivation}.
+
+\begin{figure}[H]
+\singlespacing
+\centering
+\begin{minipage}{\textwidth}
+\singlespacing\centering
+{\large\bfseries\color{motOrange}The same camera becomes the middle option.\par}
+\vspace{5mm}
+\begin{minipage}[t]{0.30\linewidth}
+\centering\textbf{Basic}\par\vspace{3mm}
+\motivationcamera{motBlue}\par\vspace{3mm}
+\textbf{US\$300}\\[1mm]
+Lower image quality\\Lower price
+\end{minipage}\hfill
+\begin{minipage}[t]{0.34\linewidth}
+\centering\colorbox{motGreen!10}{\strut\textbf{Enthusiast: compromise}}\par\vspace{3mm}
+\motivationcamera{motGreen}\par\vspace{3mm}
+\textbf{US\$600}\\[1mm]
+Intermediate quality\\Intermediate price
+\end{minipage}\hfill
+\begin{minipage}[t]{0.30\linewidth}
+\centering\textbf{Professional: added}\par\vspace{3mm}
+\motivationcamera{motOrange}\par\vspace{3mm}
+\textbf{US\$1,200}\\[1mm]
+Higher image quality\\Higher price
+\end{minipage}
+\par\vspace{5mm}
+{\small\color{motGreen}Originally the expensive option;
+now a compromise between price and quality.\par}
+\end{minipage}
+\caption[Illustration of the compromise effect]{A hypothetical camera
+comparison. Prices and quality levels are illustrative. The effect
+concerns a change in relative choice share after adding the premium
+option, not merely the existence of a middle-priced product.}
+\label{fig:motivation-compromise}
+\end{figure}
+
+These three effects show different ways in which the available menu
+can influence choice. A similar alternative competes for the same
+support, a dominated comparison can favour a target, and an extreme
+alternative can make another option a compromise. This motivates
+learning preferences through interactions between alternatives,
+rather than assigning each item an attractiveness that is independent
+of its context. The Context-Dependent Model provides a framework
+for studying such interactions \citep{seshadri2019}.
+
 % \section{Objectives}
 \chapter{Background and Choice Models}
 \section{Choice Data and Choice Sets}
 Let \(\X\) denote the universal set of alternatives. A choice set is a
 subset of \(\X\) containing the alternatives available to a decision-maker
 at a particular time.
-For the commute-mode example, the universal set is
+As a separate example, consider travel from IIT Madras to the
+airport. The universal set of transport alternatives is
 \begin{equation}
     \X=
     \{
@@ -341,6 +645,674 @@ The probability obtained using these centred scores is
 Thus, adding the same constant to every score does not change the choice
 probabilities. The zero-sum constraint selects one representative from all
 score vectors that produce the same probabilities.
+\chapter{Bradley--Terry Model and Maximum Likelihood}
+\section{Pairwise Comparison Setting}
+To understand the underlying mechanics of a model for choice data, we
+consider observed pairwise comparisons and assume a probabilistic model.
+The Bradley--Terry model, which is originally developed for analysing
+paired comparisons, provides a probabilistic framework for
+estimating the relative strengths of competing items
+\citep{bradleyterry1952}.
+
+The goal is to estimate unknown parameters that provide a compressed
+representation of the observed comparison data.
+For items \(i\) and \(j\), with parameters \(\theta_i\) and \(\theta_j\), the
+Bradley--Terry model defines
+\begin{equation}
+    P(i\succ j)
+    =
+    \frac{\exp(\theta_i)}
+    {\exp(\theta_i)+\exp(\theta_j)}.
+    \label{eq:bradley-terry}
+\end{equation}
+Dividing the numerator and denominator by \(\exp(\theta_i)\) gives
+\begin{equation}
+    P(i\succ j)
+    =
+    \frac{1}
+    {1+\exp\left(-(\theta_i-\theta_j)\right)}.
+\end{equation}
+Therefore, the probability depends only on the parameter difference
+\(\theta_i-\theta_j\).
+
+\section{Parameter Identifiability and Centring}
+
+The Bradley--Terry probability depends only on the difference between
+two parameters. Consequently, adding the same constant \(c\) to every
+parameter does not change any pairwise comparison probability:
+\begin{align*}
+    P(i\succ j)
+    &=
+    \frac{\exp(\theta_i+c)}
+    {\exp(\theta_i+c)+\exp(\theta_j+c)}
+    \\
+    &=
+    \frac{\exp(\theta_i)}
+    {\exp(\theta_i)+\exp(\theta_j)}.
+\end{align*}
+
+Therefore, the parameter vectors
+\[
+(\theta_1,\ldots,\theta_n)
+\qquad\text{and}\qquad
+(\theta_1+c,\ldots,\theta_n+c)
+\]
+represent the same Bradley--Terry model. The individual parameter
+values are consequently not identifiable without an additional
+constraint.
+
+We remove this additive ambiguity using the zero-sum constraint
+\begin{equation}
+    \sum_{i=1}^{n}\theta_i=0.
+    \label{eq:btl-zero-sum}
+\end{equation}
+
+For any parameter vector \(\boldsymbol{\theta}\), a centred version can
+be obtained by subtracting its mean:
+\begin{equation}
+    \theta_i^{\mathrm{centred}}
+    =
+    \theta_i
+    -
+    \frac{1}{n}
+    \sum_{j=1}^{n}\theta_j.
+    \label{eq:btl-centring}
+\end{equation}
+
+This transformation preserves every parameter difference and therefore
+does not change the pairwise comparison probabilities. In the numerical
+experiments, both the true and estimated parameter vectors are centred
+before their recovery error is calculated.
+
+
+\section{Maximum Likelihood Estimation}
+The model parameters can be estimated from observed pairwise
+outcomes using maximum likelihood. Likelihood-based estimation
+and computational algorithms for extensions of the
+Bradley--Terry model have been studied in the literature
+\citep{hunter2004}.
+
+Suppose that the observed dataset contains \(m\) pairwise comparisons:
+\begin{equation}
+    \mathcal{D}
+    =
+    \{(w_t,l_t)\}_{t=1}^{m},
+\end{equation}
+where \(w_t\) and \(l_t\) denote the winner and loser of comparison
+\(t\), respectively.
+
+Conditional on the compared pairs, the observed comparison outcomes are
+modelled as independent. The probability of the observed outcome in
+comparison \(t\) is
+\begin{equation}
+    p_t
+    =
+    P(w_t\succ l_t)
+    =
+    \frac{\exp(\theta_{w_t})}
+    {\exp(\theta_{w_t})+\exp(\theta_{l_t})}.
+    \label{eq:btl-observation-probability}
+\end{equation}
+
+The likelihood of the complete dataset is therefore
+\begin{equation}
+    L(\boldsymbol{\theta};\mathcal{D})
+    =
+    \prod_{t=1}^{m}
+    \frac{\exp(\theta_{w_t})}
+    {\exp(\theta_{w_t})+\exp(\theta_{l_t})}.
+    \label{eq:btl-likelihood}
+\end{equation}
+
+Taking the logarithm gives the log-likelihood
+\begin{align*}
+    \ell(\boldsymbol{\theta};\mathcal{D})
+    &=
+    \sum_{t=1}^{m}
+    \log
+    \left(
+        \frac{\exp(\theta_{w_t})}
+        {\exp(\theta_{w_t})+\exp(\theta_{l_t})}
+    \right)
+    \\
+    &=
+    \sum_{t=1}^{m}
+    \left[
+        \theta_{w_t}
+        -
+        \log
+        \left(
+            \exp(\theta_{w_t})
+            +
+            \exp(\theta_{l_t})
+        \right)
+    \right].
+    \label{eq:btl-log-likelihood}
+\end{align*}
+
+Maximizing the log-likelihood is equivalent to minimizing its negative.
+In the implementation, we use the average negative log-likelihood
+\begin{align}
+    \mathcal{L}(\boldsymbol{\theta})
+    &=
+    -\frac{1}{m}
+    \ell(\boldsymbol{\theta};\mathcal{D})
+    \\
+    &=
+    \frac{1}{m}
+    \sum_{t=1}^{m}
+    \log
+    \left(
+        1+
+        \exp(\theta_{l_t}-\theta_{w_t})
+    \right).
+    \label{eq:btl-average-nll}
+\end{align}
+
+Using the average rather than the total negative log-likelihood makes
+the reported loss values comparable across datasets containing
+different numbers of comparisons.
+
+The maximum likelihood estimate is written as
+\begin{equation}
+    \widehat{\boldsymbol{\theta}}
+    =
+    \arg\min_{\boldsymbol{\theta}}
+    \mathcal{L}(\boldsymbol{\theta}),
+    \qquad
+    \text{subject to}
+    \qquad
+    \sum_{i=1}^{n}\theta_i=0.
+    \label{eq:btl-mle}
+\end{equation}
+
+
+\section{Gradient-Based Estimation}
+
+The average negative log-likelihood in
+\cref{eq:btl-average-nll} is minimized using gradient descent. For one
+observed winner--loser pair \((w_t,l_t)\), the loss contribution is
+\begin{equation}
+    \mathcal{L}_t
+    =
+    \log
+    \left(
+        1+\exp(\theta_{l_t}-\theta_{w_t})
+    \right).
+\end{equation}
+
+Let
+\begin{equation}
+    p_t
+    =
+    P(w_t\succ l_t).
+\end{equation}
+
+The derivative of this loss with respect to the winner parameter is
+\begin{equation}
+    \frac{\partial\mathcal{L}_t}
+    {\partial\theta_{w_t}}
+    =
+    p_t-1,
+    \label{eq:btl-winner-gradient}
+\end{equation}
+while the derivative with respect to the loser parameter is
+\begin{equation}
+    \frac{\partial\mathcal{L}_t}
+    {\partial\theta_{l_t}}
+    =
+    1-p_t.
+    \label{eq:btl-loser-gradient}
+\end{equation}
+
+Therefore, when the observed winner is assigned a small winning
+probability, the magnitude of the update is larger. When the model
+already assigns the observed winner a probability close to one, the
+magnitude of the update is smaller.
+
+The gradient of the average negative log-likelihood with respect to an
+arbitrary parameter \(\theta_k\) is
+\begin{equation}
+    \frac{\partial\mathcal{L}}
+    {\partial\theta_k}
+    =
+    \frac{1}{m}
+    \sum_{t=1}^{m}
+    \left[
+        (p_t-1)\mathbb{I}\{k=w_t\}
+        +
+        (1-p_t)\mathbb{I}\{k=l_t\}
+    \right],
+    \label{eq:btl-full-gradient}
+\end{equation}
+where \(\mathbb{I}\{\cdot\}\) is the indicator function.
+
+At gradient-descent iteration \(s\), the complete parameter vector is
+updated according to
+\begin{equation}
+    \boldsymbol{\theta}^{(s+1)}
+    =
+    \boldsymbol{\theta}^{(s)}
+    -
+    \eta
+    \nabla
+    \mathcal{L}
+    \left(
+        \boldsymbol{\theta}^{(s)}
+    \right),
+    \label{eq:btl-gradient-descent-update}
+\end{equation}
+where \(\eta>0\) is the learning rate.
+
+After an update, the parameter vector is centred using
+\begin{equation}
+    \theta_i^{(s+1)}
+    \leftarrow
+    \theta_i^{(s+1)}
+    -
+    \frac{1}{n}
+    \sum_{j=1}^{n}
+    \theta_j^{(s+1)}.
+    \label{eq:btl-gradient-centring}
+\end{equation}
+
+This centring step enforces the zero-sum constraint while preserving all
+pairwise parameter differences. The numerical experiments use this
+gradient-based procedure to estimate the Bradley--Terry parameters from
+the simulated winner--loser observations.
+
+\section{Existence and Uniqueness of the MLE}
+
+\subsection{Ford's Condition}
+
+For the Bradley--Terry model, the existence of a finite maximum
+likelihood estimate depends on the observed comparison outcomes.
+These outcomes can be represented using a directed win graph, in which
+each vertex represents an item and an edge \(i\to j\) indicates that
+item \(i\) has defeated item \(j\).
+
+Ford's condition holds when this directed win graph is strongly
+connected. Equivalently, for every nonempty proper subset of items,
+there must be at least one observed win from an item inside the subset
+against an item outside it, and vice versa.
+
+When Ford's condition holds, the Bradley--Terry maximum likelihood
+estimate is finite. After imposing the centring constraint
+\[
+    \sum_{i=1}^{n}\theta_i=0,
+\]
+the estimate is unique.
+
+\subsection{Case Where a Finite MLE Exists}
+
+In the first experiment, the comparison outcomes are constructed so
+that the directed win graph is strongly connected. Consequently,
+Ford's condition holds.
+
+Figure~\ref{fig:finite-mle-diagnostics} shows the optimization
+behaviour. The negative log-likelihood converges to a finite value,
+while the centred parameter estimates stabilize. This behaviour is
+consistent with the existence of a finite Bradley--Terry MLE.
+
+\begin{figure}[H]
+    \centering
+
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[
+            width=\textwidth
+        ]{images/experiments/bradley_terry/mle_existence/finite_mle_nll.pdf}
+        \caption{Negative log-likelihood during optimization.}
+        \label{fig:finite-mle-nll}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[
+            width=\textwidth
+        ]{images/experiments/bradley_terry/mle_existence/finite_mle_parameter_trajectories.pdf}
+        \caption{Trajectories of the centred parameters.}
+        \label{fig:finite-mle-parameters}
+    \end{subfigure}
+
+    \caption{Optimization behaviour when Ford's condition holds.}
+    \label{fig:finite-mle-diagnostics}
+\end{figure}
+
+\subsection{Perfect Separation and Nonexistence of a Finite MLE}
+
+In the second experiment, the observed outcomes follow a perfectly
+separated ordering. Although the corresponding undirected comparison
+graph is connected, the directed win graph is not strongly connected.
+Therefore, Ford's condition fails.
+
+As shown in Figure~\ref{fig:nonfinite-mle-diagnostics}, the negative
+log-likelihood continues to decrease, while the range of the estimated
+parameters continues to increase. Thus, the likelihood can be improved
+by increasing the parameter differences, but no finite parameter
+vector attains the maximum likelihood value.
+
+\begin{figure}[H]
+    \centering
+
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[
+            width=\textwidth
+        ]{images/experiments/bradley_terry/mle_existence/nonfinite_mle_nll.pdf}
+        \caption{Negative log-likelihood under perfect separation.}
+        \label{fig:nonfinite-mle-nll}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[
+            width=\textwidth
+        ]{images/experiments/bradley_terry/mle_existence/nonfinite_mle_parameter_growth.pdf}
+        \caption{Growth of the parameter range.}
+        \label{fig:nonfinite-mle-parameters}
+    \end{subfigure}
+
+    \caption{Optimization behaviour when Ford's condition fails.}
+    \label{fig:nonfinite-mle-diagnostics}
+\end{figure}
+
+These experiments illustrate that ordinary connectivity of the
+comparison graph is not sufficient for the existence of a finite MLE.
+The direction of the observed wins, and hence strong connectivity of
+the directed win graph, is essential.
+\section{Numerical Experiments}
+
+\subsection{Baseline Parameter Recovery}
+
+The first experiment checks whether the parameters used to generate
+simulated Bradley--Terry comparisons can be recovered from the observed
+data.
+
+We consider \(n=10\) items. The true parameter vector is constructed
+using equally spaced values between \(-1.5\) and \(1.5\). The vector is
+centred so that
+\begin{equation}
+    \sum_{i=1}^{n}\theta_i=0.
+\end{equation}
+
+A total of \(m=1000\) pairwise comparisons are generated. Each pair is
+sampled uniformly, and the winner is sampled according to the
+Bradley--Terry probability in \cref{eq:bradley-terry}. The random seed is
+fixed at \(20260831\) to make the experiment reproducible.
+
+The unknown parameters are estimated by minimizing the average negative
+log-likelihood using gradient descent. The learning rate is set to
+\(0.1\), and the optimizer is run for a maximum of \(1000\) iterations.
+
+The parameter-recovery error is measured using the root mean squared
+error
+\begin{equation}
+    \operatorname{RMSE}
+    =
+    \sqrt{
+        \frac{1}{n}
+        \sum_{i=1}^{n}
+        \left(
+            \widehat{\theta}_i-\theta_i
+        \right)^2
+    },
+    \label{eq:btl-recovery-rmse}
+\end{equation}
+where \(\theta_i\) is the true parameter and
+\(\widehat{\theta}_i\) is its estimate.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Configuration and result of the baseline
+    Bradley--Terry parameter-recovery experiment.}
+    \label{tab:btl-baseline-recovery}
+    \begin{tabular}{lc}
+        \toprule
+        Quantity & Value \\
+        \midrule
+        Number of items, \(n\) & \(10\) \\
+        Number of comparisons, \(m\) & \(1000\) \\
+        Random seed & \(20260831\) \\
+        Learning rate & \(0.1\) \\
+        Maximum iterations & \(1000\) \\
+        Parameter-recovery RMSE & \(0.1224\) \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[
+        width=0.90\textwidth
+    ]{images/experiments/bradley_terry/baseline_parameter_recovery.pdf}
+    \caption{Comparison of the true and estimated parameters for the
+    baseline Bradley--Terry experiment with \(10\) items and \(1000\)
+    pairwise comparisons.}
+    \label{fig:btl-baseline-recovery}
+\end{figure}
+
+As shown in \cref{fig:btl-baseline-recovery}, the estimated parameters
+follow the ordering and approximate magnitudes of the true parameters.
+The parameter-recovery RMSE for this simulated dataset is \(0.1224\).
+
+This result provides a baseline example of parameter recovery. Since it
+is obtained from a single simulated dataset, it does not describe the
+variation across independent datasets. Repeated experiments are used in
+the next subsection to study how the recovery error changes with the
+number of observed comparisons.
+
+\subsection{Effect of the Number of Comparisons}
+
+The second experiment studies how the number of observed pairwise
+comparisons affects parameter recovery. The number of items is fixed at
+\(n=10\), and the same centred true parameter vector used in the
+baseline experiment is retained.
+
+The number of comparisons is varied over
+\begin{equation}
+    m
+    \in
+    \{50,100,200,500,1000,2000,5000\}.
+\end{equation}
+
+For each value of \(m\), the experiment is repeated independently
+\(20\) times. A new comparison dataset is generated in every run, while
+the true parameters, pair-sampling method, learning rate, and maximum
+number of gradient-descent iterations are kept fixed. The mean
+parameter-recovery RMSE and its standard deviation are then computed
+over the \(20\) runs.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Parameter-recovery error for different numbers of
+    pairwise comparisons. Each result is computed over \(20\)
+    independent runs.}
+    \label{tab:btl-comparison-scaling}
+    \begin{tabular}{rcc}
+        \toprule
+        Number of comparisons
+        & Mean RMSE
+        & Standard deviation \\
+        \midrule
+        \(50\)   & \(0.7225\) & \(0.2172\) \\
+        \(100\)  & \(0.4600\) & \(0.1247\) \\
+        \(200\)  & \(0.3213\) & \(0.0819\) \\
+        \(500\)  & \(0.1786\) & \(0.0487\) \\
+        \(1000\) & \(0.1412\) & \(0.0388\) \\
+        \(2000\) & \(0.1095\) & \(0.0309\) \\
+        \(5000\) & \(0.0780\) & \(0.0203\) \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[
+        width=0.68\textwidth
+    ]{images/experiments/bradley_terry/recovery_error_vs_comparisons.pdf}
+    \caption{Mean Bradley--Terry parameter-recovery RMSE as the number
+    of comparisons increases. The error bars show one standard
+    deviation across \(20\) independent runs.}
+    \label{fig:btl-recovery-vs-comparisons}
+\end{figure}
+
+As shown in \cref{tab:btl-comparison-scaling,fig:btl-recovery-vs-comparisons},
+the mean parameter-recovery RMSE decreases as the number of observed
+comparisons increases. It decreases from \(0.7225\) with \(50\)
+comparisons to \(0.0780\) with \(5000\) comparisons.
+
+The standard deviation also decreases from \(0.2172\) to \(0.0203\).
+Thus, in this experimental setting, increasing the amount of observed
+comparison data improves both the average recovery accuracy and the
+consistency of the estimates across independent datasets.
+
+\section{Comparison of Optimization Methods}
+
+\subsection{Experimental Setup}
+
+The Bradley--Terry negative log-likelihood was minimized using five
+optimization methods: full-batch gradient descent, stochastic gradient
+descent (SGD), mini-batch gradient descent, gradient descent with
+momentum, and Adam.
+
+Each method was implemented in two ways: a handcrafted implementation
+and an implementation using PyTorch. The same simulated comparison
+dataset and initial parameter vector were used for all methods.
+
+A maximum budget of \(10{,}000\) epochs was used. Convergence was
+measured using the norm of the gradient evaluated on the complete
+dataset. The convergence tolerance was set to
+
+\begin{equation}
+    \left\lVert \nabla \mathcal{L}(\boldsymbol{\theta}) \right\rVert_2
+    \leq 10^{-4}.
+\end{equation}
+
+For easier comparison, define the convergence ratio
+
+\begin{equation}
+    r
+    =
+    \frac{
+        \left\lVert
+        \nabla \mathcal{L}(\boldsymbol{\theta})
+        \right\rVert_2
+    }{
+        10^{-4}
+    }.
+\end{equation}
+
+Thus, a run satisfies the convergence criterion when \(r\leq 1\).
+
+\subsection{Final Solution Quality}
+
+Table~\ref{tab:optimizer-comparison} summarizes the parameter-recovery
+error, convergence ratio, and relative runtime. Here, H and P denote
+the handcrafted and PyTorch implementations, respectively.
+
+\begin{table}[H]
+    \centering
+    \caption{Comparison of the optimization methods. The runtime ratio
+    is PyTorch runtime divided by handcrafted runtime.}
+    \label{tab:optimizer-comparison}
+    \small
+    \begin{tabular}{lccc}
+        \toprule
+        Optimizer
+        & RMSE (H/P)
+        & \(r\) (H/P)
+        & Runtime ratio (P/H) \\
+        \midrule
+        Full-batch GD
+        & \(0.0381/0.0381\)
+        & \(1.00/1.00\)
+        & \(1.34\) \\
+
+        SGD
+        & \(0.0393/0.0395\)
+        & \(4.80/4.54\)
+        & \(2.59\) \\
+
+        Mini-batch GD
+        & \(0.0384/0.0387\)
+        & \(0.90/6.31\)
+        & \(27.82\) \\
+
+        Momentum GD
+        & \(0.0404/0.0360\)
+        & \(7.92/9.82\)
+        & \(2.15\) \\
+
+        Adam
+        & \(0.0408/0.0438\)
+        & \(24.94/29.12\)
+        & \(2.31\) \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The recovery RMSE values are similar across the different methods,
+lying between \(0.0360\) and \(0.0438\). Therefore, all methods produced
+parameter estimates close to the true parameters in this experiment.
+However, similar recovery errors do not imply that every method
+satisfied the numerical convergence criterion.
+
+\subsection{Convergence Criterion}
+
+Figure~\ref{fig:optimizer-convergence-distance} shows the final
+gradient norm relative to the selected tolerance.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[
+        width=0.88\textwidth
+    ]{images/experiments/bradley_terry/optimization/fixed_budget/06_distance_from_convergence.pdf}
+
+    \caption{Final gradient norm relative to the convergence tolerance.
+    Values at or below one satisfy the convergence criterion.}
+    \label{fig:optimizer-convergence-distance}
+\end{figure}
+
+Both implementations of full-batch gradient descent satisfied the
+convergence criterion. The handcrafted mini-batch implementation also
+satisfied the criterion. The remaining methods did not reach the
+specified tolerance within the fixed epoch budget.
+
+In particular, stochastic methods continue to fluctuate near a
+solution because their updates are computed using individual
+observations or mini-batches. Consequently, a small recovery error may
+still be obtained even when the full-gradient norm remains above the
+strict convergence tolerance.
+
+\subsection{Handcrafted and PyTorch Runtime}
+
+Figure~\ref{fig:pytorch-runtime-overhead} compares the runtime of the
+PyTorch implementation with its corresponding handcrafted
+implementation.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[
+        width=0.82\textwidth
+    ]{images/experiments/bradley_terry/optimization/fixed_budget/07_pytorch_to_handcrafted_runtime_ratio.pdf}
+
+    \caption{Ratio of PyTorch runtime to handcrafted runtime for each
+    optimization method. A value greater than one indicates that the
+    PyTorch implementation required more time.}
+    \label{fig:pytorch-runtime-overhead}
+\end{figure}
+
+For this Bradley--Terry problem, the handcrafted implementations
+were faster than their PyTorch counterparts, and among all those Adam optimizer performed well. The additional runtime
+is consistent with the overhead introduced by tensor operations and
+automatic differentiation on a small CPU-based problem.
+
+This observation is specific to the present implementation and problem
+size. It should not be interpreted as a general comparison of PyTorch
+and handcrafted optimization, since PyTorch may become advantageous
+for larger models, larger datasets, or GPU-based computation.
+
 % =========================================================
 % CHAPTER 3
 % =========================================================
@@ -559,66 +1531,118 @@ The corresponding choice probability is
 Here, $v(x)$ represents the intrinsic preference associated with $x$, while
 $v(x\mid\{z\})$ represents the contribution of context alternative $z$ to
 the utility of $x$.
+
 \subsection{Reparameterisation of the Model}
-The second-order formulation contains two types of parameters: the intrinsic
-parameters $v(x)$ and the contextual parameters $v(x\mid\{z\})$. These can
-be combined into a single set of pairwise parameters. For $x\neq z$, define
+
+The second-order utility is given by
 \begin{equation}
-    u_{xz}=v(x\mid\{z\})-v(z).
-    \label{eq:cdm-reparameterisation}
+u(x\mid C)
+=
+v(x)
++
+\sum_{z\in C\setminus\{x\}}
+v(x\mid\{z\}).
 \end{equation}
-Here, $x$ is the target alternative and $z$ is the context alternative. Using
-this definition, the reparameterised utility is
-\begin{align*}
-    \widetilde{u}(x\mid C)
-    &=\sum_{z\in C\setminus\{x\}}u_{xz}\\
-    &=\sum_{z\in C\setminus\{x\}}
-      \left(v(x\mid\{z\})-v(z)\right)\\
-    &=v(x)+\sum_{z\in C\setminus\{x\}}v(x\mid\{z\})
-      -\sum_{z\in C}v(z)\\
-    &=u(x\mid C)-\sum_{z\in C}v(z).
-    \label{eq:reparameterised-utility}
-\end{align*}
-The term $\sum_{z\in C}v(z)$ depends only on the choice set $C$ and is the
-same for every candidate in that choice set. Subtracting the same quantity
-from every candidate utility does not change the softmax probabilities:
+
+For $x\neq z$, define the pairwise interaction parameter as
 \begin{equation}
-    \frac{\exp(q_x-a)}{\sum_{y\in C}\exp(q_y-a)}
-    =
-    \frac{\exp(q_x)}{\sum_{y\in C}\exp(q_y)}.
+u_{xz}=v(x\mid\{z\})-v(z).
 \end{equation}
-Therefore, reparameterisation changes the form of the parameters without
-changing the choice probabilities.
-\subsection{CDM Choice Probability}
-After reparameterisation, the utility of alternative $x$ in choice set $C$ is
+
+Equivalently,
+\[
+v(x\mid\{z\})=u_{xz}+v(z).
+\]
+
+Substituting this into the original utility,
+\begin{align}
+u(x\mid C)
+&=
+v(x)
++
+\sum_{z\in C\setminus\{x\}}
+v(x\mid\{z\})
+\\[6pt]
+&=
+v(x)
++
+\sum_{z\in C\setminus\{x\}}u_{xz}
++
+\sum_{z\in C\setminus\{x\}}v(z)
+\\[6pt]
+&=
+\underbrace{
+v(x)+
+\sum_{z\in C\setminus\{x\}}v(z)
+}_{\displaystyle \sum_{z\in C}v(z)}
++
+\sum_{z\in C\setminus\{x\}}u_{xz}
+\\[6pt]
+&=
+\sum_{z\in C}v(z)
++
+\sum_{z\in C\setminus\{x\}}u_{xz}.
+\end{align}
+
+The first term depends only on the choice set $C$
+and is the same for every alternative $x\in C$.
+Since adding or subtracting a common constant
+does not change the softmax probabilities,
+this term can be omitted from the utility
+representation.
+
+Thus, the reparameterised utility becomes
 \begin{equation}
-    \widetilde{u}(x\mid C)
-    =
-    \sum_{z\in C\setminus\{x\}}u_{xz}.
-    \label{eq:cdm-utility}
+\boxed{
+u(x\mid C)
+=
+\sum_{z\in C\setminus\{x\}}u_{xz}.
+}
 \end{equation}
-Therefore, the CDM choice probability is
+
+Using the reparameterised utility, the choice probability
+of alternative $x$ from choice set $C$ is given by
+
+\begin{align}
+P(x\mid C)
+&=
+\frac{\exp(u(x\mid C))}
+{\sum_{y\in C}\exp(u(y\mid C))}
+\\[6pt]
+&=
+\frac{
+\exp\left(
+\sum_{z\in C\setminus\{x\}}u_{xz}
+\right)
+}{
+\sum_{y\in C}
+\exp\left(
+\sum_{z\in C\setminus\{y\}}u_{yz}
+\right)
+}.
+\end{align}
+
+Thus, the Context-Dependent Model (CDM) is
+expressed as
+
 \begin{equation}
-    P(x\mid C)
-    =
-    \frac{
-        \exp\left(
-            \displaystyle\sum_{z\in C\setminus\{x\}}u_{xz}
-        \right)
-    }{
-        \displaystyle\sum_{y\in C}
-        \exp\left(
-            \sum_{z\in C\setminus\{y\}}u_{yz}
-        \right)
-    }.
-    \label{eq:full-rank-cdm-probability}
+\boxed{
+P(x\mid C;U)
+=
+\frac{
+\exp\left(
+\sum_{z\in C\setminus\{x\}}u_{xz}
+\right)
+}{
+\sum_{y\in C}
+\exp\left(
+\sum_{z\in C\setminus\{y\}}u_{yz}
+\right)
+}
+}.
 \end{equation}
-\subsection{Interpretation of the Parameters}
-The parameter $u_{xz}$ represents the effect of context alternative $z$ on
-target alternative $x$. For example, $u_{\mathrm{Car},\mathrm{Bus}}$
-represents the contextual effect of Bus on the utility associated with Car.
-In general, $u_{xz}$ and $u_{zx}$ can be different because they represent
-effects in opposite directions.
+
+
 \subsection{Number of Parameters}
 The reparameterised parameters can be arranged in a matrix
 $U\in\R^{n\times n}$. The diagonal entries are set to zero because an
@@ -1030,874 +2054,252 @@ test data should be reserved for the final evaluation.
 
 
 
-\chapter{Bradley--Terry Model and Maximum Likelihood}
-\section{Pairwise Comparison Setting}
-To understand the underlying mechanics of a model for choice data, we
-consider observed pairwise comparisons and assume a probabilistic model.
-The Bradley--Terry model, which is originally developed for analysing
-paired comparisons, provides a probabilistic framework for
-estimating the relative strengths of competing items
-\citep{bradleyterry1952}.
+\section{Computational Scaling of the Full and Low-Rank CDM}
+\label{sec:full-low-rank-resource-scaling}
 
-The goal is to estimate unknown parameters that provide a compressed
-representation of the observed comparison data.
-For items \(i\) and \(j\), with parameters \(\theta_i\) and \(\theta_j\), the
-Bradley--Terry model defines
-\begin{equation}
-    P(i\succ j)
-    =
-    \frac{\exp(\theta_i)}
-    {\exp(\theta_i)+\exp(\theta_j)}.
-    \label{eq:bradley-terry}
-\end{equation}
-Dividing the numerator and denominator by \(\exp(\theta_i)\) gives
-\begin{equation}
-    P(i\succ j)
-    =
-    \frac{1}
-    {1+\exp\left(-(\theta_i-\theta_j)\right)}.
-\end{equation}
-Therefore, the probability depends only on the parameter difference
-\(\theta_i-\theta_j\).
-
-\section{Parameter Identifiability and Centring}
-
-The Bradley--Terry probability depends only on the difference between
-two parameters. Consequently, adding the same constant \(c\) to every
-parameter does not change any pairwise comparison probability:
-\begin{align*}
-    P(i\succ j)
-    &=
-    \frac{\exp(\theta_i+c)}
-    {\exp(\theta_i+c)+\exp(\theta_j+c)}
-    \\
-    &=
-    \frac{\exp(\theta_i)}
-    {\exp(\theta_i)+\exp(\theta_j)}.
-\end{align*}
-
-Therefore, the parameter vectors
-\[
-(\theta_1,\ldots,\theta_n)
-\qquad\text{and}\qquad
-(\theta_1+c,\ldots,\theta_n+c)
-\]
-represent the same Bradley--Terry model. The individual parameter
-values are consequently not identifiable without an additional
-constraint.
-
-We remove this additive ambiguity using the zero-sum constraint
-\begin{equation}
-    \sum_{i=1}^{n}\theta_i=0.
-    \label{eq:btl-zero-sum}
-\end{equation}
-
-For any parameter vector \(\boldsymbol{\theta}\), a centred version can
-be obtained by subtracting its mean:
-\begin{equation}
-    \theta_i^{\mathrm{centred}}
-    =
-    \theta_i
-    -
-    \frac{1}{n}
-    \sum_{j=1}^{n}\theta_j.
-    \label{eq:btl-centring}
-\end{equation}
-
-This transformation preserves every parameter difference and therefore
-does not change the pairwise comparison probabilities. In the numerical
-experiments, both the true and estimated parameter vectors are centred
-before their recovery error is calculated.
-
-
-\section{Maximum Likelihood Estimation}
-The model parameters can be estimated from observed pairwise
-outcomes using maximum likelihood. Likelihood-based estimation
-and computational algorithms for extensions of the
-Bradley--Terry model have been studied in the literature
-\citep{hunter2004}.
-
-Suppose that the observed dataset contains \(m\) pairwise comparisons:
-\begin{equation}
-    \mathcal{D}
-    =
-    \{(w_t,l_t)\}_{t=1}^{m},
-\end{equation}
-where \(w_t\) and \(l_t\) denote the winner and loser of comparison
-\(t\), respectively.
-
-Conditional on the compared pairs, the observed comparison outcomes are
-modelled as independent. The probability of the observed outcome in
-comparison \(t\) is
-\begin{equation}
-    p_t
-    =
-    P(w_t\succ l_t)
-    =
-    \frac{\exp(\theta_{w_t})}
-    {\exp(\theta_{w_t})+\exp(\theta_{l_t})}.
-    \label{eq:btl-observation-probability}
-\end{equation}
-
-The likelihood of the complete dataset is therefore
-\begin{equation}
-    L(\boldsymbol{\theta};\mathcal{D})
-    =
-    \prod_{t=1}^{m}
-    \frac{\exp(\theta_{w_t})}
-    {\exp(\theta_{w_t})+\exp(\theta_{l_t})}.
-    \label{eq:btl-likelihood}
-\end{equation}
-
-Taking the logarithm gives the log-likelihood
-\begin{align*}
-    \ell(\boldsymbol{\theta};\mathcal{D})
-    &=
-    \sum_{t=1}^{m}
-    \log
-    \left(
-        \frac{\exp(\theta_{w_t})}
-        {\exp(\theta_{w_t})+\exp(\theta_{l_t})}
-    \right)
-    \\
-    &=
-    \sum_{t=1}^{m}
-    \left[
-        \theta_{w_t}
-        -
-        \log
-        \left(
-            \exp(\theta_{w_t})
-            +
-            \exp(\theta_{l_t})
-        \right)
-    \right].
-    \label{eq:btl-log-likelihood}
-\end{align*}
-
-Maximizing the log-likelihood is equivalent to minimizing its negative.
-In the implementation, we use the average negative log-likelihood
-\begin{align}
-    \mathcal{L}(\boldsymbol{\theta})
-    &=
-    -\frac{1}{m}
-    \ell(\boldsymbol{\theta};\mathcal{D})
-    \\
-    &=
-    \frac{1}{m}
-    \sum_{t=1}^{m}
-    \log
-    \left(
-        1+
-        \exp(\theta_{l_t}-\theta_{w_t})
-    \right).
-    \label{eq:btl-average-nll}
-\end{align}
-
-Using the average rather than the total negative log-likelihood makes
-the reported loss values comparable across datasets containing
-different numbers of comparisons.
-
-The maximum likelihood estimate is written as
-\begin{equation}
-    \widehat{\boldsymbol{\theta}}
-    =
-    \arg\min_{\boldsymbol{\theta}}
-    \mathcal{L}(\boldsymbol{\theta}),
-    \qquad
-    \text{subject to}
-    \qquad
-    \sum_{i=1}^{n}\theta_i=0.
-    \label{eq:btl-mle}
-\end{equation}
-
-
-\section{Gradient-Based Estimation}
-
-The average negative log-likelihood in
-\cref{eq:btl-average-nll} is minimized using gradient descent. For one
-observed winner--loser pair \((w_t,l_t)\), the loss contribution is
-\begin{equation}
-    \mathcal{L}_t
-    =
-    \log
-    \left(
-        1+\exp(\theta_{l_t}-\theta_{w_t})
-    \right).
-\end{equation}
-
-Let
-\begin{equation}
-    p_t
-    =
-    P(w_t\succ l_t).
-\end{equation}
-
-The derivative of this loss with respect to the winner parameter is
-\begin{equation}
-    \frac{\partial\mathcal{L}_t}
-    {\partial\theta_{w_t}}
-    =
-    p_t-1,
-    \label{eq:btl-winner-gradient}
-\end{equation}
-while the derivative with respect to the loser parameter is
-\begin{equation}
-    \frac{\partial\mathcal{L}_t}
-    {\partial\theta_{l_t}}
-    =
-    1-p_t.
-    \label{eq:btl-loser-gradient}
-\end{equation}
-
-Therefore, when the observed winner is assigned a small winning
-probability, the magnitude of the update is larger. When the model
-already assigns the observed winner a probability close to one, the
-magnitude of the update is smaller.
-
-The gradient of the average negative log-likelihood with respect to an
-arbitrary parameter \(\theta_k\) is
-\begin{equation}
-    \frac{\partial\mathcal{L}}
-    {\partial\theta_k}
-    =
-    \frac{1}{m}
-    \sum_{t=1}^{m}
-    \left[
-        (p_t-1)\mathbb{I}\{k=w_t\}
-        +
-        (1-p_t)\mathbb{I}\{k=l_t\}
-    \right],
-    \label{eq:btl-full-gradient}
-\end{equation}
-where \(\mathbb{I}\{\cdot\}\) is the indicator function.
-
-At gradient-descent iteration \(s\), the complete parameter vector is
-updated according to
-\begin{equation}
-    \boldsymbol{\theta}^{(s+1)}
-    =
-    \boldsymbol{\theta}^{(s)}
-    -
-    \eta
-    \nabla
-    \mathcal{L}
-    \left(
-        \boldsymbol{\theta}^{(s)}
-    \right),
-    \label{eq:btl-gradient-descent-update}
-\end{equation}
-where \(\eta>0\) is the learning rate.
-
-After an update, the parameter vector is centred using
-\begin{equation}
-    \theta_i^{(s+1)}
-    \leftarrow
-    \theta_i^{(s+1)}
-    -
-    \frac{1}{n}
-    \sum_{j=1}^{n}
-    \theta_j^{(s+1)}.
-    \label{eq:btl-gradient-centring}
-\end{equation}
-
-This centring step enforces the zero-sum constraint while preserving all
-pairwise parameter differences. The numerical experiments use this
-gradient-based procedure to estimate the Bradley--Terry parameters from
-the simulated winner--loser observations.
-
-\section{Numerical Experiments}
-
-\subsection{Baseline Parameter Recovery}
-
-The first experiment checks whether the parameters used to generate
-simulated Bradley--Terry comparisons can be recovered from the observed
-data.
-
-We consider \(n=10\) items. The true parameter vector is constructed
-using equally spaced values between \(-1.5\) and \(1.5\). The vector is
-centred so that
-\begin{equation}
-    \sum_{i=1}^{n}\theta_i=0.
-\end{equation}
-
-A total of \(m=1000\) pairwise comparisons are generated. Each pair is
-sampled uniformly, and the winner is sampled according to the
-Bradley--Terry probability in \cref{eq:bradley-terry}. The random seed is
-fixed at \(20260831\) to make the experiment reproducible.
-
-The unknown parameters are estimated by minimizing the average negative
-log-likelihood using gradient descent. The learning rate is set to
-\(0.1\), and the optimizer is run for a maximum of \(1000\) iterations.
-
-The parameter-recovery error is measured using the root mean squared
-error
-\begin{equation}
-    \operatorname{RMSE}
-    =
-    \sqrt{
-        \frac{1}{n}
-        \sum_{i=1}^{n}
-        \left(
-            \widehat{\theta}_i-\theta_i
-        \right)^2
-    },
-    \label{eq:btl-recovery-rmse}
-\end{equation}
-where \(\theta_i\) is the true parameter and
-\(\widehat{\theta}_i\) is its estimate.
-
-\begin{table}[htbp]
-    \centering
-    \caption{Configuration and result of the baseline
-    Bradley--Terry parameter-recovery experiment.}
-    \label{tab:btl-baseline-recovery}
-    \begin{tabular}{lc}
-        \toprule
-        Quantity & Value \\
-        \midrule
-        Number of items, \(n\) & \(10\) \\
-        Number of comparisons, \(m\) & \(1000\) \\
-        Random seed & \(20260831\) \\
-        Learning rate & \(0.1\) \\
-        Maximum iterations & \(1000\) \\
-        Parameter-recovery RMSE & \(0.1224\) \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[
-        width=0.90\textwidth
-    ]{images/experiments/bradley_terry/baseline_parameter_recovery.pdf}
-    \caption{Comparison of the true and estimated parameters for the
-    baseline Bradley--Terry experiment with \(10\) items and \(1000\)
-    pairwise comparisons.}
-    \label{fig:btl-baseline-recovery}
-\end{figure}
-
-As shown in \cref{fig:btl-baseline-recovery}, the estimated parameters
-follow the ordering and approximate magnitudes of the true parameters.
-The parameter-recovery RMSE for this simulated dataset is \(0.1224\).
-
-This result provides a baseline example of parameter recovery. Since it
-is obtained from a single simulated dataset, it does not describe the
-variation across independent datasets. Repeated experiments are used in
-the next subsection to study how the recovery error changes with the
-number of observed comparisons.
-
-\subsection{Effect of the Number of Comparisons}
-
-The second experiment studies how the number of observed pairwise
-comparisons affects parameter recovery. The number of items is fixed at
-\(n=10\), and the same centred true parameter vector used in the
-baseline experiment is retained.
-
-The number of comparisons is varied over
-\begin{equation}
-    m
-    \in
-    \{50,100,200,500,1000,2000,5000\}.
-\end{equation}
-
-For each value of \(m\), the experiment is repeated independently
-\(20\) times. A new comparison dataset is generated in every run, while
-the true parameters, pair-sampling method, learning rate, and maximum
-number of gradient-descent iterations are kept fixed. The mean
-parameter-recovery RMSE and its standard deviation are then computed
-over the \(20\) runs.
-
-\begin{table}[htbp]
-    \centering
-    \caption{Parameter-recovery error for different numbers of
-    pairwise comparisons. Each result is computed over \(20\)
-    independent runs.}
-    \label{tab:btl-comparison-scaling}
-    \begin{tabular}{rcc}
-        \toprule
-        Number of comparisons
-        & Mean RMSE
-        & Standard deviation \\
-        \midrule
-        \(50\)   & \(0.7225\) & \(0.2172\) \\
-        \(100\)  & \(0.4600\) & \(0.1247\) \\
-        \(200\)  & \(0.3213\) & \(0.0819\) \\
-        \(500\)  & \(0.1786\) & \(0.0487\) \\
-        \(1000\) & \(0.1412\) & \(0.0388\) \\
-        \(2000\) & \(0.1095\) & \(0.0309\) \\
-        \(5000\) & \(0.0780\) & \(0.0203\) \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[
-        width=0.68\textwidth
-    ]{images/experiments/bradley_terry/recovery_error_vs_comparisons.pdf}
-    \caption{Mean Bradley--Terry parameter-recovery RMSE as the number
-    of comparisons increases. The error bars show one standard
-    deviation across \(20\) independent runs.}
-    \label{fig:btl-recovery-vs-comparisons}
-\end{figure}
-
-As shown in \cref{tab:btl-comparison-scaling,fig:btl-recovery-vs-comparisons},
-the mean parameter-recovery RMSE decreases as the number of observed
-comparisons increases. It decreases from \(0.7225\) with \(50\)
-comparisons to \(0.0780\) with \(5000\) comparisons.
-
-The standard deviation also decreases from \(0.2172\) to \(0.0203\).
-Thus, in this experimental setting, increasing the amount of observed
-comparison data improves both the average recovery accuracy and the
-consistency of the estimates across independent datasets.
-
-\section{Existence and Uniqueness of the MLE}
-
-\subsection{Ford's Condition}
-
-For the Bradley--Terry model, the existence of a finite maximum
-likelihood estimate depends on the observed comparison outcomes.
-These outcomes can be represented using a directed win graph, in which
-each vertex represents an item and an edge \(i\to j\) indicates that
-item \(i\) has defeated item \(j\).
-
-Ford's condition holds when this directed win graph is strongly
-connected. Equivalently, for every nonempty proper subset of items,
-there must be at least one observed win from an item inside the subset
-against an item outside it, and vice versa.
-
-When Ford's condition holds, the Bradley--Terry maximum likelihood
-estimate is finite. After imposing the centring constraint
-\[
-    \sum_{i=1}^{n}\theta_i=0,
-\]
-the estimate is unique.
-
-\subsection{Case Where a Finite MLE Exists}
-
-In the first experiment, the comparison outcomes are constructed so
-that the directed win graph is strongly connected. Consequently,
-Ford's condition holds.
-
-Figure~\ref{fig:finite-mle-diagnostics} shows the optimization
-behaviour. The negative log-likelihood converges to a finite value,
-while the centred parameter estimates stabilize. This behaviour is
-consistent with the existence of a finite Bradley--Terry MLE.
-
-\begin{figure}[H]
-    \centering
-
-    \begin{subfigure}[t]{0.48\textwidth}
-        \centering
-        \includegraphics[
-            width=\textwidth
-        ]{images/experiments/bradley_terry/mle_existence/finite_mle_nll.pdf}
-        \caption{Negative log-likelihood during optimization.}
-        \label{fig:finite-mle-nll}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[t]{0.48\textwidth}
-        \centering
-        \includegraphics[
-            width=\textwidth
-        ]{images/experiments/bradley_terry/mle_existence/finite_mle_parameter_trajectories.pdf}
-        \caption{Trajectories of the centred parameters.}
-        \label{fig:finite-mle-parameters}
-    \end{subfigure}
-
-    \caption{Optimization behaviour when Ford's condition holds.}
-    \label{fig:finite-mle-diagnostics}
-\end{figure}
-
-\subsection{Perfect Separation and Nonexistence of a Finite MLE}
-
-In the second experiment, the observed outcomes follow a perfectly
-separated ordering. Although the corresponding undirected comparison
-graph is connected, the directed win graph is not strongly connected.
-Therefore, Ford's condition fails.
-
-As shown in Figure~\ref{fig:nonfinite-mle-diagnostics}, the negative
-log-likelihood continues to decrease, while the range of the estimated
-parameters continues to increase. Thus, the likelihood can be improved
-by increasing the parameter differences, but no finite parameter
-vector attains the maximum likelihood value.
-
-\begin{figure}[H]
-    \centering
-
-    \begin{subfigure}[t]{0.48\textwidth}
-        \centering
-        \includegraphics[
-            width=\textwidth
-        ]{images/experiments/bradley_terry/mle_existence/nonfinite_mle_nll.pdf}
-        \caption{Negative log-likelihood under perfect separation.}
-        \label{fig:nonfinite-mle-nll}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[t]{0.48\textwidth}
-        \centering
-        \includegraphics[
-            width=\textwidth
-        ]{images/experiments/bradley_terry/mle_existence/nonfinite_mle_parameter_growth.pdf}
-        \caption{Growth of the parameter range.}
-        \label{fig:nonfinite-mle-parameters}
-    \end{subfigure}
-
-    \caption{Optimization behaviour when Ford's condition fails.}
-    \label{fig:nonfinite-mle-diagnostics}
-\end{figure}
-
-These experiments illustrate that ordinary connectivity of the
-comparison graph is not sufficient for the existence of a finite MLE.
-The direction of the observed wins, and hence strong connectivity of
-the directed win graph, is essential.
-\section{Comparison of Optimization Methods}
+The low-rank model uses fewer trainable parameters than the full CDM.
+We now examine how this reduction affects the resources required for
+model fitting as the number of items increases. The experiment compares
+training time, average time per update, parameter storage, and process
+memory. It uses the existing dense-matrix implementations of the models.
 
 \subsection{Experimental Setup}
 
-The Bradley--Terry negative log-likelihood was minimized using five
-optimization methods: full-batch gradient descent, stochastic gradient
-descent (SGD), mini-batch gradient descent, gradient descent with
-momentum, and Adam.
+The number of items was varied over
+$n\in\{250,500,1000,2000,3000,5000\}$. For each item count, we generated
+1,000 observations from a full CDM with parameter scale $0.4$ and
+choice-set sizes two and three. The full model and low-rank models with
+$r\in\{1,2,3\}$ were fitted to the same observations within each repeat.
+Five repeats were performed for every setting, giving 120 successful
+model fits in total. Dataset fingerprints were checked to verify that
+the four models received the same observations within each repeat.
 
-Each method was implemented in two ways: a handcrafted implementation
-and an implementation using PyTorch. The same simulated comparison
-dataset and initial parameter vector were used for all methods.
+All models were fitted using Adam with learning rate $0.05$ for exactly
+1,000 updates. Computation was performed on the CPU using
+\texttt{float64} and one PyTorch computational thread. The base random
+seed was 20260831. Each fit ran in a separate process, and the order of
+the fits was randomly shuffled.
 
-A maximum budget of \(10{,}000\) epochs was used. Convergence was
-measured using the norm of the gradient evaluated on the complete
-dataset. The convergence tolerance was set to
+The training time includes the optimization loop. Data generation, model
+construction, and the final loss and gradient evaluation are outside
+this timing interval. Since the update budget is fixed, this experiment
+measures computational cost rather than time to convergence. It also
+does not compare parameter recovery or held-out predictive performance.
 
+\subsection{Number of Trainable Parameters and Parameter Storage}
+
+The full implementation stores an $n\times n$ trainable matrix. The
+low-rank implementation stores two $n\times r$ factor matrices. Thus,
+the numbers of trainable entries are
 \begin{equation}
-    \left\lVert \nabla \mathcal{L}(\boldsymbol{\theta}) \right\rVert_2
-    \leq 10^{-4}.
+    N_{\mathrm{full}}=n^2,
+    \qquad
+    N_{\mathrm{low\text{-}rank}}=2nr.
+    \label{eq:resource-trainable-entries}
 \end{equation}
+These counts describe the entries stored by the implementation. They
+are not the numbers of identifiable free parameters discussed earlier.
+For a fixed rank, the number of trainable entries grows linearly with
+$n$, whereas the full matrix requires quadratic storage.
 
-For easier comparison, define the convergence ratio
+For example, at $n=5000$, the full model contains 25,000,000 trainable
+entries. The rank-one, rank-two, and rank-three models contain 10,000,
+20,000, and 30,000 entries, respectively. The rank-one model therefore
+uses 2,500 times fewer trainable entries than the full model.
 
+Each \texttt{float64} entry occupies eight bytes. The storage of the
+trainable tensors, measured in MiB, is therefore
 \begin{equation}
-    r
-    =
-    \frac{
-        \left\lVert
-        \nabla \mathcal{L}(\boldsymbol{\theta})
-        \right\rVert_2
-    }{
-        10^{-4}
-    }.
+    S_{\mathrm{parameters}}
+    =\frac{8N_{\mathrm{parameters}}}{2^{20}}.
+    \label{eq:resource-parameter-storage}
 \end{equation}
-
-Thus, a run satisfies the convergence criterion when \(r\leq 1\).
-
-\subsection{Final Solution Quality}
-
-Table~\ref{tab:optimizer-comparison} summarizes the parameter-recovery
-error, convergence ratio, and relative runtime. Here, H and P denote
-the handcrafted and PyTorch implementations, respectively.
-
-\begin{table}[H]
-    \centering
-    \caption{Comparison of the optimization methods. The runtime ratio
-    is PyTorch runtime divided by handcrafted runtime.}
-    \label{tab:optimizer-comparison}
-    \small
-    \begin{tabular}{lccc}
-        \toprule
-        Optimizer
-        & RMSE (H/P)
-        & \(r\) (H/P)
-        & Runtime ratio (P/H) \\
-        \midrule
-        Full-batch GD
-        & \(0.0381/0.0381\)
-        & \(1.00/1.00\)
-        & \(1.34\) \\
-
-        SGD
-        & \(0.0393/0.0395\)
-        & \(4.80/4.54\)
-        & \(2.59\) \\
-
-        Mini-batch GD
-        & \(0.0384/0.0387\)
-        & \(0.90/6.31\)
-        & \(27.82\) \\
-
-        Momentum GD
-        & \(0.0404/0.0360\)
-        & \(7.92/9.82\)
-        & \(2.15\) \\
-
-        Adam
-        & \(0.0408/0.0438\)
-        & \(24.94/29.12\)
-        & \(2.31\) \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-
-The recovery RMSE values are similar across the different methods,
-lying between \(0.0360\) and \(0.0438\). Therefore, all methods produced
-parameter estimates close to the true parameters in this experiment.
-However, similar recovery errors do not imply that every method
-satisfied the numerical convergence criterion.
-
-\subsection{Convergence Criterion}
-
-Figure~\ref{fig:optimizer-convergence-distance} shows the final
-gradient norm relative to the selected tolerance.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[
-        width=0.88\textwidth
-    ]{images/experiments/bradley_terry/optimization/fixed_budget/06_distance_from_convergence.pdf}
-
-    \caption{Final gradient norm relative to the convergence tolerance.
-    Values at or below one satisfy the convergence criterion.}
-    \label{fig:optimizer-convergence-distance}
-\end{figure}
-
-Both implementations of full-batch gradient descent satisfied the
-convergence criterion. The handcrafted mini-batch implementation also
-satisfied the criterion. The remaining methods did not reach the
-specified tolerance within the fixed epoch budget.
-
-In particular, stochastic methods continue to fluctuate near a
-solution because their updates are computed using individual
-observations or mini-batches. Consequently, a small recovery error may
-still be obtained even when the full-gradient norm remains above the
-strict convergence tolerance.
-
-\subsection{Handcrafted and PyTorch Runtime}
-
-Figure~\ref{fig:pytorch-runtime-overhead} compares the runtime of the
-PyTorch implementation with its corresponding handcrafted
-implementation.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[
-        width=0.82\textwidth
-    ]{images/experiments/bradley_terry/optimization/fixed_budget/07_pytorch_to_handcrafted_runtime_ratio.pdf}
-
-    \caption{Ratio of PyTorch runtime to handcrafted runtime for each
-    optimization method. A value greater than one indicates that the
-    PyTorch implementation required more time.}
-    \label{fig:pytorch-runtime-overhead}
-\end{figure}
-
-For this Bradley--Terry problem, the handcrafted implementations
-were faster than their PyTorch counterparts, and among all those Adam optimizer performed well. The additional runtime
-is consistent with the overhead introduced by tensor operations and
-automatic differentiation on a small CPU-based problem.
-
-This observation is specific to the present implementation and problem
-size. It should not be interpreted as a general comparison of PyTorch
-and handcrafted optimization, since PyTorch may become advantageous
-for larger models, larger datasets, or GPU-based computation.
-
-\chapter{Experimental Study of the Full Context-Dependent Model}
-\label{chap:full-cdm-experiments}
-
-\section{Experimental Setup}
-\label{sec:cdm-experimental-setup}
-
-% Experimental setup and implementation details will be added later.
-
-
-\section{CDM-to-CDM Parameter Recovery}
-\label{sec:cdm-parameter-recovery}
-
-\subsection{Baseline Recovery Experiment}
-\label{subsec:cdm-baseline-recovery}
-
-\begin{table}[htbp]
-    \centering
-    \caption{Average negative log-likelihood in the baseline CDM-to-CDM recovery experiment.}
-    \label{tab:cdm-baseline-nll}
-    \begin{tabular}{lc}
-        \toprule
-        Evaluation & Average NLL \\
-        \midrule
-        Uniform baseline---training       & 0.9015 \\
-        True parameters---training        & 0.8275 \\
-        Estimated parameters---training   & 0.8169 \\
-        True parameters---test            & 0.8020 \\
-        Estimated parameters---test       & 0.8190 \\
-        \bottomrule
-    \end{tabular}
-\end{table}
+This quantity excludes gradients, optimizer states, observations, and
+temporary allocations. It should therefore be distinguished from the
+total memory occupied by the process.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[
-        width=\textwidth
-    ]{images/experiments/context_dependent_model/cdm_cdm/01_full_cdm_parameter_recovery.pdf}
-    \caption{Recovery of the full CDM interaction matrix.}
-    \label{fig:full-cdm-parameter-recovery}
+    \begin{subfigure}{0.80\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/experiments/context_dependent_model/05_full_vs_low_rank_resource_scaling/20261021T202900_245293Z/01_parameter_count.pdf}
+        \caption{Number of trainable entries.}
+    \end{subfigure}
+    \par\medskip
+    \begin{subfigure}{0.80\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/experiments/context_dependent_model/05_full_vs_low_rank_resource_scaling/20261021T202900_245293Z/02_parameter_storage.pdf}
+        \caption{Storage occupied by trainable tensors.}
+    \end{subfigure}
+    \caption{Trainable entries and their tensor storage for the full and low-rank CDM. Storage excludes gradients, optimizer states, data, and temporary allocations.}
+    \label{fig:resource-parameters}
 \end{figure}
 
+\subsection{Training Time and Average Time per Update}
 
-\section{Recovery as the Number of Observations Increases}
-\label{sec:cdm-observation-scaling}
-
-\subsection{Observation-Scaling Results}
-\label{subsec:cdm-observation-scaling-results}
+Table~\ref{tab:resource-scaling-summary} reports the mean training time,
+its standard deviation, and the mean sampled peak process memory across
+the five repeats. Training time increased substantially with the number
+of items for all four models.
 
 \begin{table}[htbp]
     \centering
+    \caption{Computational resources for the full and low-rank CDM.
+    Time is measured over 1,000 Adam updates. Each setting has five
+    repeats. Peak RSS is the mean sampled peak process memory.}
+    \label{tab:resource-scaling-summary}
+    \begingroup
+    \singlespacing
     \small
-    \caption{Full CDM recovery as the number of observations increases.}
-    \label{tab:cdm-observation-scaling}
-    \resizebox{\textwidth}{!}{
-        \begin{tabular}{rrrrrr}
-            \toprule
-            Observations &
-            Runs &
-            Mean RMSE &
-            RMSE standard deviation &
-            Mean correlation &
-            Mean excess test NLL \\
-            \midrule
-            1,000  & 10 & 0.3243 & 0.0888 & 0.7519 & 0.0100 \\
-            5,000  & 10 & 0.1216 & 0.0321 & 0.9493 & 0.0023 \\
-            10,000 & 10 & 0.0984 & 0.0247 & 0.9673 & 0.0016 \\
-            50,000 & 10 & 0.0482 & 0.0115 & 0.9920 & 0.0003 \\
-            \bottomrule
-        \end{tabular}
+    \resizebox{\textwidth}{!}{%
+        \input{tables/experiments/context_dependent_model/05_full_vs_low_rank_resource_scaling/20261021T202900_245293Z/resource_scaling_summary.tex}%
     }
+    \endgroup
 \end{table}
+
+At $n=5000$, the full model required $413.346\pm2.486$ seconds.
+The rank-one, rank-two, and rank-three models required
+$307.714\pm4.728$, $322.378\pm4.124$, and $319.222\pm7.053$ seconds,
+respectively. Here, the values after $\pm$ are standard deviations across
+the five repeats. The low-rank models were approximately 22--26\%
+faster at this item count. This reduction is much smaller than the
+reduction in the number of trainable entries.
+
+The average time per update was calculated by dividing the training-loop
+time by 1,000. It follows the same scaling pattern as total training
+time because every model uses the same update budget. Its error bars
+describe variation across repeats, rather than variation between
+individual updates within a fit.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[
-        width=\textwidth
-    ]{images/experiments/context_dependent_model/cdm_cdm/02_recovery_vs_observations.pdf}
-    \caption{Full CDM recovery as the number of observations increases.}
-    \label{fig:cdm-recovery-vs-observations}
+    \begin{subfigure}{0.80\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/experiments/context_dependent_model/05_full_vs_low_rank_resource_scaling/20261021T202900_245293Z/03_training_time.pdf}
+        \caption{Total training-loop time.}
+    \end{subfigure}
+    \par\medskip
+    \begin{subfigure}{0.80\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/experiments/context_dependent_model/05_full_vs_low_rank_resource_scaling/20261021T202900_245293Z/04_time_per_update.pdf}
+        \caption{Average time per update.}
+    \end{subfigure}
+    \caption{Computational cost as the number of items increases. Points show means across five repeats, and error bars show one standard deviation. Each fit uses 1,000 Adam updates.}
+    \label{fig:resource-training-time}
 \end{figure}
 
+\subsection{Empirical Growth of Training Time}
 
-\section{Scaling with the Number of Items}
-\label{sec:cdm-item-scaling}
-
-\subsection{Fixed-Observation Results}
-\label{subsec:cdm-fixed-observation-results}
+To describe the observed runtime growth, we fitted a power law to the
+mean training times:
+\begin{equation}
+    t(n)\approx a n^{\alpha},
+    \qquad
+    \log t(n)\approx\log a+\alpha\log n.
+    \label{eq:resource-runtime-power-law}
+\end{equation}
+The intercept and exponent were estimated by ordinary least squares in
+log-log coordinates. Only the four item counts with $n\geq1000$ were
+used, and each included setting had all five repeats completed.
 
 \begin{table}[htbp]
     \centering
+    \caption{Empirical power-law fits to mean training time for
+    $n\in\{1000,2000,3000,5000\}$. The doubling multiplier is
+    $2^{\alpha}$. Fit statistics are reported at the precision saved
+    by the notebook.}
+    \label{tab:resource-runtime-power-law}
+    \begingroup
+    \singlespacing
     \small
-    \caption{Full CDM recovery with 50,000 observations as the number of items increases.}
-    \label{tab:cdm-item-scaling}
-    \resizebox{\textwidth}{!}{
-        \begin{tabular}{rrrrrrr}
-            \toprule
-            Items &
-            Free parameters &
-            Runs &
-            Mean RMSE &
-            RMSE standard deviation &
-            Mean correlation &
-            Mean excess test NLL \\
-            \midrule
-            5  & 19    & 5 & 0.0520 & 0.0132 & 0.9843 & 0.0000 \\
-            10 & 89    & 5 & 0.0945 & 0.0114 & 0.9692 & 0.0009 \\
-            20 & 379   & 5 & 0.1683 & 0.0054 & 0.9192 & 0.0052 \\
-            40 & 1,559 & 5 & 0.3303 & 0.0118 & 0.7860 & 0.0190 \\
-            80 & 6,319 & 5 & 0.8017 & 0.0210 & 0.5099 & 0.1152 \\
-            \bottomrule
-        \end{tabular}
+    \resizebox{\textwidth}{!}{%
+        \input{tables/experiments/context_dependent_model/05_full_vs_low_rank_resource_scaling/20261021T202900_245293Z/runtime_power_law_fits.tex}%
     }
+    \endgroup
 \end{table}
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[
-        width=\textwidth
-    ]{images/experiments/context_dependent_model/cdm_cdm/03_recovery_vs_items.pdf}
-    \caption{Full CDM recovery with a fixed number of observations as the number of items increases.}
-    \label{fig:cdm-recovery-vs-items}
-\end{figure}
-\section{Learning CDM-Generated Choices with a BTL/Luce Model}
-\label{sec:cdm-to-btl}
+The estimated exponents were $2.069$ for the full model and $2.010$,
+$2.021$, and $2.030$ for ranks one, two, and three, respectively.
+Thus, the measured training time grew approximately quadratically over
+the fitted range for all four models. Under these fitted relationships,
+doubling the number of items multiplies the training time by approximately
+$4.197$, $4.029$, $4.059$, and $4.083$, respectively.
 
-\subsection{Objective}
-\label{subsec:cdm-to-btl-objective}
-
-% TODO: State the objective of fitting a context-independent
-% BTL/Luce model to data generated from a full CDM.
-
-
-\subsection{Experimental Setup}
-\label{subsec:cdm-to-btl-setup}
-
-% TODO: Describe the number of items, choice-set sizes,
-% train--test split, random seeds, and NLL evaluation.
-
-
-\subsection{Baseline CDM-to-BTL Comparison}
-\label{subsec:cdm-to-btl-baseline}
-
-% TODO: Describe the initial single-dataset comparison between
-% the uniform baseline, true CDM, and fitted BTL/Luce model.
-
-
-\subsection{Effect of the Number of Observations}
-\label{subsec:cdm-to-btl-observations}
-
-% TODO: Describe the observation counts and repeated trials.
-
-\input{tables/experiments/context_dependent_model/cdm_btl/01_observation_scaling_summary.tex}
+These exponents describe the observed implementation and item range.
+They do not prove an asymptotic complexity bound. In particular, the
+linear growth of the number of low-rank trainable entries does not imply
+linear training time for the dense implementation used here.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\textwidth]{images/experiments/context_dependent_model/cdm_btl/02_misspecification_gap_vs_observations.pdf}
-    \caption{Predictive performance and test misspecification gap for BTL/Luce models fitted to CDM-generated choice data as the number of observations increases. Points represent means over ten independent runs, and error bars represent one standard deviation.}
-    \label{fig:cdm-btl-observation-scaling}
+    \includegraphics[width=\textwidth]{images/experiments/context_dependent_model/05_full_vs_low_rank_resource_scaling/20261021T202900_245293Z/07_empirical_runtime_exponents.pdf}
+    \caption{Empirical power-law fits to training time for $n\geq1000$.
+    Points and error bars show the mean and standard deviation across
+    five repeats. Dashed lines describe the fitted range and are not
+    proofs of asymptotic complexity.}
+    \label{fig:resource-runtime-exponents}
 \end{figure}
 
+\subsection{Process Memory}
 
-\subsection{Effect of Context-Interaction Strength}
-\label{subsec:cdm-to-btl-context-strength}
+Process memory was measured using resident set size (RSS), sampled at
+intervals of $0.005$ seconds. The baseline was recorded after data
+generation and before model construction. Sampling continued through
+model fitting and the final loss and gradient evaluation. The sampled
+peak therefore includes the Python/PyTorch process, observations, model
+parameters, and allocations made during fitting. It is not a measurement
+of parameter storage alone.
 
-% TODO: Explain the interaction-scale multiplier and the
-% five-item and ten-item experimental settings.
+At $n=5000$, the mean sampled peak RSS was $1249.312$ MiB for the full
+model. The corresponding values were $1023.025$, $1013.959$, and
+$1018.731$ MiB for ranks one, two, and three, respectively. Low-rank
+parameterization reduced the measured peak at this item count, but the
+reduction was much smaller than the parameter-storage reduction.
+At the smaller item counts, process overhead and variation between runs
+also affect the ordering of the measured peaks.
 
-\input{tables/experiments/context_dependent_model/cdm_btl/02_context_strength_summary.tex}
+The notebook additionally records the increase above the baseline:
+\begin{equation}
+    \Delta\mathrm{RSS}
+    =\mathrm{RSS}_{\mathrm{sampled\ peak}}
+     -\mathrm{RSS}_{\mathrm{baseline}}.
+    \label{eq:resource-rss-increase}
+\end{equation}
+Both memory measurements are approximate. Periodic sampling can miss
+short-lived peaks, and memory retained or reused by the allocator can
+affect the increase above the baseline.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\textwidth]{images/experiments/context_dependent_model/cdm_btl/03_context_strength_comparison.pdf}
-    \caption{Effect of CDM interaction strength on the predictive performance and test misspecification gap of the fitted BTL/Luce model. Points represent means over ten independent runs, and error bars represent one standard deviation.}
-    \label{fig:cdm-btl-context-strength}
+    \begin{subfigure}{0.80\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/experiments/context_dependent_model/05_full_vs_low_rank_resource_scaling/20261021T202900_245293Z/05_peak_process_memory.pdf}
+        \caption{Sampled peak RSS.}
+    \end{subfigure}
+    \par\medskip
+    \begin{subfigure}{0.80\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/experiments/context_dependent_model/05_full_vs_low_rank_resource_scaling/20261021T202900_245293Z/06_memory_increase.pdf}
+        \caption{Sampled peak RSS minus the pre-model baseline.}
+    \end{subfigure}
+    \caption{Sampled process memory during fitting. Points show means across five repeats, and error bars show one standard deviation. RSS includes process overhead, and periodic sampling can miss brief peaks.}
+    \label{fig:resource-process-memory}
 \end{figure}
 
+\subsection{Summary of scaling experiments.}
 
-\subsection{Key Observations}
-\label{subsec:cdm-to-btl-observations-summary}
-
-\begin{itemize}
-    \item % TODO: BTL/Luce performance relative to the uniform baseline.
-    \item % TODO: Persistence of the gap with increasing observations.
-    \item % TODO: Effect of increasing context-interaction strength.
-    \item % TODO: Comparison between five and ten items.
-\end{itemize}
-
-
-\subsection{Summary}
-\label{subsec:cdm-to-btl-summary}
-
-% TODO: Summarise the evidence of BTL/Luce model
-% misspecification on CDM-generated choice data.
+So, these experiments show that low-rank parameterization is substantially
+reducing the number of trainable parameters. However, parameter count,
+training time, and total process memory do not decrease by the same
+factor. In these present implementations, the low-rank models still
+show approximately quadratic runtime growth over the measured range.
+The results therefore separate the storage benefit of the parameterization
+from the computational behaviour of the implementation. 
 
 
-% Discussion, limitations, CDM-to-BTL experiments, and motivation
-% for the low-rank CDM will be added later.
 \appendix
-\chapter{Additional Derivations}
-\chapter{Reproducibility Details}
+%\chapter{Additional Derivations}
+%\chapter{Reproducibility Details}
 \backmatter
 \bibliographystyle{plainnat}
 \bibliography{references}
