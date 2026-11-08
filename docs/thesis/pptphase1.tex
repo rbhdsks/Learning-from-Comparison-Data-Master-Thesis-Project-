@@ -1,0 +1,117 @@
+% Viva presentation skeleton: 12 main slides for a 15-minute talk.
+% Copy selected text/equations from Notes.tex; write explanations yourself.
+% This file contains headings and editing comments, not a finished talk.
+% Compile from this folder: latexmk -pdf pptphase1.tex
+% Suggested timing totals 15 minutes; adjust after rehearsing.
+
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,amsmath,amssymb,mathtools}
+\usepackage{graphicx,booktabs,array}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+\setbeamercolor{frametitle}{fg=black}
+\setbeamerfont{frametitle}{series=\bfseries}
+\setbeamersize{text margin left=8mm,text margin right=8mm}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\X}{\mathcal{X}}
+
+\title{Learning from Comparison Data}
+\subtitle{M.Tech Project: Phase I}
+\author{Nitesh Kumar Shah\\ID25M806}
+\institute{Indian Institute of Technology Madras\\
+    Prof. Suryanarayana Sankagiri}
+\date{November 2026}
+\titlegraphic{\includegraphics[height=1cm]{images/iitm-logo.png}}
+
+\begin{document}
+
+% 1. About 0:30.
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+% 2. About 1:00. Source: Notes.tex, Motivation and IIA.
+\begin{frame}{Motivation and the Choice Problem}
+    % Choose one example; explain the research question aloud.
+    % Add one existing illustration if it helps.
+\end{frame}
+
+% 3. About 1:15. Source: Notes.tex, BTL formulation and MLE.
+\begin{frame}{Bradley--Terry Model and Estimation}
+    % Add the probability model, centring constraint, and estimation objective.
+    % Keep derivations for backup slides.
+\end{frame}
+
+% 4. About 1:30. Source: BTL recovery sections and Choix notebook.
+\begin{frame}{Bradley--Terry Parameter Recovery}
+    % Add one selected recovery/scaling graph and its essential settings.
+    % Explain axes, error bars, valid-run counts, and the m^(-1/2) guide.
+    % Add your own short inference.
+\end{frame}
+
+% 5. About 1:15. Source: Notes.tex, Ford's condition and optimizer results.
+\begin{frame}{MLE Existence and Optimization}
+    % Add Ford's condition and one diagnostic or compact optimizer result.
+    % Explain the distinction between recovery accuracy and convergence.
+\end{frame}
+
+% 6. About 1:30. Source: Notes.tex, full CDM and reparameterisation.
+\begin{frame}{Context-Dependent Model}
+    % Define u_ij, menu utility, and choice probability.
+    % Explain the extra flexibility relative to context-free choice.
+\end{frame}
+
+% 7. About 1:30. Source: full-CDM recovery experiments.
+\begin{frame}{Full CDM Parameter Recovery}
+    % Choose observation scaling or item scaling as the main figure.
+    % Give the fixed quantities, run count, metric, and your interpretation.
+\end{frame}
+
+% 8. About 1:15. Source: BTL/CDM cross-model experiments.
+\begin{frame}{BTL--CDM Cross-Model Fits}
+    % State which model generated the data and which model was fitted.
+    % Add a selected held-out comparison; identify menu sizes and splits.
+\end{frame}
+
+% 9. About 1:30. Source: Notes.tex low-rank model and unified notebook.
+\begin{frame}{Full and Low-Rank CDM Comparison}
+    % Add the factorization and a compact selected result.
+    % Explain rank selection, restarts, and any nonconverged fits.
+\end{frame}
+
+% 10. About 1:15. Source: Notes.tex computational scaling section.
+\begin{frame}{Computational Scaling}
+    % Add one useful runtime/memory figure with its benchmark settings.
+    % Explain what was measured and what the experiment supports.
+\end{frame}
+
+% 11. About 1:15. Source: paper-reproduction notebooks and saved outputs.
+\begin{frame}{CDM Paper Reproduction}
+    % Show only a completed experiment you can explain.
+    % Name the reproduced experiment, cite the paper, and state differences.
+    % If not included in the report, replace this with another report result.
+\end{frame}
+
+% 12. About 1:15. Write this after completing the report's discussion.
+\begin{frame}{Summary and Further Work}
+    % Add your own conclusions supported by the presented results.
+    % Clearly separate completed work and proposed next steps.
+\end{frame}
+
+% Optional backup slides: uncomment only those you actually need for Q&A.
+% \appendix
+% \begin{frame}[noframenumbering]{Likelihood and Gradient}
+%     % Copy the relevant derivation from Notes.tex.
+% \end{frame}
+% \begin{frame}[noframenumbering]{Additional Experimental Settings}
+%     % Add the actual settings, fit coverage, and convergence diagnostics.
+% \end{frame}
+% \begin{frame}[noframenumbering]{Cyclic Preferences}
+%     % Include only completed examples; distinguish planned simulations.
+% \end{frame}
+% \begin{frame}[noframenumbering]{References}
+%     % Add references cited in your slides.
+% \end{frame}
+
+\end{document}

@@ -1,0 +1,50 @@
+% Editable vector illustration for the original airport motivation example.
+\begingroup
+\newcommand{\airportbike}{%
+  \begin{tikzpicture}[x=0.48cm,y=0.48cm,line width=0.9pt,baseline=(current bounding box.center)]
+    \draw[motBlue] (0,0) circle (0.4) (2,0) circle (0.4);
+    \draw[motBlue,line width=1.3pt] (0,0)--(0.65,0.8)--(1.35,0.8)--(2,0);
+    \draw[motBlue,line width=1.3pt] (0.65,0.8)--(1.05,0.15)--(0,0);
+    \fill[motBlue!65] (0.8,0.8) rectangle (1.45,1.1);
+    \draw[motBlue,line width=1.3pt] (0.25,1.1)--(0.8,1.1);
+    \draw[motBlue,line width=1.3pt] (1.5,0.8)--(1.35,1.5)--(1.05,1.5);
+  \end{tikzpicture}%
+}
+\newcommand{\airportwalk}{%
+  \begin{tikzpicture}[x=0.55cm,y=0.55cm,line width=1.5pt,baseline=(current bounding box.center)]
+    \fill[motOrange] (0.8,2.2) circle (0.19);
+    \draw[motOrange] (0.72,1.88)--(0.55,1.05)--(0.05,0.15);
+    \draw[motOrange] (0.55,1.05)--(1.05,0.65)--(1.3,0.05);
+    \draw[motOrange] (0.65,1.6)--(0.2,1.15)--(-0.15,1.15);
+    \draw[motOrange] (0.65,1.6)--(1.1,1.25)--(1.45,1.5);
+  \end{tikzpicture}%
+}
+\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
+  % A route schematic, rather than a geographic map.
+  \node[anchor=west,font=\bfseries,color=motGreen] at (0,0.5) {IIT Madras};
+  \node[anchor=east,font=\bfseries,color=motBlue] at (12.1,0.5) {Airport};
+  \draw[->,color=motBlue,line width=1pt] (2.45,0.5)--(9.95,0.5);
+
+  \node[anchor=west,text=black!65] at (0,-0.2) {Original choice set};
+  \node at (1.1,-0.95) {\resizebox{1.45cm}{!}{\motivationcar{motGreen}}};
+  \node at (3.5,-0.95) {\resizebox{1.45cm}{!}{\motivationcar{motOrange}}};
+  \node[font=\tiny\bfseries,text=motOrange] at (3.5,-0.58) {TAXI};
+  \node at (5.9,-0.95) {\airportbike};
+  \node at (8.3,-0.95) {\resizebox{1.45cm}{!}{\motivationbus{motBlue}}};
+  \foreach \x/\name in {1.1/Car,3.5/Taxi,5.9/Bike,8.3/Bus}
+      \node at (\x,-1.57) {\name};
+
+  \draw[black!15] (0,-1.95)--(12.1,-1.95);
+  \node[anchor=west,text=black!65] at (0,-2.3) {Expanded choice set};
+  \node at (1.1,-3.1) {\resizebox{1.45cm}{!}{\motivationcar{motGreen}}};
+  \node at (3.5,-3.1) {\resizebox{1.45cm}{!}{\motivationcar{motOrange}}};
+  \node[font=\tiny\bfseries,text=motOrange] at (3.5,-2.73) {TAXI};
+  \node at (5.9,-3.1) {\airportbike};
+  \node at (8.3,-3.1) {\resizebox{1.45cm}{!}{\motivationbus{motBlue}}};
+  \node at (10.75,-3.03) {\resizebox{0.75cm}{!}{\airportwalk}};
+  \foreach \x/\name in {1.1/Car,3.5/Taxi,5.9/Bike,8.3/Bus}
+      \node at (\x,-3.73) {\name};
+  \node[text=motOrange] at (10.75,-3.73) {Walking};
+  \node[text=motOrange,font=\footnotesize] at (10.75,-4.12) {Added option: $\sim 3$ hours};
+\end{tikzpicture}
+\endgroup
