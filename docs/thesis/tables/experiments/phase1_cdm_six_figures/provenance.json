@@ -1,0 +1,12 @@
+{
+  "copied_summaries": {
+    "unified_comparison.csv": "docs/thesis/tables/experiments/context_dependent_model/unified/n10_m10000_seed20260831_scale0.4/04_all_models_test_nll.csv",
+    "resource_scaling.csv": "docs/thesis/tables/experiments/context_dependent_model/05_full_vs_low_rank_resource_scaling/20261021T202900_245293Z/resource_scaling_summary.csv",
+    "paper_recovery.csv": "results/experiments/cdm_paper_reproduction/01_synthetic_recovery/extended_100k_20261013T142308_572830Z/observation_scaling_summary.csv",
+    "iia_rejections.csv": "results/experiments/cdm_paper_reproduction/02_synthetic_iia_tests/scaling_pilot_20261014T222227_304978Z/rejection_summary.csv",
+    "iia_separation.csv": "results/experiments/cdm_paper_reproduction/02_synthetic_iia_tests/scaling_pilot_20261014T222227_304978Z/cdm_separation_summary.csv"
+  },
+  "full_cdm_summaries": "Saved display tables in Full CDM/01_CDM-CDM.ipynb; values displayed to four decimal places.",
+  "cdm_to_btl_summaries": "Existing cdm_btl LaTeX tables; values displayed to four decimal places.",
+  "experiments_rerun": false
+}
