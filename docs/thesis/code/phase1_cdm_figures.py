@@ -80,7 +80,7 @@ t=read('paper_recovery.csv');fig,axs=plt.subplots(1,2,figsize=(6.3,2.7),layout='
 x=t['Number of observations'].to_numpy();y=t.Mean_squared_parameter_error.to_numpy()
 axs[0].errorbar(x,y,yerr=t.Squared_parameter_error_std,fmt='o-',capsize=2,color=BLUE,label='Mean, 10 runs')
 axs[0].plot(x,y[0]*x[0]/x,'--',color='.5',label=r'$m^{-1}$ guide')
-axs[0].set(xscale='log',yscale='log',xlabel='Observations',ylabel='Squared Frobenius error',title='(a) Interaction recovery');axs[0].legend()
+axs[0].set(xscale='log',yscale='log',xlabel='Observations',ylabel='Squared Frobenius error',title='(a) Parameter recovery');axs[0].legend()
 axs[1].plot(x,t.Mean_CDM_runtime_seconds,'o-',color=ORANGE)
 axs[1].set(xscale='log',xlabel='Observations',ylabel='Mean fitting time (seconds)',title='(b) Optimization cost')
 for ax in axs:xticks(ax,[1000,10000,100000])
