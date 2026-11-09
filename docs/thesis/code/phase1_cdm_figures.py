@@ -35,18 +35,18 @@ for ax,name,xcol,title,color in zip(axs,
  ['Number of observations','Number of items'],
  ['(a) More observations; 5 items','(b) More items; 50,000 observations'],[BLUE,ORANGE]):
  t=read(name);ax.errorbar(t[xcol],t.Mean_parameter_RMSE,yerr=t.RMSE_std,fmt='o-',capsize=3,color=color)
- ax.set(xscale='log',xlabel=xcol,ylabel='Interaction RMSE',title=title)
+ ax.set(xscale='log',xlabel=xcol,ylabel='Parameter RMSE',title=title)
  xticks(ax,t[xcol])
 save(fig,'01_full_cdm_recovery')
 
 # 2. Cross-model misspecification, with independent-repeat SDs.
 fig,axs=plt.subplots(1,2,figsize=(6.3,2.7),layout='constrained')
 for ax,name,xcol,title in zip(axs,['cdm_btl_observations.csv','cdm_btl_strength.csv'],
- ['Observations','Scale'],['(a) Increasing observations','(b) Increasing interaction scale']):
+ ['Observations','Scale'],['(a) Increasing observations','(b) Stronger context effects']):
  t=read(name)
  for n,color in [(5,BLUE),(10,ORANGE)]:
   g=t[t.Items==n];ax.errorbar(g[xcol],g.Gap,yerr=g['Gap SD'],fmt='o-',capsize=3,color=color,label=f'{n} items')
- ax.axhline(0,color='.45',lw=.8,ls='--');ax.set(xlabel='Observations' if xcol=='Observations' else 'Interaction scale',ylabel='BTL test NLL - true CDM NLL',title=title)
+ ax.axhline(0,color='.45',lw=.8,ls='--');ax.set(xlabel='Observations' if xcol=='Observations' else 'CDM parameter scale',ylabel='BTL test NLL - true CDM NLL',title=title)
  if xcol=='Observations':ax.set_xscale('log');xticks(ax,sorted(t[xcol].unique()))
  ax.legend()
 save(fig,'02_cdm_to_btl_misspecification')
@@ -80,7 +80,7 @@ t=read('paper_recovery.csv');fig,axs=plt.subplots(1,2,figsize=(6.3,2.7),layout='
 x=t['Number of observations'].to_numpy();y=t.Mean_squared_parameter_error.to_numpy()
 axs[0].errorbar(x,y,yerr=t.Squared_parameter_error_std,fmt='o-',capsize=2,color=BLUE,label='Mean, 10 runs')
 axs[0].plot(x,y[0]*x[0]/x,'--',color='.5',label=r'$m^{-1}$ guide')
-axs[0].set(xscale='log',yscale='log',xlabel='Observations',ylabel='Squared Frobenius error',title='(a) Interaction recovery');axs[0].legend()
+axs[0].set(xscale='log',yscale='log',xlabel='Observations',ylabel='Squared Frobenius error',title='(a) Parameter recovery');axs[0].legend()
 axs[1].plot(x,t.Mean_CDM_runtime_seconds,'o-',color=ORANGE)
 axs[1].set(xscale='log',xlabel='Observations',ylabel='Mean fitting time (seconds)',title='(b) Optimization cost')
 for ax in axs:xticks(ax,[1000,10000,100000])

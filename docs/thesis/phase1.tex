@@ -7,16 +7,45 @@
 \usepackage{tikz,multirow,makecell,rotating}
 \usepackage{graphicx,booktabs,array,tabularx}
 \usepackage{caption,subcaption,float,placeins}
-\usepackage{enumitem}
+\usepackage{enumitem,needspace,titlesec,etoolbox}
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage[hidelinks]{hyperref}
 \usepackage{cleveref}
-
 \setstretch{1.1}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{5pt}
+\setlength{\parskip}{4pt plus 1pt minus 1pt}
 \setlist[itemize]{itemsep=2pt,topsep=3pt}
-\captionsetup{font=small,labelfont=bf}
+\captionsetup{font=small,labelfont=bf,skip=5pt}
+\raggedbottom
+\widowpenalty=10000
+\clubpenalty=10000
+\displaywidowpenalty=10000
+\setlength{\textfloatsep}{10pt plus 2pt minus 2pt}
+\setlength{\intextsep}{10pt plus 2pt minus 2pt}
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.08}
+\renewcommand{\floatpagefraction}{0.8}
+\titlespacing*{\section}{0pt}{14pt plus 2pt minus 2pt}{7pt}
+\titlespacing*{\subsection}{0pt}{12pt plus 2pt minus 2pt}{6pt}
+\titlespacing*{\subsubsection}{0pt}{10pt plus 2pt minus 2pt}{5pt}
+\titlespacing*{\paragraph}{0pt}{8pt plus 1pt minus 1pt}{0.7em}
+\preto\section{\Needspace{5\baselineskip}}
+\preto\subsection{\Needspace{4\baselineskip}}
+\preto\subsubsection{\Needspace{5\baselineskip}}
+\preto\paragraph{\Needspace{3\baselineskip}}
+\appto\normalsize{%
+  \setlength{\abovedisplayskip}{6pt plus 2pt minus 2pt}%
+  \setlength{\belowdisplayskip}{6pt plus 2pt minus 2pt}%
+  \setlength{\abovedisplayshortskip}{4pt plus 1pt minus 1pt}%
+  \setlength{\belowdisplayshortskip}{4pt plus 1pt minus 1pt}%
+}
+\AtBeginDocument{\normalsize}
+\allowdisplaybreaks[1]
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\X}{\mathcal{X}}
 \newtheorem{definition}{Definition}[section]
@@ -26,7 +55,6 @@
 \newtheorem{remark}[definition]{Remark}
 \hypersetup{pdftitle={Learning from Comparison Data},pdfauthor={Nitesh Kumar Shah}}
 
-% Draw the cars directly in LaTeX; no additional image files are needed.
 \usepackage{tikz}
 \definecolor{motGreen}{HTML}{176B4D}
 \definecolor{motBlue}{HTML}{356A91}
@@ -80,37 +108,44 @@
     \par\noindent{\small\textit{Source notebook: }\href{#1}{\nolinkurl{#2}}}\par\smallskip
 }
 
-% Compact navigation page; short list titles do not change body headings/captions.
+% Navigation page; spacing changes are local to this page.
 \makeatletter
 \newcommand{\phasecontentspage}{%
   \begingroup
-  \setstretch{1.04}
+  \setstretch{1.16}
   \setlength{\parskip}{0pt}
   \noindent
   \begin{minipage}[t]{0.54\textwidth}
     \vspace{0pt}
     \pdfbookmark[0]{Contents}{phase1contents}
-    {\Large\bfseries Contents\par}
-    \vspace{1em}
-    \small
-    \setcounter{tocdepth}{2}
-    \renewcommand{\l@subsection}{\@dottedtocline{2}{0.7em}{2.1em}}
-    \renewcommand{\l@subsubsection}{\@dottedtocline{3}{1.1em}{3em}}
+    {\fontsize{16}{20}\selectfont\bfseries Contents\par}
+    \vspace{1.25em}
+    \fontsize{10.3}{13}\selectfont
+    \setcounter{tocdepth}{3}
+    \let\phaseoldsection\l@section
+    \renewcommand{\l@section}[2]{%
+      \vspace{4pt}\phaseoldsection{##1}{##2}}
+    \renewcommand{\l@subsection}[2]{%
+      \vspace{3pt}\@dottedtocline{2}{0.7em}{2.1em}{##1}{##2}}
+    \renewcommand{\l@subsubsection}[2]{%
+      \vspace{2.5pt}\@dottedtocline{3}{1.1em}{3em}{##1}{##2}}
     \@starttoc{toc}
   \end{minipage}\hfill
   \begin{minipage}[t]{0.42\textwidth}
     \vspace{0pt}
     \pdfbookmark[0]{List of Figures}{phase1figures}
-    {\Large\bfseries List of Figures\par}
-    \vspace{1em}
-    \small
-    \renewcommand{\l@figure}{\@dottedtocline{1}{0em}{1.6em}}
+    {\fontsize{16}{20}\selectfont\bfseries List of Figures\par}
+    \vspace{1.25em}
+    \fontsize{10.3}{13}\selectfont
+    \renewcommand{\l@figure}[2]{%
+      \vspace{5pt}\@dottedtocline{1}{0em}{1.6em}{##1}{##2}}
     \@starttoc{lof}
-    \par\vspace{1.6em}
+    \par\vspace{2.1em}
     \pdfbookmark[0]{List of Tables}{phase1tables}
-    {\Large\bfseries List of Tables\par}
-    \vspace{1em}
-    \renewcommand{\l@table}{\@dottedtocline{1}{0em}{1.6em}}
+    {\fontsize{16}{20}\selectfont\bfseries List of Tables\par}
+    \vspace{1.25em}
+    \renewcommand{\l@table}[2]{%
+      \vspace{5pt}\@dottedtocline{1}{0em}{1.6em}{##1}{##2}}
     \@starttoc{lot}
   \end{minipage}
   \endgroup
@@ -122,30 +157,43 @@
 % Cover: identification details follow Notes.tex.
 \begin{titlepage}
     \centering
-    \vspace*{0.4in}
-    \includegraphics[width=1.35in]{images/iitm-logo.png}\par
-    \vspace{0.35in}
-    {\Large\bfseries INDIAN INSTITUTE OF TECHNOLOGY MADRAS\par}
-    \vspace{0.6in}
-    {\LARGE\bfseries Learning from Comparison Data\par}
-    \vspace{0.3in}
-    {\large M.Tech Project: Phase I Report\par}
-    \vspace{0.4in}
-    {\large Under the Supervision of\par}
-    \vspace{0.12in}
-    {\large\bfseries Prof. Suryanarayana Sankagiri\par}
-    \vspace{0.4in}
-    {\large Submitted by\par}
-    \vspace{0.12in}
-    {\Large\bfseries Nitesh Kumar Shah\par}
-    \vspace{0.12in}
-    {\large ID25M806\par}
+    \begingroup
+    \setstretch{1.05}
+    \setlength{\parskip}{0pt}
+    \vspace*{0.25cm}
+    \includegraphics[width=3.0cm]{images/iitm-logo.png}\par
+    \vspace{0.65cm}
+    {\fontsize{12}{16}\selectfont\bfseries
+     INDIAN INSTITUTE OF TECHNOLOGY MADRAS\par}
+
     \vfill
-    {\large Department of Data Science and Artificial Intelligence\par}
-    {\large Indian Institute of Technology Madras\par}
-    {\large Chennai -- 600036\par}
-    \vspace{0.2in}
-    {\large November 2026\par}
+    {\fontsize{23}{29}\selectfont\bfseries
+     Learning from\\[0.08cm]Comparison Data\par}
+    \vspace{0.45cm}
+    {\fontsize{12}{16}\selectfont M.Tech Project: Phase I Report\par}
+
+    \vfill
+    {\fontsize{10.5}{14}\selectfont Submitted by\par}
+    \vspace{0.18cm}
+    {\fontsize{15}{19}\selectfont\bfseries Nitesh Kumar Shah\par}
+    \vspace{0.13cm}
+    {\fontsize{11}{15}\selectfont ID25M806\par}
+
+    \vspace{0.85cm}
+    {\fontsize{10.5}{14}\selectfont Under the Supervision of\par}
+    \vspace{0.18cm}
+    {\fontsize{12.5}{17}\selectfont\bfseries
+     Prof. Suryanarayana Sankagiri\par}
+
+    \vfill
+    {\fontsize{10.5}{15}\selectfont
+     Department of Data Science and Artificial Intelligence\\[0.08cm]
+     Indian Institute of Technology Madras\\[0.08cm]
+     Chennai -- 600036\par}
+    \vspace{0.55cm}
+    {\fontsize{11}{15}\selectfont November 2026\par}
+    \vspace*{0.35cm}
+    \endgroup
 \end{titlepage}
 \setcounter{page}{2}
 
@@ -156,7 +204,14 @@ This project begins with the Bradley–Terry model to understand parameter recov
 
 The experiments conducted so far helped us to examine how the CDM recovery changes with the number of observations and items. We also fit Bradley–Terry and CDM to data generated by each other and compare their predictive performance on unseen choices. Finally, we investigated the low-rank CDM as a way to reduce the number of model parameters and study its computational behaviour. The results illustrates that the context-dependent model improves prediction in the synthetically generated choice data. 
 \par
-The code and experiment notebooks are available in the \href{https://github.com/rbhdsks/Learning-from-Comparison-Data-Master-Thesis-Project-}{project's GitHub repository}.
+The code and experiment notebooks are available at:
+\par\nobreak
+{\small\urlstyle{same}%
+\hypersetup{colorlinks=true,urlcolor=motBlue}%
+\textcolor{motBlue}{\url{https://github.com/rbhdsks/Learning-from-Comparison-Data-Master-Thesis-Project-}}\par}
+
+\smallskip
+\textbf{Keywords:} Preference learning; Bradley--Terry model; context-dependent choice; independence of irrelevant alternatives; maximum likelihood estimation; low-rank models.
 
 \clearpage
 \phasecontentspage
@@ -194,25 +249,15 @@ there is a strong experimental evidence proves that it would shift the attractiv
 \clearpage
 
 
-
 \section{Background and Choice Models}
-\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
+\addtocontents{toc}{\protect\setcounter{tocdepth}{3}}
 \subsection{Choice Data and Choice Sets}
 Let \(\X\) denote the universal set of alternatives. A choice set is a
 subset of \(\X\) containing the alternatives available to a decision-maker
 at a particular time.
 As a separate example, consider travel from IIT Madras to the
 airport. The universal set of transport alternatives is
-\begin{equation}
-    \X=
-    \{
-    \text{Car},
-    \text{Taxi},
-    \text{Bike},
-    \text{Bus},
-    \text{Walking}
-    \}.
-\end{equation}
+\(\X= \{ \text{Car}, \text{Taxi}, \text{Bike}, \text{Bus}, \text{Walking} \}.\)
 The walking alternative remains a option of the universal set even when it
 does not appear in a particular choice set. All the smaller choice sets are
 constructed from the same fixed universal set.
@@ -248,9 +293,8 @@ is
 When the choice set contains two alternatives, this gives the Bradley--Terry model.
 
 
-
 \subsection[Bradley--Terry model and estimation]{Bradley--Terry Model and Maximum Likelihood}
-\subsubsection{Pairwise Comparison Setting}
+\subsubsection[Pairwise comparison setting]{Pairwise Comparison Setting}
 To understand the underlying mechanics of a model for choice data, we
 consider observed pairwise comparisons and assume a probabilistic model.
 The Bradley--Terry model, which is originally developed for analysing
@@ -270,19 +314,14 @@ Bradley--Terry model defines
     \label{eq:bradley-terry}
 \end{equation}
 Dividing the numerator and denominator by \(\exp(\theta_i)\) gives
-\begin{equation}
-    P(i\succ j)
-    =
-    \frac{1}
-    {1+\exp\left(-(\theta_i-\theta_j)\right)}.
-\end{equation}
+\(P(i\succ j) = \frac{1} {1+\exp\left(-(\theta_i-\theta_j)\right)}.\)
 Therefore, the probability depends only on the parameter difference
 \(\theta_i-\theta_j\).
 
-\subsubsection{Parameter Identifiability and Centring}
+\subsubsection[Identifiability and centring]{Parameter Identifiability and Centring}
 
 The Bradley--Terry probability depends only on the difference between
-two parameters as see in equation (5). Consequently, adding the same constant \(c\) to every
+two parameters as shown in \cref{eq:bradley-terry}. Consequently, adding the same constant \(c\) to every
 parameter does not change any pairwise comparison probability.
 
 
@@ -324,21 +363,11 @@ before their recovery error is calculated.
 The same additive ambiguity occurs in MNL: adding a common constant to all scores leaves the choice probabilities unchanged. Centring removes this ambiguity by selecting scores whose sum is zero.
 
 Consider two alternatives, car and taxi, with scores \(v(C)=2.5\) and \(v(T)=-0.9\). Their mean is \(0.8\). Subtracting this mean gives
-\[
-    v(C)=2.5-0.8=1.7,
-    \qquad
-    v(T)=-0.9-0.8=-1.7.
-\]
-The centred scores sum to zero, while their difference remains \(3.4\). Therefore, the probability of choosing car is unchanged:
-\[
-    \frac{\exp(2.5)}{\exp(2.5)+\exp(-0.9)}
-    =
-    \frac{\exp(1.7)}{\exp(1.7)+\exp(-1.7)}
-    \approx 0.968.
-\]
+$v(C)=2.5-0.8=1.7$ and $v(T)=-0.9-0.8=-1.7$.
+The centred scores sum to zero, while their difference remains $3.4$. The probability of choosing car is approximately $0.968$ before and after centring.
 Thus, adding the same constant to every score does not change the choice probabilities. The zero-sum constraint selects one representative from all score vectors that produce the same probabilities.
 
-\subsubsection{Maximum Likelihood Estimation}
+\subsubsection[Maximum likelihood estimation]{Maximum Likelihood Estimation}
 The model parameters can be estimated from observed pairwise
 outcomes using maximum likelihood. Likelihood-based estimation
 and computational algorithms for extensions of the
@@ -346,26 +375,11 @@ Bradley--Terry model have been studied in the literature
 \citep{hunter2004}.
 
 Suppose that the observed dataset contains \(m\) pairwise comparisons:
-\begin{equation}
-    \mathcal{D}
-    =
-    \{(w_t,l_t)\}_{t=1}^{m},
-\end{equation}
+\(\mathcal{D} = \{(w_t,l_t)\}_{t=1}^{m},\)
 where \(w_t\) and \(l_t\) denote the winner and loser of comparison
 \(t\), respectively.
 
-Conditional on the compared pairs, the observed comparison outcomes are
-modelled as independent. The probability of the observed outcome in
-comparison \(t\) is
-\begin{equation}
-    p_t
-    =
-    P(w_t\succ l_t)
-    =
-    \frac{\exp(\theta_{w_t})}
-    {\exp(\theta_{w_t})+\exp(\theta_{l_t})}.
-    \label{eq:btl-observation-probability}
-\end{equation}
+Conditional on the compared pairs, the observed comparison outcomes are modelled as independent. For comparison $t$, let $p_t=P(w_t\succ l_t)$, using the Bradley--Terry probability in \cref{eq:bradley-terry}.
 
 The likelihood of the complete dataset is therefore
 \begin{equation}
@@ -377,50 +391,14 @@ The likelihood of the complete dataset is therefore
     \label{eq:btl-likelihood}
 \end{equation}
 
-Taking the logarithm gives the log-likelihood
-\begin{align*}
-    \ell(\boldsymbol{\theta};\mathcal{D})
-    &=
-    \sum_{t=1}^{m}
-    \log
-    \left(
-        \frac{\exp(\theta_{w_t})}
-        {\exp(\theta_{w_t})+\exp(\theta_{l_t})}
-    \right)
-    \\
-    &=
-    \sum_{t=1}^{m}
-    \left[
-        \theta_{w_t}
-        -
-        \log
-        \left(
-            \exp(\theta_{w_t})
-            +
-            \exp(\theta_{l_t})
-        \right)
-    \right].
-    \label{eq:btl-log-likelihood}
-\end{align*}
-
-Maximizing the log-likelihood is equivalent to minimizing its negative.
-In the implementation, we use the average negative log-likelihood
-\begin{align}
+Taking the logarithm gives the log-likelihood $\ell(\boldsymbol{\theta};\mathcal{D})=\log L(\boldsymbol{\theta};\mathcal{D})$. Maximizing the log-likelihood is equivalent to minimizing its negative. In the implementation, we use the average negative log-likelihood
+\begin{equation}
     \mathcal{L}(\boldsymbol{\theta})
-    &=
-    -\frac{1}{m}
-    \ell(\boldsymbol{\theta};\mathcal{D})
-    \\
-    &=
-    \frac{1}{m}
-    \sum_{t=1}^{m}
-    \log
-    \left(
-        1+
-        \exp(\theta_{l_t}-\theta_{w_t})
-    \right).
+    =-\frac{1}{m}\ell(\boldsymbol{\theta};\mathcal{D})
+    =\frac{1}{m}\sum_{t=1}^{m}
+    \log\left(1+\exp(\theta_{l_t}-\theta_{w_t})\right).
     \label{eq:btl-average-nll}
-\end{align}
+\end{equation}
 
 Using the average rather than the total negative log-likelihood makes
 the reported loss values comparable across datasets containing
@@ -440,43 +418,12 @@ The maximum likelihood estimate is written as
 \end{equation}
 
 
-\subsubsection{Gradient-Based Estimation}
+\subsubsection[Gradient-based estimation]{Gradient-Based Estimation}
 
 The average negative log-likelihood in
-\cref{eq:btl-average-nll} is minimized using gradient descent. For one
-observed winner--loser pair \((w_t,l_t)\), the loss contribution is
-\begin{equation}
-    \mathcal{L}_t
-    =
-    \log
-    \left(
-        1+\exp(\theta_{l_t}-\theta_{w_t})
-    \right).
-\end{equation}
+\cref{eq:btl-average-nll} is minimized using gradient descent. For one observed winner--loser pair $(w_t,l_t)$, the loss contribution is $\mathcal{L}_t=\log(1+\exp(\theta_{l_t}-\theta_{w_t}))$, with $p_t=P(w_t\succ l_t)$.
 
-Let
-\begin{equation}
-    p_t
-    =
-    P(w_t\succ l_t).
-\end{equation}
-
-The derivative of this loss with respect to the winner parameter is
-\begin{equation}
-    \frac{\partial\mathcal{L}_t}
-    {\partial\theta_{w_t}}
-    =
-    p_t-1,
-    \label{eq:btl-winner-gradient}
-\end{equation}
-while the derivative with respect to the loser parameter is
-\begin{equation}
-    \frac{\partial\mathcal{L}_t}
-    {\partial\theta_{l_t}}
-    =
-    1-p_t.
-    \label{eq:btl-loser-gradient}
-\end{equation}
+The derivative with respect to the winner parameter is $\partial\mathcal{L}_t/\partial\theta_{w_t}=p_t-1$, while the derivative with respect to the loser parameter is $\partial\mathcal{L}_t/\partial\theta_{l_t}=1-p_t$.
 
 Therefore, when the observed winner is assigned a small winning
 probability, the magnitude of the update is larger. When the model
@@ -517,24 +464,14 @@ updated according to
 \end{equation}
 where \(\eta>0\) is the learning rate.
 
-After an update, the parameter vector is centred using
-\begin{equation}
-    \theta_i^{(s+1)}
-    \leftarrow
-    \theta_i^{(s+1)}
-    -
-    \frac{1}{n}
-    \sum_{j=1}^{n}
-    \theta_j^{(s+1)}.
-    \label{eq:btl-gradient-centring}
-\end{equation}
+After an update, the parameter vector is centred by subtracting its mean, as in \cref{eq:btl-centring}.
 
 This centring step enforces the zero-sum constraint while preserving all
 pairwise parameter differences. The numerical experiments use this
 gradient-based procedure to estimate the Bradley--Terry parameters from
 the simulated winner--loser observations.
 
-\subsubsection{Existence and Uniqueness of the MLE}
+\subsubsection[MLE existence and uniqueness]{Existence and Uniqueness of the MLE}
 \paragraph{Ford's Condition}
 
 For the Bradley--Terry model, the existence of a finite maximum
@@ -550,14 +487,12 @@ against an item outside it, and vice versa.
 
 When Ford's condition holds, the Bradley--Terry maximum likelihood
 estimate is finite. After imposing the centring constraint
-\[
-    \sum_{i=1}^{n}\theta_i=0,
-\]
+$\sum_{i=1}^{n}\theta_i=0$,
 the estimate is unique.
 
 
 \subsection[Context-dependent models]{From Multinomial Logit to Context-Dependent Choice Models}
-\subsubsection{Universal Logit Representation}
+\subsubsection[Universal logit]{Universal Logit Representation}
 The universal logit model provides a framework for modelling
 choice probabilities \citep{mcfadden1975}.
 In a universal logit model, the utility of an alternative can depend on the
@@ -573,12 +508,8 @@ The probability of selecting $x$ from $C$ is
     \label{eq:context-logit}
 \end{equation}
 An identification constraint can be imposed separately for each choice set:
-\begin{equation}
-    \sum_{y\in C}u(y\mid C)=0,
-    \qquad
-    \text{for every } C\subseteq\X.
-\end{equation}
-\subsubsection{Decomposition of Context-Dependent Utility}
+\(\sum_{y\in C}u(y\mid C)=0, \qquad \text{for every } C\subseteq\X.\)
+\subsubsection[Utility decomposition]{Decomposition of Context-Dependent Utility}
 \paragraph{Statement of Lemma 1}
 \begin{lemma}[Decomposition of context-dependent utility]Related approaches also model the influence of competing
 alternatives on choice probabilities, including the
@@ -592,20 +523,6 @@ $C\setminus\{x\}$ \citep{seshadri2019}:
     =
     \sum_{B\subseteq C\setminus\{x\}}v(x\mid B).
     \label{eq:utility-decomposition}
-\end{equation}
-Equivalently,
-\begin{equation}
-\begin{split}
-    u(x\mid C)
-    &=
-    v(x)
-    +
-    \sum_{y\in C\setminus\{x\}}v(x\mid\{y\}) \\
-    &\quad+
-    \sum_{\{y,z\}\subseteq C\setminus\{x\}}
-    v(x\mid\{y,z\})
-    +\cdots.
-\end{split}
 \end{equation}
 The parameters satisfy
 \begin{equation}
@@ -624,59 +541,13 @@ alternative $z$ to the utility of alternative $x$. Similarly, a term such as
 $v(x\mid\{y,z\})$ represents a higher-order interaction involving the joint
 presence of alternatives $y$ and $z$.
 \paragraph{Worked Example}
-Consider the choice set
-\begin{equation}
-    A=\{C,T,Bi\}.
-\end{equation}
-The subsets of $A$ are
-\begin{equation}
-\begin{split}
-    \emptyset,\;
-    \{C\},\;
-    \{T\},\;
-    \{Bi\},\;
-    \{C,T\},\;
-    \{T,Bi\},\;
-    \{Bi,C\},\;
-    \{C,T,Bi\}.
-\end{split}
-\end{equation}
-The utility expansions are
-\begin{align*}
-    u(C\mid A)
-    &=v(C)+v(C\mid\{T\})+v(C\mid\{Bi\})+v(C\mid\{T,Bi\}),\\
-    u(T\mid A)
-    &=v(T)+v(T\mid\{C\})+v(T\mid\{Bi\})+v(T\mid\{C,Bi\}),\\
-    u(Bi\mid A)
-    &=v(Bi)+v(Bi\mid\{C\})+v(Bi\mid\{T\})+v(Bi\mid\{C,T\}).
-\end{align*}
-The corresponding constraints are
-\begin{align*}
-    v(C)+v(T)+v(Bi)&=0,\label{eq:constraint-empty}\\
-    v(T\mid\{C\})+v(Bi\mid\{C\})&=0,\\
-    v(C\mid\{T\})+v(Bi\mid\{T\})&=0,\\
-    v(C\mid\{Bi\})+v(T\mid\{Bi\})&=0,\\
-    v(C\mid\{T,Bi\})&=0,\\
-    v(T\mid\{C,Bi\})&=0,\\
-    v(Bi\mid\{C,T\})&=0.
-\end{align*}
-The final three constraints force the highest-order terms to zero. Therefore,
-the utilities reduce to
-\begin{align*}
-    u(C\mid A)
-    &=v(C)+v(C\mid\{T\})+v(C\mid\{Bi\}),\\
-    u(T\mid A)
-    &=v(T)+v(T\mid\{C\})+v(T\mid\{Bi\}),\\
-    u(Bi\mid A)
-    &=v(Bi)+v(Bi\mid\{C\})+v(Bi\mid\{T\}).
-\end{align*}
-There are nine remaining parameters and four independent constraints. Hence,
-the number of free parameters is
-\begin{equation}
-    9-4=5.
-    \label{eq:three-alternative-free-parameters}
-\end{equation}
-\subsubsection{Hierarchy of Choice Models}
+Consider the choice set $A=\{C,T,Bi\}$. For alternative $C$, the utility expansion is
+\[
+    u(C\mid A)=v(C)+v(C\mid\{T\})+v(C\mid\{Bi\})+v(C\mid\{T,Bi\}).
+\]
+The expansions for $T$ and $Bi$ follow in the same way. The constraints in \cref{eq:decomposition-constraint} force the terms involving both other alternatives to zero. The remaining terms consist of the intrinsic utility and the separate contribution of each other alternative. There are nine remaining parameters and four independent constraints, giving $9-4=5$ free parameters.
+
+\subsubsection[Model hierarchy]{Hierarchy of Choice Models}
 The decomposition gives a hierarchy of choice models. A lower-order model
 retains simpler contextual interactions, while a higher-order model allows the
 utility of an alternative to depend on larger subsets of the choice set.
@@ -686,15 +557,7 @@ number of parameters that must be estimated.
 Let $\mathcal{M}_p$ denote the model obtained by retaining utility terms up to
 order $p$ and setting all higher-order terms equal to zero. This produces the
 nested hierarchy
-\begin{equation}
-    \mathcal{M}_1
-    \subseteq
-    \mathcal{M}_2
-    \subseteq
-    \cdots
-    \subseteq
-    \mathcal{M}_{n-1}.
-\end{equation}
+\(\mathcal{M}_1 \subseteq \mathcal{M}_2 \subseteq \cdots \subseteq \mathcal{M}_{n-1}.\)
 The first-order model retains only $v(x)$. The second-order model additionally
 retains terms of the form $v(x\mid\{z\})$. Higher-order models include terms
 involving larger subsets of alternatives.
@@ -711,243 +574,57 @@ target alternatives. Their parameters satisfy one zero-sum constraint,
 leaving $n-q$ free parameters. There are $\binom{n}{q-1}$ such subsets
 \citep{seshadri2019}.
 
-For the first-order model (MNL) and the full universal logit model,
-this gives
-\begin{align}
-    d_1 &= n-1,\\
-    d_{n-1} &= (n-2)2^{n-1}+1.
-\end{align}
+For the first-order model (MNL), this gives $d_1=n-1$. For the full universal logit model, it gives $d_{n-1}=(n-2)2^{n-1}+1$.
 For fixed $p$, the parameter count grows as $O(n^p)$: the first-order
 model has $O(n)$ parameters, the second-order model has $O(n^2)$,
 and higher orders require increasingly many parameters.
 
 
-For the second-order model, there are $n$ intrinsic parameters of the form
-$v(x)$ and $n(n-1)$ contextual parameters of the form
-$v(x\mid\{z\})$, where $x\neq z$. Thus, before applying the constraints,
-the number of parameters is
+For the second-order model, there are $n$ intrinsic parameters $v(x)$ and $n(n-1)$ contextual parameters $v(x\mid\{z\})$, giving $n^2$ parameters before applying the constraints. There is one zero-sum constraint on the intrinsic parameters and one for each context alternative, giving $n+1$ constraints. The number of free parameters is therefore
 \begin{equation}
-    n+n(n-1)=n^2.
-\end{equation}
-The intrinsic parameters satisfy one constraint:
-\begin{equation}
-    \sum_{x\in\X}v(x)=0.
-\end{equation}
-For every $z\in\X$, the contextual parameters satisfy
-\begin{equation}
-    \sum_{x\in\X\setminus\{z\}}v(x\mid\{z\})=0.
-\end{equation}
-There are $n$ contextual constraints. Therefore, the total number of
-constraints is $n+1$, and the number of free parameters is
-\begin{equation}
-    n^2-(n+1)=n^2-n-1.
+    d_2=n^2-n-1.
     \label{eq:second-order-parameter-count}
 \end{equation}
 
-\subsubsection{Context-Dependent Random Utility Model}
+\subsubsection[Full context-dependent model]{Context-Dependent Random Utility Model}
 The first-order model does not allow the utility of an alternative to change
 when other alternatives are added to or removed from the choice set. To
 represent such context effects without retaining every higher-order
 interaction, we consider the second-order model $\mathcal{M}_2$.
 \paragraph{Second-Order Truncation}
-Starting from the universal logit decomposition,
+The second-order model sets all terms involving two or more contextual alternatives equal to zero. Hence,
 \begin{equation}
-\begin{split}
-    u(x\mid C)
-    &=v(x)
-    +\sum_{z\in C\setminus\{x\}}v(x\mid\{z\})\\
-    &\quad+
-    \sum_{\{y,z\}\subseteq C\setminus\{x\}}v(x\mid\{y,z\})
-    +\cdots,
-\end{split}
-\end{equation}
-the second-order model sets all terms involving two or more contextual
-alternatives equal to zero. Hence,
-\begin{equation}
-    u(x\mid C)
-    =
-    v(x)+\sum_{z\in C\setminus\{x\}}v(x\mid\{z\}).
+    u(x\mid C)=v(x)+\sum_{z\in C\setminus\{x\}}v(x\mid\{z\}).
     \label{eq:second-order-truncation}
 \end{equation}
-The corresponding choice probability is
-\begin{equation}
-    P(x\mid C)
-    =
-    \frac{
-        \exp\left(
-            v(x)+\displaystyle\sum_{z\in C\setminus\{x\}}
-            v(x\mid\{z\})
-        \right)
-    }{
-        \displaystyle\sum_{y\in C}
-        \exp\left(
-            v(y)+\sum_{z\in C\setminus\{y\}}
-            v(y\mid\{z\})
-        \right)
-    }.
-    \label{eq:second-order-choice-probability}
-\end{equation}
+The choice probability is obtained by substituting this utility into \cref{eq:context-logit}.
 Here, $v(x)$ represents the intrinsic preference associated with $x$, while
 $v(x\mid\{z\})$ represents the contribution of context alternative $z$ to
 the utility of $x$.
 
 \paragraph{Reparameterisation of the Model}
-
-The second-order utility is given by
+For $x\neq z$, define the pairwise parameter $u_{xz}=v(x\mid\{z\})-v(z)$. Substituting $v(x\mid\{z\})=u_{xz}+v(z)$ into the second-order utility gives a term $\sum_{z\in C}v(z)$ that is common to every alternative in the choice set. A common additive term does not change the softmax probabilities, so it can be omitted. The reparameterised utility becomes
 \begin{equation}
-u(x\mid C)
-=
-v(x)
-+
-\sum_{z\in C\setminus\{x\}}
-v(x\mid\{z\}).
+    u(x\mid C)=\sum_{z\in C\setminus\{x\}}u_{xz}.
+    \label{eq:cdm-utility}
 \end{equation}
-
-For $x\neq z$, define the pairwise interaction parameter as
+Thus, the Context-Dependent Model (CDM) is expressed as
 \begin{equation}
-u_{xz}=v(x\mid\{z\})-v(z).
+    P(x\mid C;U)=
+    \frac{\exp\left(\sum_{z\in C\setminus\{x\}}u_{xz}\right)}
+    {\displaystyle\sum_{y\in C}\exp\left(\sum_{z\in C\setminus\{y\}}u_{yz}\right)}.
+    \label{eq:cdm-probability}
 \end{equation}
-
-Equivalently,
-\[
-v(x\mid\{z\})=u_{xz}+v(z).
-\]
-
-Substituting this into the original utility,
-\begin{align}
-u(x\mid C)
-&=
-v(x)
-+
-\sum_{z\in C\setminus\{x\}}
-v(x\mid\{z\})
-\\[6pt]
-&=
-v(x)
-+
-\sum_{z\in C\setminus\{x\}}u_{xz}
-+
-\sum_{z\in C\setminus\{x\}}v(z)
-\\[6pt]
-&=
-\underbrace{
-v(x)+
-\sum_{z\in C\setminus\{x\}}v(z)
-}_{\displaystyle \sum_{z\in C}v(z)}
-+
-\sum_{z\in C\setminus\{x\}}u_{xz}
-\\[6pt]
-&=
-\sum_{z\in C}v(z)
-+
-\sum_{z\in C\setminus\{x\}}u_{xz}.
-\end{align}
-
-The first term depends only on the choice set $C$
-and is the same for every alternative $x\in C$.
-Since adding or subtracting a common constant
-does not change the softmax probabilities,
-this term can be omitted from the utility
-representation.
-
-Thus, the reparameterised utility becomes
-\begin{equation}
-\boxed{
-u(x\mid C)
-=
-\sum_{z\in C\setminus\{x\}}u_{xz}.
-}
-\end{equation}
-
-Using the reparameterised utility, the choice probability
-of alternative $x$ from choice set $C$ is given by
-
-\begin{align}
-P(x\mid C)
-&=
-\frac{\exp(u(x\mid C))}
-{\sum_{y\in C}\exp(u(y\mid C))}
-\\[6pt]
-&=
-\frac{
-\exp\left(
-\sum_{z\in C\setminus\{x\}}u_{xz}
-\right)
-}{
-\sum_{y\in C}
-\exp\left(
-\sum_{z\in C\setminus\{y\}}u_{yz}
-\right)
-}.
-\end{align}
-
-Thus, the Context-Dependent Model (CDM) is
-expressed as
-
-\begin{equation}
-\boxed{
-P(x\mid C;U)
-=
-\frac{
-\exp\left(
-\sum_{z\in C\setminus\{x\}}u_{xz}
-\right)
-}{
-\sum_{y\in C}
-\exp\left(
-\sum_{z\in C\setminus\{y\}}u_{yz}
-\right)
-}
-}.
-\end{equation}
-
 
 \paragraph{Number of Parameters}
-The reparameterised parameters can be arranged in a matrix
-$U\in\R^{n\times n}$. The diagonal entries are set to zero because an
-alternative is not treated as its own context:
+The reparameterised parameters can be arranged in a matrix $U\in\R^{n\times n}$. Its diagonal entries are set to zero, $u_{xx}=0$, because an alternative is not treated as its own context. There are $n(n-1)$ off-diagonal parameters, with the identification constraint
 \begin{equation}
-    u_{xx}=0.
-\end{equation}
-Therefore, $U$ contains
-\begin{equation}
-    n^2-n=n(n-1)
-\end{equation}
-off-diagonal parameters. These parameters satisfy the identification
-constraint
-\begin{equation}
-    \sum_{x\in\X}
-    \sum_{z\in\X\setminus\{x\}}u_{xz}=0.
+    \sum_{x\in\X}\sum_{z\in\X\setminus\{x\}}u_{xz}=0.
     \label{eq:cdm-identification-constraint}
 \end{equation}
-Hence, the number of free parameters is
-\begin{equation}
-    n(n-1)-1=n^2-n-1.
-\end{equation}
-This agrees with the count obtained from the original second-order
-formulation in \cref{eq:second-order-parameter-count}.
-For example, suppose $\X=\{A,B,C\}$. Then
-\begin{equation}
-    U=
-    \begin{pmatrix}
-        0      & u_{AB} & u_{AC}\\
-        u_{BA} & 0      & u_{BC}\\
-        u_{CA} & u_{CB} & 0
-    \end{pmatrix}.
-\end{equation}
-The matrix has six off-diagonal parameters. After applying the constraint
-\begin{equation}
-    u_{AB}+u_{AC}+u_{BA}+u_{BC}+u_{CA}+u_{CB}=0,
-\end{equation}
-the number of free parameters is
-\begin{equation}
-    6-1=5.
-\end{equation}
-This is consistent with the five free parameters obtained in
-\cref{eq:three-alternative-free-parameters}.
+This leaves $n(n-1)-1=n^2-n-1$ free parameters, agreeing with \cref{eq:second-order-parameter-count}. For three alternatives, the six off-diagonal parameters satisfy one zero-sum constraint, leaving five free parameters, as in the earlier worked example.
 
-
-\subsubsection{Low-Rank Context-Dependent Model}
+\subsubsection[Low-rank model]{Low-Rank Context-Dependent Model}
 \label{sec:low-rank-cdm}
 
 In the full context-dependent model, the parameter $u_{xz}$
@@ -1033,12 +710,24 @@ error
 where \(\theta_i\) is the true parameter and
 \(\widehat{\theta}_i\) is its estimate.
 
-\begin{table}[htbp]
+% Graph and its numerical summary stay side by side.
+\begin{figure}[H]
     \centering
-    \caption[BTL baseline settings and recovery]{Configuration and result of the baseline
-    Bradley--Terry parameter-recovery experiment.}
-    \label{tab:btl-baseline-recovery}
-    \begin{tabular}{lc}
+    \begin{minipage}[t]{0.52\textwidth}
+        \vspace{0pt}
+        \centering
+        \includegraphics[width=\linewidth]{images/experiments/bradley_terry/baseline_parameter_recovery.pdf}
+        \captionof{figure}[BTL baseline recovery]{Comparison of the true and estimated parameters for the
+    baseline Bradley--Terry experiment with \(10\) items and \(1000\)
+    pairwise comparisons.}
+        \label{fig:btl-baseline-recovery}
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.44\textwidth}
+        \vspace{0pt}
+        \centering
+        \footnotesize
+        \setlength{\tabcolsep}{3pt}
+        \begin{tabularx}{\linewidth}{@{}Xr@{}}
         \toprule
         Quantity & Value \\
         \midrule
@@ -1049,18 +738,11 @@ where \(\theta_i\) is the true parameter and
         Maximum iterations & \(1000\) \\
         Parameter-recovery RMSE & \(0.1224\) \\
         \bottomrule
-    \end{tabular}
-\end{table}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[
-        width=0.90\textwidth
-    ]{images/experiments/bradley_terry/baseline_parameter_recovery.pdf}
-    \caption[BTL baseline recovery]{Comparison of the true and estimated parameters for the
-    baseline Bradley--Terry experiment with \(10\) items and \(1000\)
-    pairwise comparisons.}
-    \label{fig:btl-baseline-recovery}
+    \end{tabularx}
+        \captionof{table}[BTL baseline settings and recovery]{Configuration and result of the baseline
+    Bradley--Terry parameter-recovery experiment.}
+        \label{tab:btl-baseline-recovery}
+    \end{minipage}
 \end{figure}
 
 As shown in \cref{fig:btl-baseline-recovery}, the estimated parameters
@@ -1094,17 +776,28 @@ number of gradient-descent iterations are kept fixed. The mean
 parameter-recovery RMSE and its standard deviation are then computed
 over the \(20\) runs.
 
-\begin{table}[htbp]
+% Graph and its numerical summary stay side by side.
+\begin{figure}[H]
     \centering
-    \caption[Recovery vs comparison count]{Parameter-recovery error for different numbers of
-    pairwise comparisons. Each result is computed over \(20\)
-    independent runs.}
-    \label{tab:btl-comparison-scaling}
-    \begin{tabular}{rcc}
+    \begin{minipage}[t]{0.52\textwidth}
+        \vspace{0pt}
+        \centering
+        \includegraphics[width=\linewidth]{images/experiments/bradley_terry/recovery_error_vs_comparisons.pdf}
+        \captionof{figure}[BTL recovery vs comparisons]{Mean Bradley--Terry parameter-recovery RMSE as the number
+    of comparisons increases. The error bars show one standard
+    deviation across \(20\) independent runs.}
+        \label{fig:btl-recovery-vs-comparisons}
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.44\textwidth}
+        \vspace{0pt}
+        \centering
+        \footnotesize
+        \setlength{\tabcolsep}{3pt}
+        \begin{tabular}{rcc}
         \toprule
-        Number of comparisons
-        & Mean RMSE
-        & Standard deviation \\
+        \makecell{Comparisons\\$m$}
+        & \makecell{Mean\\RMSE}
+        & \makecell{Standard\\deviation} \\
         \midrule
         \(50\)   & \(0.7225\) & \(0.2172\) \\
         \(100\)  & \(0.4600\) & \(0.1247\) \\
@@ -1115,17 +808,11 @@ over the \(20\) runs.
         \(5000\) & \(0.0780\) & \(0.0203\) \\
         \bottomrule
     \end{tabular}
-\end{table}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[
-        width=0.68\textwidth
-    ]{images/experiments/bradley_terry/recovery_error_vs_comparisons.pdf}
-    \caption[BTL recovery vs comparisons]{Mean Bradley--Terry parameter-recovery RMSE as the number
-    of comparisons increases. The error bars show one standard
-    deviation across \(20\) independent runs.}
-    \label{fig:btl-recovery-vs-comparisons}
+        \captionof{table}[Recovery vs comparison count]{Parameter-recovery error for different numbers of
+    pairwise comparisons. Each result is computed over \(20\)
+    independent runs.}
+        \label{tab:btl-comparison-scaling}
+    \end{minipage}
 \end{figure}
 
 As shown in \cref{tab:btl-comparison-scaling,fig:btl-recovery-vs-comparisons},
@@ -1148,30 +835,35 @@ We use $n\in\{10,20,50,100,200\}$ and repeat each setting five times.
 The true parameters are sampled from a standard normal distribution and centred.
 Pairs are sampled uniformly, and parameters are fitted using the Choix library.
 
-\paragraph{Number of Items at Fixed Total Comparisons}
-The total number of comparisons is fixed at
-$m\in\{1000,5000,20000,100000\}$ while the number of items increases.
-For a fixed number of comparisons, increasing the number of items reduces the expected number of appearances per item, $2m/n$.
-\begin{figure}[htbp]
+\paragraph{Fixed Total Comparisons (Left)}
+We keep the total number of comparisons fixed at $m\in\{1000,5000,20000,100000\}$ and increase the number of items. The same data budget is now shared among more items. Since every comparison involves two items, each item appears in $2m/n$ comparisons on average, so this average decreases as $n$ increases.
+
+\paragraph{Fixed Comparisons per Item (Right)}
+We instead keep $m/n$ fixed at 100 or 500. As more items are added, the total number of comparisons increases in the same proportion. The expected number of appearances per item, $2m/n$, therefore stays at 200 or 1,000, respectively. This checks recovery when the data budget grows with the number of items.
+
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.82\textwidth]{images/experiments/bradley_terry/bt_choix_recovery_vs_items_fixed_m.pdf}
-    \caption[Choix: fixed total comparisons]{Choix parameter-recovery RMSE versus the number of items at fixed total comparison budgets. Points show means over converged runs, and error bars show one standard deviation.}
-    \label{fig:phase1-choix-items-fixed-m}
+    \begin{minipage}[t]{0.49\textwidth}
+        \vspace{0pt}
+        \centering
+        \includegraphics[width=\linewidth]{images/experiments/bradley_terry/bt_choix_recovery_vs_items_fixed_m.pdf}
+        \captionof{figure}[Choix: fixed total comparisons]{Parameter RMSE as the number of items increases at fixed total comparison budgets $m$.}
+        \label{fig:phase1-choix-items-fixed-m}
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.49\textwidth}
+        \vspace{0pt}
+        \centering
+        \includegraphics[width=\linewidth]{images/experiments/bradley_terry/bt_choix_recovery_vs_items_fixed_ratio.pdf}
+        \captionof{figure}[Choix: fixed comparisons per item]{Parameter RMSE as the number of items increases at fixed $m/n=100$ and $m/n=500$.}
+        \label{fig:phase1-choix-items-fixed-ratio}
+    \end{minipage}
 \end{figure}
 
-\paragraph{Number of Items at Fixed Comparisons per Item}
-We also compare settings with $m/n=100$ and $m/n=500$.
-Here, the total number of comparisons increases with the number of items,
-so the expected appearances per item remain fixed at $200$ and $1000$, respectively.
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.82\textwidth]{images/experiments/bradley_terry/bt_choix_recovery_vs_items_fixed_ratio.pdf}
-    \caption[Choix: fixed comparisons per item]{Choix parameter-recovery RMSE versus the number of items at fixed $m/n$. Error bars show one standard deviation across converged runs.}
-    \label{fig:phase1-choix-items-fixed-ratio}
-\end{figure}
+Both graphs show the mean RMSE across converged runs, with error bars showing one standard deviation. Each setting has five attempted runs. Only runs with a finite MLE and a converged fit are included. At $n=200$ and $m=1000$, none of the five runs has a finite MLE, so that point is not shown.
 
-Only runs with a finite MLE and a converged fit are included in the recovery summaries.
-At $n=200$ and $m=1000$, none of the five runs has a finite MLE, so no RMSE point is shown for that setting.
+\paragraph{Interpretation}
+At fixed $m$, recovery generally becomes worse as the number of items increases. At fixed $m/n$, the error stays roughly stable, and the larger comparison budget gives lower error.
+
 \FloatBarrier
 
 \subsubsection[Optimizer comparison]{Comparison of Optimization Methods}
@@ -1220,6 +912,8 @@ error, convergence ratio, and relative runtime. Here, H and P denote
 the handcrafted and PyTorch implementations, respectively.
 
 \begin{table}[H]
+    \small
+    \setlength{\tabcolsep}{5pt}
     \centering
     \caption[Optimizer comparison]{Comparison of the optimization methods. The runtime ratio
     is PyTorch runtime divided by handcrafted runtime.}
@@ -1272,14 +966,30 @@ Figure~\ref{fig:optimizer-convergence-distance} shows the final
 gradient norm relative to the selected tolerance.
 
 \begin{figure}[H]
-    \centering
+\centering
+\begin{minipage}[t]{0.49\textwidth}
+\vspace{0pt}
+\centering
     \includegraphics[
-        width=0.88\textwidth
+        width=\linewidth
     ]{images/experiments/bradley_terry/optimization/fixed_budget/06_distance_from_convergence.pdf}
 
-    \caption[Optimizer convergence]{Final gradient norm relative to the convergence tolerance.
+    \captionof{figure}[Optimizer convergence]{Final gradient norm relative to the convergence tolerance.
     Values at or below one satisfy the convergence criterion.}
     \label{fig:optimizer-convergence-distance}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\textwidth}
+\vspace{0pt}
+\centering
+    \includegraphics[
+        width=\linewidth
+    ]{images/experiments/bradley_terry/optimization/fixed_budget/07_pytorch_to_handcrafted_runtime_ratio.pdf}
+
+    \captionof{figure}[PyTorch/handcrafted runtime]{Ratio of PyTorch runtime to handcrafted runtime for each
+    optimization method. A value greater than one indicates that the
+    PyTorch implementation required more time.}
+    \label{fig:pytorch-runtime-overhead}
+\end{minipage}
 \end{figure}
 
 Both implementations of full-batch gradient descent satisfied the
@@ -1299,17 +1009,7 @@ Figure~\ref{fig:pytorch-runtime-overhead} compares the runtime of the
 PyTorch implementation with its corresponding handcrafted
 implementation.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[
-        width=0.82\textwidth
-    ]{images/experiments/bradley_terry/optimization/fixed_budget/07_pytorch_to_handcrafted_runtime_ratio.pdf}
 
-    \caption[PyTorch/handcrafted runtime]{Ratio of PyTorch runtime to handcrafted runtime for each
-    optimization method. A value greater than one indicates that the
-    PyTorch implementation required more time.}
-    \label{fig:pytorch-runtime-overhead}
-\end{figure}
 
 For this Bradley--Terry problem, the handcrafted implementations
 were faster than their PyTorch counterparts, and among all those Adam optimizer performed well. The additional runtime
@@ -1321,112 +1021,159 @@ size. It should not be interpreted as a general comparison of PyTorch
 and handcrafted optimization, since PyTorch may become advantageous
 for larger models, larger datasets, or GPU-based computation.
 
-% =========================================================
-% CHAPTER 3
-% =========================================================
-% =========================================================
-% CHAPTER 3
-% Cleaned version through the full-rank CDM reparameterisation
-% =========================================================
 
 
 \FloatBarrier
-% BEGIN CDM EXPERIMENTS
+
+\setlength{\parskip}{3pt plus 1pt minus 1pt}
 \subsection[CDM experiments]{Context-Dependent Model Experiments}
 \label{sec:phase1-cdm-experiments}
 
+\FloatBarrier
 \subsubsection[Full-CDM recovery]{Full CDM Parameter Recovery}
 \notebooksource{https://github.com/rbhdsks/Learning-from-Comparison-Data-Master-Thesis-Project-/blob/cc7a5ab5ccf2ef462020f26919576bf275fa4105/notebooks/experiments/Context_Dependent_Model/Full\%20CDM/01_CDM-CDM.ipynb}{01_CDM-CDM.ipynb}
 
-We compare the estimated interaction matrix with the matrix used to generate the synthetic observations. The diagonal is excluded because an item does not act as its own context. The experiments use two- and three-item choice sets, with 80\% of observations used for training.
+In this experiment, we first choose known CDM parameters and use them to generate synthetic choices. We then fit a full CDM to these observations and compare the estimated parameters with the true values used to generate the data. Parameters on the diagonal are excluded because an item does not act as its own context.
 
-For five items, the observation count is increased from 1,000 to 50,000, with ten runs per setting. We also keep 50,000 observations fixed and increase the number of items from five to 80, with five runs per setting. The first comparison studies recovery with more data; the second studies recovery as the number of full-CDM parameters increases.
+Each observation records the available items and the item selected from them. A choice set contains either two or three items, and only one item is selected in each observation. For example, a two-item set records a choice between two alternatives; a three-item set records a choice among three alternatives.
 
-\begin{figure}[htbp]
+We randomly divide the observations into two parts. The model is fitted using 80\% of the observations, called the training data. The remaining 20\%, called the test data, are kept aside to evaluate predictions on choices that were not used for fitting. For example, with 1,000 observations, 800 are used for training and 200 for testing. Parameter recovery is measured separately by comparing the fitted parameters with the known true parameters using RMSE.
+
+A \emph{run} means one complete repetition of generating observations, splitting the data, fitting the model, and recording the results. It is not one optimizer update. At each fixed setting, the true CDM parameters stay the same across runs, but a different random seed gives a new simulated dataset. Repeating the experiment shows how much the recovery error changes from one dataset to another.
+
+We study two settings. First, we keep five items fixed and use 1,000, 5,000, 10,000, and 50,000 observations, with ten runs for each observation count. Second, we keep 50,000 observations fixed and use 5, 10, 20, 40, and 80 items, with five runs for each item count. Each plotted point is the mean RMSE across the runs, and the error bar shows one standard deviation.
+
+\begin{figure}[!htbp]
     \centering
-    \includegraphics[width=\textwidth]{images/experiments/phase1_cdm_six_figures/01_full_cdm_recovery.pdf}
-    \caption[Full-CDM recovery]{Full-CDM interaction recovery. (a) Observation scaling for five items, over ten runs per setting. (b) Item scaling with 50,000 total observations, over five runs per setting. Error bars show one standard deviation across runs.}
+    \includegraphics[width=0.92\textwidth]{images/experiments/phase1_cdm_six_figures/01_full_cdm_recovery.pdf}
+    \caption[Full-CDM recovery]{Full-CDM parameter recovery. (a) Observation scaling for five items, over ten runs per setting. (b) Item scaling with 50,000 total observations, over five runs per setting. Error bars show one standard deviation across runs.}
     \label{fig:phase1-cdm-recovery}
+\par\smallskip
+    \begin{minipage}{\textwidth}
+    \normalfont\normalsize\raggedright
+    \textbf{Interpretation}\enspace More observations improve recovery for five items. With 50,000 observations fixed, recovery becomes worse as the number of items and parameters increases.
+    \end{minipage}
 \end{figure}
-\FloatBarrier
 
+
+\Needspace{5\baselineskip}
+\FloatBarrier
 \subsubsection[CDM-to-BTL fits]{CDM-Generated Choices Fitted with BTL/Luce}
 \notebooksource{https://github.com/rbhdsks/Learning-from-Comparison-Data-Master-Thesis-Project-/blob/cc7a5ab5ccf2ef462020f26919576bf275fa4105/notebooks/experiments/Context_Dependent_Model/Full\%20CDM/02_CDM-BTL.ipynb}{02_CDM-BTL.ipynb}
 
-This experiment studies model misspecification by generating synthetic choice observations from a full Context-Dependent Model and fitting a Bradley--Terry/Luce model to the same data. The main objective is to determine when a context-independent BTL model fails to represent choices generated by context-dependent preferences.
+Here, we generate choice observations using a full CDM, but fit a BTL/Luce model to them. The generating CDM can change an item's utility according to the other available items, whereas BTL/Luce uses a fixed score for each item. Fitting a model that cannot represent the generating choice pattern is called \emph{model misspecification}. We examine whether such a gap appears in these experiments.
 
-We compare the fitted BTL/Luce test NLL with the true CDM test NLL for five and ten items. Each setting has ten runs with an 80/20 training/test split. The interaction-strength comparison uses 50,000 observations. For the tested generators, the predictive gap remains as observations increase and becomes larger as the interaction scale increases.
+We use five and ten items, with choice sets containing two or three items. Each setting is repeated for ten runs. In every run, a new simulated dataset is divided into 80\% training observations and 20\% test observations, and BTL/Luce is fitted only to the training part.
 
-\begin{figure}[htbp]
+For evaluation, we calculate the average negative log-likelihood (NLL) on the test choices. A smaller NLL means better prediction of those test choices. We compare the fitted BTL/Luce model with the true CDM parameters used for generation. The plotted gap is BTL test NLL minus true CDM test NLL, so a positive gap means BTL performs worse on those test choices.
+
+The first comparison increases the observations from 1,000 to 50,000. The second keeps 50,000 observations fixed and changes the scale of the generating CDM parameters from zero to one.
+
+\begin{figure}[!htbp]
     \centering
-    \includegraphics[width=\textwidth]{images/experiments/phase1_cdm_six_figures/02_cdm_to_btl_misspecification.pdf}
+    \includegraphics[width=0.92\textwidth]{images/experiments/phase1_cdm_six_figures/02_cdm_to_btl_misspecification.pdf}
     \caption[CDM-to-BTL predictive gap]{BTL/Luce misspecification on CDM-generated data. The gap is fitted BTL test NLL minus generating-CDM test NLL on the same choices. (a) Increasing observations. (b) Increasing interaction scale with 50,000 observations. Error bars show one standard deviation across ten runs.}
     \label{fig:phase1-cdm-btl}
+\par\smallskip
+    \begin{minipage}{\textwidth}
+    \normalfont\normalsize\raggedright
+    \textbf{Interpretation}\enspace For these CDM-generated choices, more observations do not remove BTL's prediction gap. The gap increases with the CDM parameter scale, so BTL has greater difficulty representing these stronger context effects.
+    \end{minipage}
 \end{figure}
+
+
 \FloatBarrier
-
-\subsubsection[Paper-style synthetic recovery]{Synthetic Recovery Based on the CDM Paper}
-\notebooksource{https://github.com/rbhdsks/Learning-from-Comparison-Data-Master-Thesis-Project-/blob/cc7a5ab5ccf2ef462020f26919576bf275fa4105/notebooks/experiments/Context_Dependent_Model/CDM_Paper_Reproduction/01_synthetic_recovery.ipynb}{01_synthetic_recovery.ipynb}
-
-Following the synthetic recovery experiment of Seshadri et al.\ \citep{seshadri2019}, we study a fixed six-item interaction matrix constructed from standard-normal target and context matrices. Menus contain two through six items. The extended experiment uses ten runs and observation counts from 1,000 to 100,000, with nested datasets within each run. The observation grid is our chosen grid; it has not been verified as the exact grid used by the authors.
-
-The reported error is the squared Frobenius distance between the centred true and fitted interactions, averaged across runs. This differs from the per-entry RMSE used in the earlier recovery experiment. The inverse-observation curve is a reference guide, not a fitted theoretical claim. Numerical stopping criteria should not be interpreted as proof that a finite unregularized MLE exists.
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\textwidth]{images/experiments/phase1_cdm_six_figures/05_paper_synthetic_recovery.pdf}
-    \caption[Paper-style synthetic recovery]{Six-item paper-inspired recovery on the extended observation grid. (a) Mean squared Frobenius error, with one-standard-deviation error bars over ten runs and an $m^{-1}$ reference anchored at the first point. (b) Mean fitting time across those runs. Menus contain two through six items. This experiment uses a different generator and error metric from Figure~\ref{fig:phase1-cdm-recovery}.}
-    \label{fig:phase1-paper-recovery}
-\end{figure}
-\FloatBarrier
-
 \subsubsection[Computational scaling]{Computational Scaling of the Full and Low-Rank CDM}
 \label{sec:full-low-rank-resource-scaling}
 \notebooksource{https://github.com/rbhdsks/Learning-from-Comparison-Data-Master-Thesis-Project-/blob/cc7a5ab5ccf2ef462020f26919576bf275fa4105/notebooks/experiments/Context_Dependent_Model/Low\%20Rank\%20CDM/01-FullvsLowrankResourceScaling.ipynb}{01-FullvsLowrankResourceScaling.ipynb}
 
 We compare full CDM with ranks one, two, and three for 250--5,000 items. Each fit uses the same 1,000 observations within a repeat and 1,000 Adam updates on the CPU, with five repeats per setting. This measures fixed-budget computational cost, not time to convergence.
 
-The full implementation stores $n^2$ trainable entries, whereas the low-rank implementation stores $2nr$. These are stored entries, not identifiable free parameters. Low-rank models reduce parameter storage, but the present dense-matrix implementation still shows approximately quadratic runtime growth. Sampled process memory also includes Python/PyTorch overhead.
+The full implementation stores $n^2$ trainable entries, whereas the low-rank implementation stores $2nr$. These are stored entries, not identifiable free parameters. Low-rank models reduce parameter storage, but the present dense-matrix implementation still shows approximately quadratic runtime growth. The low-rank implementation still forms the full array of CDM parameters during computation.
 
-\begin{figure}[htbp]
+\textbf{What RSS measures.} Resident Set Size (RSS) is the amount of RAM used by the running process. It includes the model, data, temporary calculations, and Python/PyTorch memory. We sample RSS during each fit and record the highest observed value, then average these values over five repeats. The unit is MiB ($2^{20}$ bytes). RSS therefore measures more than parameter storage, and sampling can miss a brief memory peak.
+
+\begin{figure}[!htbp]
     \centering
-    \includegraphics[width=\textwidth]{images/experiments/phase1_cdm_six_figures/04_computational_scaling.pdf}
-    \caption[Full/low-rank resource scaling]{Computational scaling of full and low-rank CDM: (a) trainable entries, (b) time for 1,000 Adam updates, and (c) sampled peak process resident memory (RSS). Means are over five repeats; time and RSS error bars show one standard deviation. RSS includes process overhead, and sampling can miss brief peaks. The low-rank implementation still forms a dense interaction matrix.}
+    \includegraphics[width=0.96\textwidth]{images/experiments/phase1_cdm_six_figures/04_computational_scaling.pdf}
+    \caption[Full/low-rank resource scaling]{Computational scaling of full and low-rank CDM: (a) trainable entries, (b) time for 1,000 Adam updates, and (c) sampled peak process resident memory (RSS). Means are over five repeats; time and RSS error bars show one standard deviation. RSS measures the whole process, as explained above.}
     \label{fig:phase1-cdm-resources}
+\par\smallskip
+    \begin{minipage}{\textwidth}
+    \normalfont\normalsize\raggedright
+    \textbf{Interpretation}\enspace Low-rank CDM stores far fewer parameters, but fitting time remains similar in this implementation. Its process memory is lower for large item counts, though the reduction is much smaller than the reduction in stored parameters.
+    \end{minipage}
 \end{figure}
-\FloatBarrier
 
+\FloatBarrier
+\Needspace{34\baselineskip}
 \subsubsection[Full/low-rank comparison]{Unified BTL, Full CDM, and Low-Rank Comparison}
 \notebooksource{https://github.com/rbhdsks/Learning-from-Comparison-Data-Master-Thesis-Project-/blob/cc7a5ab5ccf2ef462020f26919576bf275fa4105/notebooks/experiments/Context_Dependent_Model/Low\%20Rank\%20CDM/04-Unifiednotebook.ipynb}{04-Unifiednotebook.ipynb}
 
 The models are compared on common synthetic choice sets with ten items and 10,000 observations per generating model. Both BTL-generated and CDM-generated choices include pairs and triples. The split is 70\% training, 15\% validation, and 15\% test. Each fitted model is evaluated on the same 1,500 test choices within a generating model.
 
-This covers BTL-to-BTL, BTL-to-CDM, CDM-to-BTL, and CDM-to-CDM fits. Low-rank fits are added to the same datasets, with ranks and restarts selected using validation NLL. The selected ranks are one for BTL data and five for CDM data. The selected rank-five fit did not meet the gradient convergence criterion within 5,000 epochs. These are results from one synthetic setup, rather than averages over independent training datasets.
+This covers BTL-to-BTL, BTL-to-CDM, CDM-to-BTL, and CDM-to-CDM fits. Low-rank fits are added to the same datasets, with ranks and restarts selected using validation NLL. The selected ranks are one for BTL data and five for CDM data.
 
-\begin{figure}[htbp]
+The selected rank-five fit did not meet the gradient convergence criterion within 5,000 epochs. These are results from one synthetic setup, rather than averages over independent training datasets.
+
+\begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{images/experiments/phase1_cdm_six_figures/03_unified_model_comparison.pdf}
-    \caption[Unified model comparison]{Mean held-out NLL for BTL, full CDM, and validation-selected low-rank CDM. Lower is better. The left and right panels use BTL-generated and CDM-generated choices, respectively. The asterisk marks the selected rank-five fit that reached the epoch limit without satisfying the gradient criterion. No between-dataset uncertainty is estimated from this single setup.}
+    \includegraphics[width=0.66\textwidth]{images/experiments/phase1_cdm_six_figures/03_unified_model_comparison.pdf}
+    \caption[Unified model comparison]{Held-out mean NLL (lower is better) on BTL-generated choices (left) and CDM-generated choices (right). The asterisk marks the selected rank-five fit that reached the epoch limit.}
     \label{fig:phase1-unified-cdm}
+\par\smallskip
+    \begin{minipage}{\textwidth}
+    \normalfont\normalsize\raggedright
+    \textbf{Interpretation}\enspace The models perform similarly on BTL-generated choices. On CDM-generated choices, full and low-rank CDM have lower test NLL than BTL, although the selected rank-five fit has not converged.
+    \end{minipage}
 \end{figure}
+
+\FloatBarrier
+\subsubsection[Six-item CDM recovery]{Six-Item Parameter Recovery Following Seshadri et al.}
+\notebooksource{https://github.com/rbhdsks/Learning-from-Comparison-Data-Master-Thesis-Project-/blob/cc7a5ab5ccf2ef462020f26919576bf275fa4105/notebooks/experiments/Context_Dependent_Model/CDM_Paper_Reproduction/01_synthetic_recovery.ipynb}{01_synthetic_recovery.ipynb}
+
+Following the synthetic recovery experiment of Seshadri et al.\ \citep{seshadri2019}, we study a fixed set of CDM parameters for six items, constructed from standard-normal target and context vectors. Each choice set contains between two and six items. We extend the experiment to observation counts from 1,000 to 100,000. A run is one complete repetition of generating data, fitting the model, and recording the error and fitting time. We use ten runs, each with a different random seed, while keeping the true parameters fixed. Within a run, smaller datasets are taken from the same pool of 100,000 observations, so each larger dataset contains the smaller ones.
+
+\Needspace{5\baselineskip}
+To measure recovery in each run, we first centre the true and fitted CDM parameters in the same way. We subtract each fitted parameter from its corresponding true value, square the difference, and add these squared differences over all distinct item pairs:
+\begin{equation}
+    E=\sum_{x\ne z}\bigl(\widehat u_{xz}-u_{xz}\bigr)^2.
+    \label{eq:phase1-squared-error}
+\end{equation}
+This sum is called the \emph{squared Frobenius distance}. It is zero when all the compared parameters match, and a smaller value means better recovery. For six items, the sum contains $6\times5=30$ terms. The earlier per-entry RMSE is $\sqrt{E/30}$ for the same parameters in a single run; here we plot the mean of $E$ across ten runs. The dashed $m^{-1}$ curve is a reference for comparing the trend.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.92\textwidth]{images/experiments/phase1_cdm_six_figures/05_paper_synthetic_recovery.pdf}
+    \caption[Six-item CDM recovery]{Six-item recovery following Seshadri et al. (a) Mean sum of squared parameter errors, with one-standard-deviation error bars over ten runs; the $m^{-1}$ guide is anchored at the first point. (b) Mean fitting time over the same runs.}
+    \label{fig:phase1-paper-recovery}
+\par\smallskip
+    \begin{minipage}{\textwidth}
+    \normalfont\normalsize\raggedright
+    \textbf{Interpretation}\enspace Recovery error decreases as more observations are used, with a trend close to the $m^{-1}$ guide over the tested range. Fitting time also increases, so better recovery here requires more computation.
+    \end{minipage}
+\end{figure}
+
+
+
+\addtocontents{toc}{\protect\setcounter{tocdepth}{3}}
 \FloatBarrier
 
-% END CDM EXPERIMENTS
-
-\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
+\setlength{\parskip}{4pt plus 1pt minus 1pt}
+\Needspace{19\baselineskip}
 \section{Conclusion}
 \label{sec:conclusion}
 This phase began with Bradley--Terry estimation and parameter recovery, and extended the study to full and low-rank context-dependent models. In the tested synthetic settings, increasing the observations improved recovery, while increasing the number of items under a fixed data budget made estimation more difficult. Fitting BTL/Luce to the tested CDM-generated choices left a predictive gap, showing the limitations of a context-independent model in those settings.
 
-Low-rank CDM reduces the number of stored parameters, but this did not translate into the same reduction in runtime or total process memory in the present implementation. The unified comparison also showed that predictive results must be read together with convergence diagnostics: the selected rank-five fit reached the epoch limit. Further work will check these comparisons across independent datasets and improve optimization before drawing broader conclusions about low-rank performance.
+Low-rank CDM reduces the number of stored parameters, but this did not translate into the same reduction in runtime or total process memory in the present implementation. Further work will check these comparisons across independent datasets and improve optimization before drawing broader conclusions about low-rank performance.
 
-\FloatBarrier
-% References share the 15-page limit. Uncomment after adding citations.
-% Existing bibliography files can be used without duplicating their entries.
-\clearpage
+\begingroup
+\small
+\setlength{\bibsep}{3pt}
 \phantomsection
 \addcontentsline{toc}{section}{References}
 \bibliographystyle{plainnat}
 \bibliography{references}
+\endgroup
 
 \end{document}
