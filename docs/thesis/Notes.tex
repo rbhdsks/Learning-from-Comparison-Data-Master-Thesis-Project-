@@ -1756,7 +1756,7 @@ choices will be used for ranks one, two, and three.
 
 The dataset tells us which items were available and which
 one was chosen. It does not give us target vectors, context
-vectors, or an interaction matrix. The following values
+vectors, or a CDM parameter matrix. The following values
 are initial values chosen to demonstrate the calculations;
 they are not estimates fitted to the six observations.
 
@@ -1990,8 +1990,7 @@ $0.3466$, $0.3398$, and $0.3136$.
 
 \subsection{Comparison Across All Six Observations}
 
-For each rank, the factor product gives an interaction
-matrix. We calculate scores for the items available in
+For each rank, the factor product gives a CDM parameter matrix. We calculate scores for the items available in
 each observation, apply the softmax, and record the
 probability assigned to the item that was actually
 chosen.
