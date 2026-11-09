@@ -11,14 +11,11 @@
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage[hidelinks]{hyperref}
 \usepackage{cleveref}
-
 \setstretch{1.1}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{4pt plus 1pt minus 1pt}
 \setlist[itemize]{itemsep=2pt,topsep=3pt}
 \captionsetup{font=small,labelfont=bf,skip=5pt}
-
-% Consistent body spacing; the cover and navigation page keep their own styles.
 \raggedbottom
 \widowpenalty=10000
 \clubpenalty=10000
@@ -33,7 +30,6 @@
 \renewcommand{\bottomfraction}{0.85}
 \renewcommand{\textfraction}{0.08}
 \renewcommand{\floatpagefraction}{0.8}
-
 \titlespacing*{\section}{0pt}{14pt plus 2pt minus 2pt}{7pt}
 \titlespacing*{\subsection}{0pt}{12pt plus 2pt minus 2pt}{6pt}
 \titlespacing*{\subsubsection}{0pt}{10pt plus 2pt minus 2pt}{5pt}
@@ -42,7 +38,6 @@
 \preto\subsection{\Needspace{4\baselineskip}}
 \preto\subsubsection{\Needspace{5\baselineskip}}
 \preto\paragraph{\Needspace{3\baselineskip}}
-
 \appto\normalsize{%
   \setlength{\abovedisplayskip}{6pt plus 2pt minus 2pt}%
   \setlength{\belowdisplayskip}{6pt plus 2pt minus 2pt}%
@@ -60,7 +55,6 @@
 \newtheorem{remark}[definition]{Remark}
 \hypersetup{pdftitle={Learning from Comparison Data},pdfauthor={Nitesh Kumar Shah}}
 
-% Draw the cars directly in LaTeX; no additional image files are needed.
 \usepackage{tikz}
 \definecolor{motGreen}{HTML}{176B4D}
 \definecolor{motBlue}{HTML}{356A91}
@@ -716,14 +710,24 @@ error
 where \(\theta_i\) is the true parameter and
 \(\widehat{\theta}_i\) is its estimate.
 
-\begin{table}[htbp]
-    \small
-    \setlength{\tabcolsep}{5pt}
+% Graph and its numerical summary stay side by side.
+\begin{figure}[H]
     \centering
-    \caption[BTL baseline settings and recovery]{Configuration and result of the baseline
-    Bradley--Terry parameter-recovery experiment.}
-    \label{tab:btl-baseline-recovery}
-    \begin{tabular}{lc}
+    \begin{minipage}[t]{0.52\textwidth}
+        \vspace{0pt}
+        \centering
+        \includegraphics[width=\linewidth]{images/experiments/bradley_terry/baseline_parameter_recovery.pdf}
+        \captionof{figure}[BTL baseline recovery]{Comparison of the true and estimated parameters for the
+    baseline Bradley--Terry experiment with \(10\) items and \(1000\)
+    pairwise comparisons.}
+        \label{fig:btl-baseline-recovery}
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.44\textwidth}
+        \vspace{0pt}
+        \centering
+        \footnotesize
+        \setlength{\tabcolsep}{3pt}
+        \begin{tabularx}{\linewidth}{@{}Xr@{}}
         \toprule
         Quantity & Value \\
         \midrule
@@ -734,18 +738,11 @@ where \(\theta_i\) is the true parameter and
         Maximum iterations & \(1000\) \\
         Parameter-recovery RMSE & \(0.1224\) \\
         \bottomrule
-    \end{tabular}
-\end{table}
-
-\begin{figure}[!htbp]
-    \centering
-    \includegraphics[
-        width=0.58\textwidth
-    ]{images/experiments/bradley_terry/baseline_parameter_recovery.pdf}
-    \caption[BTL baseline recovery]{Comparison of the true and estimated parameters for the
-    baseline Bradley--Terry experiment with \(10\) items and \(1000\)
-    pairwise comparisons.}
-    \label{fig:btl-baseline-recovery}
+    \end{tabularx}
+        \captionof{table}[BTL baseline settings and recovery]{Configuration and result of the baseline
+    Bradley--Terry parameter-recovery experiment.}
+        \label{tab:btl-baseline-recovery}
+    \end{minipage}
 \end{figure}
 
 As shown in \cref{fig:btl-baseline-recovery}, the estimated parameters
@@ -779,19 +776,28 @@ number of gradient-descent iterations are kept fixed. The mean
 parameter-recovery RMSE and its standard deviation are then computed
 over the \(20\) runs.
 
-\begin{table}[htbp]
-    \small
-    \setlength{\tabcolsep}{5pt}
+% Graph and its numerical summary stay side by side.
+\begin{figure}[H]
     \centering
-    \caption[Recovery vs comparison count]{Parameter-recovery error for different numbers of
-    pairwise comparisons. Each result is computed over \(20\)
-    independent runs.}
-    \label{tab:btl-comparison-scaling}
-    \begin{tabular}{rcc}
+    \begin{minipage}[t]{0.52\textwidth}
+        \vspace{0pt}
+        \centering
+        \includegraphics[width=\linewidth]{images/experiments/bradley_terry/recovery_error_vs_comparisons.pdf}
+        \captionof{figure}[BTL recovery vs comparisons]{Mean Bradley--Terry parameter-recovery RMSE as the number
+    of comparisons increases. The error bars show one standard
+    deviation across \(20\) independent runs.}
+        \label{fig:btl-recovery-vs-comparisons}
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.44\textwidth}
+        \vspace{0pt}
+        \centering
+        \footnotesize
+        \setlength{\tabcolsep}{3pt}
+        \begin{tabular}{rcc}
         \toprule
-        Number of comparisons
-        & Mean RMSE
-        & Standard deviation \\
+        \makecell{Comparisons\\$m$}
+        & \makecell{Mean\\RMSE}
+        & \makecell{Standard\\deviation} \\
         \midrule
         \(50\)   & \(0.7225\) & \(0.2172\) \\
         \(100\)  & \(0.4600\) & \(0.1247\) \\
@@ -802,17 +808,11 @@ over the \(20\) runs.
         \(5000\) & \(0.0780\) & \(0.0203\) \\
         \bottomrule
     \end{tabular}
-\end{table}
-
-\begin{figure}[!htbp]
-    \centering
-    \includegraphics[
-        width=0.58\textwidth
-    ]{images/experiments/bradley_terry/recovery_error_vs_comparisons.pdf}
-    \caption[BTL recovery vs comparisons]{Mean Bradley--Terry parameter-recovery RMSE as the number
-    of comparisons increases. The error bars show one standard
-    deviation across \(20\) independent runs.}
-    \label{fig:btl-recovery-vs-comparisons}
+        \captionof{table}[Recovery vs comparison count]{Parameter-recovery error for different numbers of
+    pairwise comparisons. Each result is computed over \(20\)
+    independent runs.}
+        \label{tab:btl-comparison-scaling}
+    \end{minipage}
 \end{figure}
 
 As shown in \cref{tab:btl-comparison-scaling,fig:btl-recovery-vs-comparisons},
@@ -835,30 +835,35 @@ We use $n\in\{10,20,50,100,200\}$ and repeat each setting five times.
 The true parameters are sampled from a standard normal distribution and centred.
 Pairs are sampled uniformly, and parameters are fitted using the Choix library.
 
-\paragraph{Number of Items at Fixed Total Comparisons}
-The total number of comparisons is fixed at
-$m\in\{1000,5000,20000,100000\}$ while the number of items increases.
-For a fixed number of comparisons, increasing the number of items reduces the expected number of appearances per item, $2m/n$.
-\begin{figure}[!htbp]
+\paragraph{Fixed Total Comparisons (Left)}
+We keep the total number of comparisons fixed at $m\in\{1000,5000,20000,100000\}$ and increase the number of items. The same data budget is now shared among more items. Since every comparison involves two items, each item appears in $2m/n$ comparisons on average, so this average decreases as $n$ increases.
+
+\paragraph{Fixed Comparisons per Item (Right)}
+We instead keep $m/n$ fixed at 100 or 500. As more items are added, the total number of comparisons increases in the same proportion. The expected number of appearances per item, $2m/n$, therefore stays at 200 or 1,000, respectively. This checks recovery when the data budget grows with the number of items.
+
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.66\textwidth]{images/experiments/bradley_terry/bt_choix_recovery_vs_items_fixed_m.pdf}
-    \caption[Choix: fixed total comparisons]{Choix parameter-recovery RMSE versus the number of items at fixed total comparison budgets. Points show means over converged runs, and error bars show one standard deviation.}
-    \label{fig:phase1-choix-items-fixed-m}
+    \begin{minipage}[t]{0.49\textwidth}
+        \vspace{0pt}
+        \centering
+        \includegraphics[width=\linewidth]{images/experiments/bradley_terry/bt_choix_recovery_vs_items_fixed_m.pdf}
+        \captionof{figure}[Choix: fixed total comparisons]{Parameter RMSE as the number of items increases at fixed total comparison budgets $m$.}
+        \label{fig:phase1-choix-items-fixed-m}
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.49\textwidth}
+        \vspace{0pt}
+        \centering
+        \includegraphics[width=\linewidth]{images/experiments/bradley_terry/bt_choix_recovery_vs_items_fixed_ratio.pdf}
+        \captionof{figure}[Choix: fixed comparisons per item]{Parameter RMSE as the number of items increases at fixed $m/n=100$ and $m/n=500$.}
+        \label{fig:phase1-choix-items-fixed-ratio}
+    \end{minipage}
 \end{figure}
 
-\paragraph{Number of Items at Fixed Comparisons per Item}
-We also compare settings with $m/n=100$ and $m/n=500$.
-Here, the total number of comparisons increases with the number of items,
-so the expected appearances per item remain fixed at $200$ and $1000$, respectively.
-\begin{figure}[!htbp]
-    \centering
-    \includegraphics[width=0.66\textwidth]{images/experiments/bradley_terry/bt_choix_recovery_vs_items_fixed_ratio.pdf}
-    \caption[Choix: fixed comparisons per item]{Choix parameter-recovery RMSE versus the number of items at fixed $m/n$. Error bars show one standard deviation across converged runs.}
-    \label{fig:phase1-choix-items-fixed-ratio}
-\end{figure}
+Both graphs show the mean RMSE across converged runs, with error bars showing one standard deviation. Each setting has five attempted runs. Only runs with a finite MLE and a converged fit are included. At $n=200$ and $m=1000$, none of the five runs has a finite MLE, so that point is not shown.
 
-Only runs with a finite MLE and a converged fit are included in the recovery summaries.
-At $n=200$ and $m=1000$, none of the five runs has a finite MLE, so no RMSE point is shown for that setting.
+\paragraph{Interpretation}
+At fixed $m$, recovery generally becomes worse as the number of items increases. At fixed $m/n$, the error stays roughly stable, and the larger comparison budget gives lower error.
+
 \FloatBarrier
 
 \subsubsection[Optimizer comparison]{Comparison of Optimization Methods}
@@ -961,14 +966,30 @@ Figure~\ref{fig:optimizer-convergence-distance} shows the final
 gradient norm relative to the selected tolerance.
 
 \begin{figure}[H]
-    \centering
+\centering
+\begin{minipage}[t]{0.49\textwidth}
+\vspace{0pt}
+\centering
     \includegraphics[
-        width=0.70\textwidth
+        width=\linewidth
     ]{images/experiments/bradley_terry/optimization/fixed_budget/06_distance_from_convergence.pdf}
 
-    \caption[Optimizer convergence]{Final gradient norm relative to the convergence tolerance.
+    \captionof{figure}[Optimizer convergence]{Final gradient norm relative to the convergence tolerance.
     Values at or below one satisfy the convergence criterion.}
     \label{fig:optimizer-convergence-distance}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\textwidth}
+\vspace{0pt}
+\centering
+    \includegraphics[
+        width=\linewidth
+    ]{images/experiments/bradley_terry/optimization/fixed_budget/07_pytorch_to_handcrafted_runtime_ratio.pdf}
+
+    \captionof{figure}[PyTorch/handcrafted runtime]{Ratio of PyTorch runtime to handcrafted runtime for each
+    optimization method. A value greater than one indicates that the
+    PyTorch implementation required more time.}
+    \label{fig:pytorch-runtime-overhead}
+\end{minipage}
 \end{figure}
 
 Both implementations of full-batch gradient descent satisfied the
@@ -988,17 +1009,7 @@ Figure~\ref{fig:pytorch-runtime-overhead} compares the runtime of the
 PyTorch implementation with its corresponding handcrafted
 implementation.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[
-        width=0.66\textwidth
-    ]{images/experiments/bradley_terry/optimization/fixed_budget/07_pytorch_to_handcrafted_runtime_ratio.pdf}
 
-    \caption[PyTorch/handcrafted runtime]{Ratio of PyTorch runtime to handcrafted runtime for each
-    optimization method. A value greater than one indicates that the
-    PyTorch implementation required more time.}
-    \label{fig:pytorch-runtime-overhead}
-\end{figure}
 
 For this Bradley--Terry problem, the handcrafted implementations
 were faster than their PyTorch counterparts, and among all those Adam optimizer performed well. The additional runtime
@@ -1010,18 +1021,10 @@ size. It should not be interpreted as a general comparison of PyTorch
 and handcrafted optimization, since PyTorch may become advantageous
 for larger models, larger datasets, or GPU-based computation.
 
-% =========================================================
-% CHAPTER 3
-% =========================================================
-% =========================================================
-% CHAPTER 3
-% Cleaned version through the full-rank CDM reparameterisation
-% =========================================================
 
 
 \FloatBarrier
-% BEGIN CDM EXPERIMENTS
-% Compact local paragraph gaps; figures keep their short interpretations.
+
 \setlength{\parskip}{3pt plus 1pt minus 1pt}
 \subsection[CDM experiments]{Context-Dependent Model Experiments}
 \label{sec:phase1-cdm-experiments}
@@ -1103,6 +1106,7 @@ The full implementation stores $n^2$ trainable entries, whereas the low-rank imp
 \end{figure}
 
 \FloatBarrier
+\Needspace{34\baselineskip}
 \subsubsection[Full/low-rank comparison]{Unified BTL, Full CDM, and Low-Rank Comparison}
 \notebooksource{https://github.com/rbhdsks/Learning-from-Comparison-Data-Master-Thesis-Project-/blob/cc7a5ab5ccf2ef462020f26919576bf275fa4105/notebooks/experiments/Context_Dependent_Model/Low\%20Rank\%20CDM/04-Unifiednotebook.ipynb}{04-Unifiednotebook.ipynb}
 
@@ -1112,10 +1116,10 @@ This covers BTL-to-BTL, BTL-to-CDM, CDM-to-BTL, and CDM-to-CDM fits. Low-rank fi
 
 The selected rank-five fit did not meet the gradient convergence criterion within 5,000 epochs. These are results from one synthetic setup, rather than averages over independent training datasets.
 
-\begin{figure}[!htbp]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.92\textwidth]{images/experiments/phase1_cdm_six_figures/03_unified_model_comparison.pdf}
-    \caption[Unified model comparison]{Mean held-out NLL for BTL, full CDM, and validation-selected low-rank CDM. Lower is better. The left and right panels use BTL-generated and CDM-generated choices, respectively. The asterisk marks the selected rank-five fit that reached the epoch limit without satisfying the gradient criterion. No between-dataset uncertainty is estimated from this single setup.}
+    \includegraphics[width=0.66\textwidth]{images/experiments/phase1_cdm_six_figures/03_unified_model_comparison.pdf}
+    \caption[Unified model comparison]{Held-out mean NLL (lower is better) on BTL-generated choices (left) and CDM-generated choices (right). The asterisk marks the selected rank-five fit that reached the epoch limit.}
     \label{fig:phase1-unified-cdm}
 \par\smallskip
     \begin{minipage}{\textwidth}
@@ -1150,24 +1154,26 @@ This sum is called the \emph{squared Frobenius distance}. It is zero when all th
     \end{minipage}
 \end{figure}
 
-% END CDM EXPERIMENTS
+
 
 \addtocontents{toc}{\protect\setcounter{tocdepth}{3}}
 \FloatBarrier
+
+\setlength{\parskip}{4pt plus 1pt minus 1pt}
+\Needspace{19\baselineskip}
 \section{Conclusion}
 \label{sec:conclusion}
 This phase began with Bradley--Terry estimation and parameter recovery, and extended the study to full and low-rank context-dependent models. In the tested synthetic settings, increasing the observations improved recovery, while increasing the number of items under a fixed data budget made estimation more difficult. Fitting BTL/Luce to the tested CDM-generated choices left a predictive gap, showing the limitations of a context-independent model in those settings.
 
 Low-rank CDM reduces the number of stored parameters, but this did not translate into the same reduction in runtime or total process memory in the present implementation. Further work will check these comparisons across independent datasets and improve optimization before drawing broader conclusions about low-rank performance.
 
-\FloatBarrier
-% References share the 15-page limit. Uncomment after adding citations.
-% Existing bibliography files can be used without duplicating their entries.
-\clearpage
-\setlength{\parskip}{4pt plus 1pt minus 1pt}
+\begingroup
+\small
+\setlength{\bibsep}{3pt}
 \phantomsection
 \addcontentsline{toc}{section}{References}
 \bibliographystyle{plainnat}
 \bibliography{references}
+\endgroup
 
 \end{document}
