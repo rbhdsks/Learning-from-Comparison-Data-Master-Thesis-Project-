@@ -1,9 +1,4 @@
-% Viva presentation skeleton: 12 main slides for a 15-minute talk.
-% Copy selected text/equations from Notes.tex; write explanations yourself.
-% This file contains headings and editing comments, not a finished talk.
-% Compile from this folder: latexmk -pdf pptphase1.tex
-% Suggested timing totals 15 minutes; adjust after rehearsing.
-
+% Compile from docs/thesis with latexmk -pdf pptphase1.tex
 \documentclass[aspectratio=169,11pt]{beamer}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern,amsmath,amssymb,mathtools}
@@ -24,94 +19,145 @@
 \date{November 2026}
 \titlegraphic{\includegraphics[height=1cm]{images/iitm-logo.png}}
 
-\begin{document}
 
-% 1. About 0:30.
+\definecolor{vivateal}{HTML}{12675C}
+\setbeamercolor{frametitle}{fg=vivateal}
+\setbeamercolor{structure}{fg=vivateal}
+\graphicspath{{images/experiments/bradley_terry/}{images/experiments/bradley_terry/optimization/fixed_budget/}{images/experiments/phase1_cdm_six_figures/}}
+\newcommand{\vivaplot}[1]{\centering\includegraphics[width=\linewidth,height=.48\textheight,keepaspectratio]{#1}\par}
+\newcommand{\takeaway}[1]{\medskip\par\raggedright\small\textbf{#1}}
+\begin{document}
 \begin{frame}[plain]
     \titlepage
 \end{frame}
 
-% 2. About 1:00. Source: Notes.tex, Motivation and IIA.
-\begin{frame}{Motivation and the Choice Problem}
-    % Choose one example; explain the research question aloud.
-    % Add one existing illustration if it helps.
+\begin{frame}{Choice Sets and IIA}
+    \textbf{Travel from IIT Madras to the airport}
+    \medskip
+    \begin{columns}[T,onlytextwidth]
+        \column{.48\textwidth}
+        \textbf{Original choice set}\\
+        Car, taxi, bike, bus
+        \column{.48\textwidth}
+        \textbf{Expanded choice set}\\
+        Car, taxi, bike, bus, walking
+    \end{columns}
+    \bigskip
+    \textbf{Independence of Irrelevant Alternatives (IIA)}
+    \medskip
+
+    Under IIA, the relative odds of choosing car over taxi stay the same when walking is added.
+    A context effect occurs when the available alternatives change those relative odds.
+    \medskip
+
+    {\footnotesize Seshadri et al.\ (2019), \emph{Discovering Context Effects from Raw Choice Data}.}
 \end{frame}
 
-% 3. About 1:15. Source: Notes.tex, BTL formulation and MLE.
-\begin{frame}{Bradley--Terry Model and Estimation}
-    % Add the probability model, centring constraint, and estimation objective.
-    % Keep derivations for backup slides.
+\begin{frame}{Bradley--Terry Estimation}
+    For items \(i\) and \(j\), the probability that \(i\) defeats \(j\) is
+    \[
+        P(i\succ j)=\frac{\exp(\theta_i)}{\exp(\theta_i)+\exp(\theta_j)}.
+    \]
+    \begin{itemize}
+        \item Fit the scores by minimising the average negative log-likelihood.
+        \item Centre the scores so their sum is zero.
+        \item A finite MLE exists when the directed win graph is strongly connected.
+    \end{itemize}
 \end{frame}
 
-% 4. About 1:30. Source: BTL recovery sections and Choix notebook.
 \begin{frame}{Bradley--Terry Parameter Recovery}
-    % Add one selected recovery/scaling graph and its essential settings.
-    % Explain axes, error bars, valid-run counts, and the m^(-1/2) guide.
-    % Add your own short inference.
+    \begin{columns}[T,onlytextwidth]
+        \column{.48\textwidth}
+        \centering\small\textbf{More comparisons with 10 items}\par
+        \vivaplot{recovery_error_vs_comparisons.pdf}
+        \column{.48\textwidth}
+        \centering\small\textbf{More items at fixed \(m/n\)}\par
+        \vivaplot{bt_choix_recovery_vs_items_fixed_ratio.pdf}
+    \end{columns}
+    \takeaway{RMSE falls as comparisons increase. At fixed \(m/n\), it stays roughly stable as the number of items grows.}
 \end{frame}
 
-% 5. About 1:15. Source: Notes.tex, Ford's condition and optimizer results.
-\begin{frame}{MLE Existence and Optimization}
-    % Add Ford's condition and one diagnostic or compact optimizer result.
-    % Explain the distinction between recovery accuracy and convergence.
+\begin{frame}{Comparison of Optimisation Methods}
+    \begin{columns}[T,onlytextwidth]
+        \column{.48\textwidth}
+        \centering\small\textbf{Distance from convergence}\par
+        \vivaplot{06_distance_from_convergence.pdf}
+        \column{.48\textwidth}
+        \centering\small\textbf{PyTorch / handcrafted runtime}\par
+        \vivaplot{07_pytorch_to_handcrafted_runtime_ratio.pdf}
+    \end{columns}
+    \takeaway{Recovery errors were similar, but convergence and runtime differed across methods.}
 \end{frame}
 
-% 6. About 1:30. Source: Notes.tex, full CDM and reparameterisation.
 \begin{frame}{Context-Dependent Model}
-    % Define u_ij, menu utility, and choice probability.
-    % Explain the extra flexibility relative to context-free choice.
+    Utility of item \(x\) in choice set \(C\) and its choice probability:
+    \[
+      u(x\mid C)=\sum_{z\in C\setminus\{x\}}u_{xz},
+      \qquad P(x\mid C)=\frac{\exp(u(x\mid C))}{\sum_{y\in C}\exp(u(y\mid C))}.
+    \]
+    \begin{columns}[T,onlytextwidth]
+        \column{.48\textwidth}
+        \textbf{Full CDM}\\
+        Estimate a parameter for each ordered pair. The centred model has \(n(n-1)-1\) free parameters.
+        \column{.48\textwidth}
+        \textbf{Low-rank CDM}\\
+        Write \(u_{xz}=t_x^\top c_z\) for vectors in \(\R^r\). The implementation stores \(2nr\) trainable entries.
+    \end{columns}
 \end{frame}
 
-% 7. About 1:30. Source: full-CDM recovery experiments.
 \begin{frame}{Full CDM Parameter Recovery}
-    % Choose observation scaling or item scaling as the main figure.
-    % Give the fixed quantities, run count, metric, and your interpretation.
+    \small Synthetic choices from pairs and triples. The model is fitted on 80\% of the observations.
+    \medskip
+    \vivaplot{01_full_cdm_recovery.pdf}
+    \takeaway{More observations improve recovery for five items. With 50,000 observations fixed, recovery worsens as the number of items increases.}
 \end{frame}
 
-% 8. About 1:15. Source: BTL/CDM cross-model experiments.
-\begin{frame}{BTL--CDM Cross-Model Fits}
-    % State which model generated the data and which model was fitted.
-    % Add a selected held-out comparison; identify menu sizes and splits.
+\begin{frame}{BTL/Luce Fitted to CDM-Generated Choices}
+    \small Prediction gap \(=\) fitted BTL test NLL \(-\) generating CDM test NLL.
+    \medskip
+    \vivaplot{02_cdm_to_btl_misspecification.pdf}
+    \takeaway{More observations do not remove the gap in these experiments. The gap increases with the CDM parameter scale.}
 \end{frame}
 
-% 9. About 1:30. Source: Notes.tex low-rank model and unified notebook.
-\begin{frame}{Full and Low-Rank CDM Comparison}
-    % Add the factorization and a compact selected result.
-    % Explain rank selection, restarts, and any nonconverged fits.
+\begin{frame}{Computational Scaling of Full and Low-Rank CDM}
+    \small 250--5,000 items. Each fit uses 1,000 observations and 1,000 Adam updates on the CPU.
+    \medskip
+    \vivaplot{04_computational_scaling.pdf}
+    \raggedright\footnotesize RSS is resident set size, the RAM used by the running process.
+    \takeaway{Low-rank CDM stores fewer parameters, but fitting time remains similar in this implementation.}
 \end{frame}
 
-% 10. About 1:15. Source: Notes.tex computational scaling section.
-\begin{frame}{Computational Scaling}
-    % Add one useful runtime/memory figure with its benchmark settings.
-    % Explain what was measured and what the experiment supports.
+\begin{frame}{Unified Comparison on Held-Out Choices}
+    \small 10 items, 10,000 observations per generator, 70/15/15 split. Lower test NLL is better.
+    \medskip
+    \vivaplot{03_unified_model_comparison.pdf}
+    \takeaway{The models perform similarly on BTL-generated choices. Both CDM fits have lower test NLL on CDM-generated choices, although the selected rank-five fit has not converged.}
 \end{frame}
 
-% 11. About 1:15. Source: paper-reproduction notebooks and saved outputs.
-\begin{frame}{CDM Paper Reproduction}
-    % Show only a completed experiment you can explain.
-    % Name the reproduced experiment, cite the paper, and state differences.
-    % If not included in the report, replace this with another report result.
+\begin{frame}{Six-Item CDM Parameter Recovery}
+    \small Choice sets contain two to six items. Results average ten runs at each observation count.
+    \medskip
+    \vivaplot{05_paper_synthetic_recovery.pdf}
+    \takeaway{The sum of squared parameter errors decreases as observations increase, while fitting time rises.}
+    \medskip
+
+    {\footnotesize Following Seshadri et al.\ (2019).}
 \end{frame}
 
-% 12. About 1:15. Write this after completing the report's discussion.
-\begin{frame}{Summary and Further Work}
-    % Add your own conclusions supported by the presented results.
-    % Clearly separate completed work and proposed next steps.
+\begin{frame}{Conclusion}
+    \textbf{Parameter recovery}\\
+    More observations improved recovery. Increasing the number of items under a fixed data budget made estimation more difficult.
+    \medskip
+
+    \textbf{Context effects}\\
+    Fitting BTL/Luce to the tested CDM-generated choices left a predictive gap.
+    \medskip
+
+    \textbf{Low-rank CDM}\\
+    Fewer stored parameters did not translate into the same reduction in runtime or total process memory.
+    \medskip
+
+    \textbf{Further work}\\
+    Check the comparisons across independent datasets and improve optimisation.
 \end{frame}
-
-% Optional backup slides: uncomment only those you actually need for Q&A.
-% \appendix
-% \begin{frame}[noframenumbering]{Likelihood and Gradient}
-%     % Copy the relevant derivation from Notes.tex.
-% \end{frame}
-% \begin{frame}[noframenumbering]{Additional Experimental Settings}
-%     % Add the actual settings, fit coverage, and convergence diagnostics.
-% \end{frame}
-% \begin{frame}[noframenumbering]{Cyclic Preferences}
-%     % Include only completed examples; distinguish planned simulations.
-% \end{frame}
-% \begin{frame}[noframenumbering]{References}
-%     % Add references cited in your slides.
-% \end{frame}
-
 \end{document}
